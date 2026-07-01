@@ -52,16 +52,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </ul>
         </li>
 
-        <!-- School Year -->
-        <li class="menu-item <?php echo ($currentPage === 'sy.php' || $currentPage === 'pages-misc-under-maintenance.html') ? 'active' : ''; ?>">
+        <!-- Parent/Guardian -->
+        <li class="menu-item <?php echo ($currentPage === 'parent-guardian.php' || $currentPage === 'pages-misc-under-maintenance.html') ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-calendar"></i>
-            <div data-i18n="Misc">School Year</div>
+            <div data-i18n="Misc">Parent/Guardian</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item">
-              <a href="sy.php" class="menu-link">
-                <div data-i18n="Error">Manage School Year</div>
+              <a href="parent-guardian.php" class="menu-link">
+                <div data-i18n="Error">Manage Parent/Guardian</div>
               </a>
             </li>
           </ul>
