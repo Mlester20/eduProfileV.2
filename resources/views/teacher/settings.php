@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
 require_once __DIR__ . '/../../../app/models/UpdateProfileModel.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
-AuthRole::allowOnly(['admin']);
+AuthRole::allowOnly(['teacher']);
 
 // Get user profile data
 $updateProfileModel = new UpdateProfileModel($con);

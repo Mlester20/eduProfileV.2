@@ -44,6 +44,201 @@ AuthRole::allowOnly(['teacher']);
         </button>
     </div>
 
+    <!-- Add Parent/Guardian Modal -->
+    <div class="modal fade" id="addParentModal" tabindex="-1" aria-labelledby="addParentLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addParentLabel">Add Parent/Guardian</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="../../../app/controllers/teacher/ParentGuardianController.php" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="recorded_by" value="">
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">Student</label>
+                            <select class="form-select" name="student_id" id="student_id" required>
+                                <option value="" selected disabled>-- Select Student --</option>
+                                <?php foreach ($students as $student): ?>
+                                    <option value="<?= htmlspecialchars($student['id']) ?>">
+                                        <?= htmlspecialchars($student['last_name'] . ', ' . $student['first_name']) ?>
+                                        <?php if (!empty($student['grade_name'])): ?>
+                                            (<?= htmlspecialchars($student['grade_name']) ?>)
+                                        <?php endif; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="mb-3">Father's Information</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="father_name" class="form-label">Father's Name</label>
+                                <input class="form-control" type="text" name="father_name" id="father_name" placeholder="Full name">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="father_occupation" class="form-label">Occupation</label>
+                                <input class="form-control" type="text" name="father_occupation" id="father_occupation" placeholder="Occupation">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="father_contact" class="form-label">Contact Number</label>
+                                <input class="form-control" type="text" name="father_contact" id="father_contact" placeholder="e.g., 09XXXXXXXXX">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="mb-3">Mother's Information</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="mother_name" class="form-label">Mother's Name</label>
+                                <input class="form-control" type="text" name="mother_name" id="mother_name" placeholder="Full name">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="mother_occupation" class="form-label">Occupation</label>
+                                <input class="form-control" type="text" name="mother_occupation" id="mother_occupation" placeholder="Occupation">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="mother_contact" class="form-label">Contact Number</label>
+                                <input class="form-control" type="text" name="mother_contact" id="mother_contact" placeholder="e.g., 09XXXXXXXXX">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="mb-3">Guardian's Information <small class="text-muted">(if applicable)</small></h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="guardian_name" class="form-label">Guardian's Name</label>
+                                <input class="form-control" type="text" name="guardian_name" id="guardian_name" placeholder="Full name">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="guardian_relationship" class="form-label">Relationship to Student</label>
+                                <input class="form-control" type="text" name="guardian_relationship" id="guardian_relationship" placeholder="e.g., Aunt, Grandparent">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="guardian_contact" class="form-label">Contact Number</label>
+                                <input class="form-control" type="text" name="guardian_contact" id="guardian_contact" placeholder="e.g., 09XXXXXXXXX">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary" 
+                            name="create_parent_guardian"
+                        >
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Edit Parent/Guardian Modal -->
+    <div class="modal fade" id="editParentModal" tabindex="-1" aria-labelledby="editParentLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editParentLabel">Edit Parent/Guardian</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="../../../app/controllers/teacher/ParentGuardianController.php" method="post">
+                    <input type="hidden" name="id" id="edit_parent_id" value="<?= htmlspecialchars($parentGuardian['id'] ?? '') ?>">
+                    <div class="modal-body">
+                        <input type="hidden" name="recorded_by" value="">
+
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">Student</label>
+                            <select class="form-select" name="student_id" id="edit_student_id" required>
+                                <option value="" selected disabled>-- Select Student --</option>
+                                <?php foreach ($students as $student): ?>
+                                    <option value="<?= htmlspecialchars($student['id']) ?>">
+                                        <?= htmlspecialchars($student['last_name'] . ', ' . $student['first_name']) ?>
+                                        <?php if (!empty($student['grade_name'])): ?>
+                                            (<?= htmlspecialchars($student['grade_name']) ?>)
+                                        <?php endif; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="mb-3">Father's Information</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="father_name" class="form-label">Father's Name</label>
+                                <input class="form-control" type="text" name="father_name" id="edit_father_name" placeholder="Full name">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="father_occupation" class="form-label">Occupation</label>
+                                <input class="form-control" type="text" name="father_occupation" id="edit_father_occupation" placeholder="Occupation">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="father_contact" class="form-label">Contact Number</label>
+                                <input class="form-control" type="text" name="father_contact" id="edit_father_contact" placeholder="e.g., 09XXXXXXXXX">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="mb-3">Mother's Information</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="mother_name" class="form-label">Mother's Name</label>
+                                <input class="form-control" type="text" name="mother_name" id="edit_mother_name" placeholder="Full name">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="mother_occupation" class="form-label">Occupation</label>
+                                <input class="form-control" type="text" name="mother_occupation" id="edit_mother_occupation" placeholder="Occupation">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="mother_contact" class="form-label">Contact Number</label>
+                                <input class="form-control" type="text" name="mother_contact" id="edit_mother_contact" placeholder="e.g., 09XXXXXXXXX">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="mb-3">Guardian's Information <small class="text-muted">(if applicable)</small></h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="guardian_name" class="form-label">Guardian's Name</label>
+                                <input class="form-control" type="text" name="guardian_name" id="edit_guardian_name" placeholder="Full name">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="guardian_relationship" class="form-label">Relationship to Student</label>
+                                <input class="form-control" type="text" name="guardian_relationship" id="edit_guardian_relationship" placeholder="e.g., Aunt, Grandparent">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="guardian_contact" class="form-label">Contact Number</label>
+                                <input class="form-control" type="text" name="guardian_contact" id="edit_guardian_contact" placeholder="e.g., 09XXXXXXXXX">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            name="update_parent_guardian"
+                        >
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="card mt-4">
         <h5 class="card-header">Parent & Guardian Information</h5>
         <div class="table-responsive nowrap">
@@ -66,6 +261,36 @@ AuthRole::allowOnly(['teacher']);
                                 <td><?= htmlspecialchars($parentGuardian['guardian_name']) ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['guardian_contact']) ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['guardian_relationship']) ?></td>
+                                <td>
+                                    <button
+                                        class="btn btn-sm btn-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editParentModal"
+                                        data-id="<?= htmlspecialchars($parentGuardian['id']) ?>"
+                                        data-student-id="<?= htmlspecialchars($parentGuardian['student_id']) ?>"
+                                        data-father-name="<?= htmlspecialchars($parentGuardian['father_name']) ?>"
+                                        data-father-occupation="<?= htmlspecialchars($parentGuardian['father_occupation']) ?>"
+                                        data-father-contact="<?= htmlspecialchars($parentGuardian['father_contact']) ?>"
+                                        data-mother-name="<?= htmlspecialchars($parentGuardian['mother_name']) ?>"
+                                        data-mother-occupation="<?= htmlspecialchars($parentGuardian['mother_occupation']) ?>"
+                                        data-mother-contact="<?= htmlspecialchars($parentGuardian['mother_contact']) ?>"
+                                        data-guardian-name="<?= htmlspecialchars($parentGuardian['guardian_name']) ?>"
+                                        data-guardian-relationship="<?= htmlspecialchars($parentGuardian['guardian_relationship']) ?>"
+                                        data-guardian-contact="<?= htmlspecialchars($parentGuardian['guardian_contact']) ?>"
+                                        onclick="editParentGuardian(this)"
+                                    >Edit</button>
+                                    
+                                    <form action="../../../app/controllers/teacher/ParentGuardianController.php" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($parentGuardian['id']); ?>">
+                                        <button 
+                                            type="submit" 
+                                            name="delete_parent_guardian"
+                                            class="btn btn-sm btn-danger" 
+                                            onclick="return confirm('Are you sure you want to delete this record?');">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else : ?>
@@ -80,15 +305,14 @@ AuthRole::allowOnly(['teacher']);
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
-<script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
-<script src="../../../public/assets/vendor/js/bootstrap.js"></script>
-<script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-<script src="../../../public/assets/vendor/js/menu.js"></script>
-<script src="../../../public/assets/js/main.js"></script>
-<script src="../../../public/js/teacher/home.js"></script>
-
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
+    <script src="../../../public/assets/vendor/js/bootstrap.js"></script>
+    <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../../../public/assets/vendor/js/menu.js"></script>
+    <script src="../../../public/assets/js/main.js"></script>
+    <script src="../../../public/js/teacher/parent-guardian.js"></script>
 </body>
 </html>

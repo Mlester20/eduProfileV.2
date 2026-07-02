@@ -54,6 +54,12 @@ if ($profilePic) {
           </li>
           <li><div class="dropdown-divider"></div></li>
           <li>
+            <a class="dropdown-item" href="settings.php">
+              <i class="bx bx-cog me-2"></i>
+              <span class="align-middle">Profile</span>
+            </a>
+          </li>
+          <li>
             <a class="dropdown-item" href="../../../app/controllers/Logout.php"
                onclick="return confirm('Are you sure you want to logout?')">
               <i class="bx bx-power-off me-2"></i>

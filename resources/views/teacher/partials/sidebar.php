@@ -55,8 +55,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <!-- Parent/Guardian -->
         <li class="menu-item <?php echo ($currentPage === 'parent-guardian.php' || $currentPage === 'pages-misc-under-maintenance.html') ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-calendar"></i>
-            <div data-i18n="Misc">Parent/Guardian</div>
+            <i class="menu-icon tf-icons bx bx-group"></i>
+            <div data-i18n="Parent/Guardian">Parent/Guardian</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item">
@@ -65,14 +65,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
               </a>
             </li>
           </ul>
-        </li>
-
-        <!-- Guardians -->
-        <li class="menu-item <?php echo ($currentPage === 'guardians.php') ? 'active' : ''; ?>">
-          <a href="guardians.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-group"></i>
-            <div data-i18n="Guardians">Guardians</div>
-          </a>
         </li>
 
         <!-- Observations -->
