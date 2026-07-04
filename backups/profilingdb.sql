@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 02, 2026 at 04:58 PM
+-- Generation Time: Jul 04, 2026 at 08:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -93,7 +93,20 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (269, 116, 'teacher', 'Deleted Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Deleted Parent/Guardian', '::1', 'success', '2026-07-02 14:07:16'),
 (270, 116, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Added Parent/Guardian Melba Raguindin', '::1', 'success', '2026-07-02 14:23:03'),
 (271, 116, 'teacher', 'Updated Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Updated Parent/Guardian dasda', '::1', 'success', '2026-07-02 14:26:20'),
-(272, 116, 'teacher', 'Deleted Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Deleted Parent/Guardian', '::1', 'success', '2026-07-02 14:26:24');
+(272, 116, 'teacher', 'Deleted Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Deleted Parent/Guardian', '::1', 'success', '2026-07-02 14:26:24'),
+(273, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 01:37:18'),
+(274, 116, 'teacher', 'Deleting Student Behavior', 'Student Behavioral', NULL, '2', 'Mark Lester Raguindin Deleted Student Behavioral ', '::1', 'success', '2026-07-04 01:39:02'),
+(275, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 01:42:40'),
+(276, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 4', '::1', 'success', '2026-07-04 01:56:44'),
+(277, 116, 'teacher', 'Deleting Student Behavior', 'Student Behavioral', NULL, '4', 'Mark Lester Raguindin Deleted Student Behavioral ', '::1', 'success', '2026-07-04 01:57:07'),
+(278, 116, 'teacher', 'Updating Student Behavior', 'Student Behavioral', 3, 'Mark Lester Raguindin Updated a student behavioral 3', '', '::1', 'success', '2026-07-04 01:57:20'),
+(279, 116, 'teacher', 'Updating Student Behavior', 'Student Behavioral', 3, 'Mark Lester Raguindin Updated a student behavioral 4', '', '::1', 'success', '2026-07-04 01:57:30'),
+(280, 116, 'teacher', 'Deleting Student Behavior', 'Student Behavioral', NULL, '3', 'Mark Lester Raguindin Deleted Student Behavioral ', '::1', 'success', '2026-07-04 06:25:38'),
+(281, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 06:26:41'),
+(282, 116, 'teacher', 'Deleting Student Behavior', 'Student Behavioral', NULL, '5', 'Mark Lester Raguindin Deleted Student Behavioral ', '::1', 'success', '2026-07-04 06:26:44'),
+(283, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 06:48:35'),
+(284, 116, 'teacher', 'Deleting Student Behavior', 'Student Behavioral', NULL, '6', 'Mark Lester Raguindin Deleted Student Behavioral ', '::1', 'success', '2026-07-04 06:48:38'),
+(285, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 06:52:31');
 
 -- --------------------------------------------------------
 
@@ -114,6 +127,13 @@ CREATE TABLE `behavioral_profiles` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `behavioral_profiles`
+--
+
+INSERT INTO `behavioral_profiles` (`id`, `student_id`, `school_year_id`, `observation_date`, `category`, `observation`, `intervention`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
+(7, 3, 8, '2026-07-04', 'Test Category', 'Test Observation', 'Test Intervention', 'Test', 116, '2026-07-04 06:52:31', '2026-07-04 06:52:31');
 
 -- --------------------------------------------------------
 
@@ -278,7 +298,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `profile_pi
 (3, 'Administrative', 'administrative@gmail.com', '$2y$10$CQASCJeXsOYOvWm4kK03i.S1SxUWsdPMv56Qlz04eq0GazfxE8FSi', 'administrative', 'storage/profiles/pfp_3_1782485485.jpg', '2026-05-09', '2026-06-26'),
 (4, 'admin', 'admin@gmail.com', '$2y$10$ihbCVd8WOJO17B4BFQgAUORhb1UEYpIFmpd1Q/ShW6n5uNMkLZ7kq', 'admin', 'storage/profiles/pfp_4_1782273895.jpg', '2026-05-09', '2026-06-24'),
 (13, 'Registrar', 'registrar@school.edu.ph', '$2y$10$IEz8YAjPkN2ddoQTR6YRUupEwnweJ6YNzsl8opZsKoXrMMFkaJYZG', 'registrar', 'storage/profiles/pfp_13_1779633057.jpg', '2026-05-15', '2026-05-30'),
-(116, 'Mark Lester Raguindin', 'teacher@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', 'storage/profiles/pfp_116_1782996344.jpg', '2026-06-24', '2026-07-02');
+(116, 'Mark Lester Raguindin', 'teacher.edu.ph@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', 'storage/profiles/pfp_116_1782996344.jpg', '2026-06-24', '2026-07-04');
 
 -- --------------------------------------------------------
 
@@ -410,13 +430,13 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=273;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=286;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
 --
 ALTER TABLE `behavioral_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `developmental_profiles`

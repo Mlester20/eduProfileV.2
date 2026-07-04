@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../models/teacher/StudentBehavioralProfileModel.php';
+require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../../database/config/config.php';
@@ -13,6 +14,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         protected $auditLogs;
         protected $sy;
         protected $students;
+        protected $studentService;
 
         public function __construct($con){
             parent::__construct(
@@ -21,6 +23,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->auditLogs = new AuditLogs($con);
             $this->sy = new SchoolYearModel($con);
             $this->students = new StudentsModel($con);
+            $this->studentService = new StudentService($con);
         }
 
         public function index(){
@@ -32,7 +35,12 @@ require_once __DIR__ . '/../../../database/config/config.php';
         }
 
         public function getStudents(){
-            return $this->students->index();
+            if(!isset($_SESSION['id'])){
+                return [];
+            }
+            $activeSy = $this->getActiveSy();
+            $activeSchoolYearId = !empty($activeSy) ? $activeSy[0]['id'] : null;
+            return $this->studentService->getStudentsByAdviser((int) $_SESSION['id'], $activeSchoolYearId);
         }
 
         public function create($data){
