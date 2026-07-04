@@ -7,15 +7,7 @@
                 </div>
                 <form action="../../../app/controllers/admin/GradeLevelsController.php" method="post">
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="grade_level" class="form-label">Grade Level</label>
-                            <input 
-                                class="form-control"
-                                type="text"
-                                name="grade_name"
-                                placeholder="e.g., Grade 1"
-                            >
-                        </div>
+                        <!-- implement fields here -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary">Close</button>

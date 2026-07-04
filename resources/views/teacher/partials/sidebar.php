@@ -68,10 +68,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <!-- Observations -->
-        <li class="menu-item <?php echo ($currentPage === 'observations.php') ? 'active' : ''; ?>">
-          <a href="observations.php" class="menu-link">
+        <li class="menu-item <?php echo ($currentPage === 'student-behavior.php') ? 'active' : ''; ?>">
+          <a href="student-behavior.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Observations">Observations</div>
+            <div data-i18n="Observations">Student Behavior</div>
           </a>
         </li>
 

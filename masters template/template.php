@@ -35,23 +35,22 @@ AuthRole::allowOnly(['teacher']);
 </head>
 <body>
 
-  <?php FlashMessage::showFlash(); ?>
+    <?php FlashMessage::showFlash(); ?>
 
-  <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
-  <?php require_once __DIR__ . '/partials/topbar.php'; ?>
+    <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
+    <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
 
-  <?php require_once __DIR__ . '/partials/footer.php'; ?>
+    <?php require_once __DIR__ . '/partials/footer.php'; ?>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
-<script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
-<script src="../../../public/assets/vendor/js/bootstrap.js"></script>
-<script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-<script src="../../../public/assets/vendor/js/menu.js"></script>
-<script src="../../../public/assets/js/main.js"></script>
-<script src="../../../public/js/teacher/home.js"></script>
-
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
+  <script src="../../../public/assets/vendor/js/bootstrap.js"></script>
+  <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="../../../public/assets/vendor/js/menu.js"></script>
+  <script src="../../../public/assets/js/main.js"></script>
+  <script src="../../../public/js/teacher/home.js"></script>
 </body>
 </html>
