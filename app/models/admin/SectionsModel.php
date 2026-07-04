@@ -26,6 +26,28 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        public function findByAdviser($adviserId){
+            try{
+                $query = "SELECT
+                    s.*,
+                    gl.grade_name AS grade_level_name,
+                    u.full_name as assigned_teacher
+                    FROM {$this->sections} s
+                    LEFT JOIN {$this->grade_levels} gl ON s.grade_level_id = gl.id
+                    LEFT JOIN {$this->users} u ON s.adviser_id = u.id
+                    WHERE s.adviser_id = ?
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $adviserId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log("Error " . $e->getMessage());
+                return[];
+            }
+        }
+
         public function create($data){
             try{
                 $create = "INSERT INTO {$this->sections} (grade_level_id, section_name, adviser_id) VALUES(?,?,?)";

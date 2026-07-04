@@ -52,34 +52,26 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </ul>
         </li>
 
-        <!-- School Year -->
-        <li class="menu-item <?php echo ($currentPage === 'sy.php' || $currentPage === 'pages-misc-under-maintenance.html') ? 'active' : ''; ?>">
+        <!-- Parent/Guardian -->
+        <li class="menu-item <?php echo ($currentPage === 'parent-guardian.php' || $currentPage === 'pages-misc-under-maintenance.html') ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-calendar"></i>
-            <div data-i18n="Misc">School Year</div>
+            <i class="menu-icon tf-icons bx bx-group"></i>
+            <div data-i18n="Parent/Guardian">Parent/Guardian</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item">
-              <a href="sy.php" class="menu-link">
-                <div data-i18n="Error">Manage School Year</div>
+              <a href="parent-guardian.php" class="menu-link">
+                <div data-i18n="Error">Manage Parent/Guardian</div>
               </a>
             </li>
           </ul>
         </li>
 
-        <!-- Guardians -->
-        <li class="menu-item <?php echo ($currentPage === 'guardians.php') ? 'active' : ''; ?>">
-          <a href="guardians.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-group"></i>
-            <div data-i18n="Guardians">Guardians</div>
-          </a>
-        </li>
-
         <!-- Observations -->
-        <li class="menu-item <?php echo ($currentPage === 'observations.php') ? 'active' : ''; ?>">
-          <a href="observations.php" class="menu-link">
+        <li class="menu-item <?php echo ($currentPage === 'student-behavior.php') ? 'active' : ''; ?>">
+          <a href="student-behavior.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Observations">Observations</div>
+            <div data-i18n="Observations">Student Behavior</div>
           </a>
         </li>
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2026 at 11:30 AM
+-- Generation Time: Jul 02, 2026 at 04:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,42 @@ SET time_zone = "+00:00";
 --
 -- Database: `profilingdb`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `academic_profiles`
+--
+
+CREATE TABLE `academic_profiles` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `subject_name` varchar(100) NOT NULL,
+  `grading_period` enum('1st Quarter','2nd Quarter','3rd Quarter','4th Quarter') NOT NULL,
+  `grade` decimal(5,2) NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attendance`
+--
+
+CREATE TABLE `attendance` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `attendance_date` date NOT NULL,
+  `status` enum('Present','Absent','Late','Excused') NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -46,13 +82,56 @@ CREATE TABLE `audit_logs` (
 --
 
 INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `reference_id`, `reference_table`, `description`, `ip_address`, `status`, `created_at`) VALUES
-(252, 4, 'admin', 'Update Grade Level', 'Grade Level', NULL, 'admin Updated the Grade Level Test', '', '::1', 'success', '2026-06-28 08:06:28'),
-(253, 4, 'admin', 'Deleted Grade Level', 'Grade Level', NULL, 'Deleted Grade Level', 'adminDeleted Grade Level', '::1', 'success', '2026-06-28 08:06:33'),
-(254, 4, 'admin', 'Deleted Section', 'Section', 1, 'adminDeleted Section', '', '::1', 'success', '2026-06-28 15:52:25'),
-(255, 4, 'admin', 'Adding new section', 'Section', NULL, 'Created Grade Level', 'admin Created new section Mahogani', '::1', 'success', '2026-06-29 14:15:19'),
-(256, 4, 'admin', 'Updating Section', 'Section', 2, 'Updating Section', 'admin Updating the Test update', '::1', 'success', '2026-06-29 15:25:03'),
-(257, 4, 'admin', 'Updating Section', 'Section', 2, 'Updating Section', 'admin Updating the Working?', '::1', 'success', '2026-06-29 15:25:21'),
-(258, 4, 'admin', 'Updating Section', 'Section', 2, 'Updating Section', 'admin Updating the Mahogani', '::1', 'success', '2026-06-29 15:25:30');
+(261, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: ', '::1', 'success', '2026-07-01 14:27:18'),
+(262, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 2', '::1', 'success', '2026-07-01 14:27:47'),
+(263, 116, 'teacher', 'Updating a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Updated a student with ID: 1', '::1', 'success', '2026-07-01 14:45:44'),
+(264, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 1', '::1', 'success', '2026-07-01 14:45:48'),
+(265, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-01 15:00:28'),
+(266, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Armando Raguindin', '::1', 'success', '2026-07-01 15:03:38'),
+(267, 116, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Added Parent/Guardian Melba Raguindin', '::1', 'success', '2026-07-02 13:35:32'),
+(268, 116, 'teacher', 'Deleted Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Deleted Parent/Guardian', '::1', 'success', '2026-07-02 14:00:27'),
+(269, 116, 'teacher', 'Deleted Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Deleted Parent/Guardian', '::1', 'success', '2026-07-02 14:07:16'),
+(270, 116, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Added Parent/Guardian Melba Raguindin', '::1', 'success', '2026-07-02 14:23:03'),
+(271, 116, 'teacher', 'Updated Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Updated Parent/Guardian dasda', '::1', 'success', '2026-07-02 14:26:20'),
+(272, 116, 'teacher', 'Deleted Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Deleted Parent/Guardian', '::1', 'success', '2026-07-02 14:26:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `behavioral_profiles`
+--
+
+CREATE TABLE `behavioral_profiles` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `observation_date` date NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `observation` text NOT NULL,
+  `intervention` text DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `developmental_profiles`
+--
+
+CREATE TABLE `developmental_profiles` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `domain` enum('Cognitive','Social','Emotional','Physical','Language') NOT NULL,
+  `observation` text NOT NULL,
+  `recommendation` text DEFAULT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -73,6 +152,29 @@ CREATE TABLE `grade_levels` (
 
 INSERT INTO `grade_levels` (`id`, `grade_name`, `created_at`, `updated_at`) VALUES
 (5, 'Grade 1', '2026-06-28 14:50:48', '2026-06-28 14:50:48');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `parents_guardians`
+--
+
+CREATE TABLE `parents_guardians` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `recorded_by` int(11) DEFAULT NULL,
+  `father_name` varchar(50) DEFAULT NULL,
+  `father_occupation` varchar(50) DEFAULT NULL,
+  `father_contact` varchar(50) DEFAULT NULL,
+  `mother_name` varchar(50) DEFAULT NULL,
+  `mother_occupation` varchar(50) DEFAULT NULL,
+  `mother_contact` varchar(50) DEFAULT NULL,
+  `guardian_name` varchar(50) DEFAULT NULL,
+  `guardian_relationship` varchar(50) DEFAULT NULL,
+  `guardian_contact` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -134,6 +236,7 @@ CREATE TABLE `students` (
   `suffix` varchar(20) DEFAULT NULL,
   `birth_date` date NOT NULL,
   `gender` enum('Male','Female') NOT NULL,
+  `address` varchar(50) DEFAULT NULL,
   `school_year_id` int(11) NOT NULL,
   `grade_level_id` int(11) NOT NULL,
   `section_id` int(11) NOT NULL,
@@ -146,8 +249,9 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `gender`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(1, '20242110365', 'Mark Lester', 'Suguitan', 'Raguindin', NULL, '2002-12-20', 'Male', 8, 5, 2, 116, '2026-06-30 08:30:28', '2026-06-30 08:30:28');
+INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `gender`, `address`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `created_at`, `updated_at`) VALUES
+(3, '20242111365', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2002-12-20', 'Male', 'Rizal, Roxas, Isabela', 8, 5, 2, 116, '2026-07-01 15:00:28', '2026-07-01 15:00:28'),
+(4, '20242110364', 'Armando', 'Suguitan', 'Raguindin', 'Jr', '2004-10-14', 'Male', 'Santiago City, Isabela', 8, 5, 2, 116, '2026-07-01 15:03:38', '2026-07-01 15:03:38');
 
 -- --------------------------------------------------------
 
@@ -174,7 +278,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `profile_pi
 (3, 'Administrative', 'administrative@gmail.com', '$2y$10$CQASCJeXsOYOvWm4kK03i.S1SxUWsdPMv56Qlz04eq0GazfxE8FSi', 'administrative', 'storage/profiles/pfp_3_1782485485.jpg', '2026-05-09', '2026-06-26'),
 (4, 'admin', 'admin@gmail.com', '$2y$10$ihbCVd8WOJO17B4BFQgAUORhb1UEYpIFmpd1Q/ShW6n5uNMkLZ7kq', 'admin', 'storage/profiles/pfp_4_1782273895.jpg', '2026-05-09', '2026-06-24'),
 (13, 'Registrar', 'registrar@school.edu.ph', '$2y$10$IEz8YAjPkN2ddoQTR6YRUupEwnweJ6YNzsl8opZsKoXrMMFkaJYZG', 'registrar', 'storage/profiles/pfp_13_1779633057.jpg', '2026-05-15', '2026-05-30'),
-(116, 'Mark Lester Raguindin', 'teacher@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', NULL, '2026-06-24', '0000-00-00');
+(116, 'Mark Lester Raguindin', 'teacher@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', 'storage/profiles/pfp_116_1782996344.jpg', '2026-06-24', '2026-07-02');
 
 -- --------------------------------------------------------
 
@@ -192,10 +296,46 @@ CREATE TABLE `_migrations` (
 --
 
 --
+-- Indexes for table `academic_profiles`
+--
+ALTER TABLE `academic_profiles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
+
+--
+-- Indexes for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
+
+--
 -- Indexes for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `behavioral_profiles`
+--
+ALTER TABLE `behavioral_profiles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
+
+--
+-- Indexes for table `developmental_profiles`
+--
+ALTER TABLE `developmental_profiles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
 
 --
 -- Indexes for table `grade_levels`
@@ -203,6 +343,14 @@ ALTER TABLE `audit_logs`
 ALTER TABLE `grade_levels`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `grade_name` (`grade_name`);
+
+--
+-- Indexes for table `parents_guardians`
+--
+ALTER TABLE `parents_guardians`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
 
 --
 -- Indexes for table `school_year`
@@ -247,16 +395,46 @@ ALTER TABLE `_migrations`
 --
 
 --
+-- AUTO_INCREMENT for table `academic_profiles`
+--
+ALTER TABLE `academic_profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `attendance`
+--
+ALTER TABLE `attendance`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=259;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=273;
+
+--
+-- AUTO_INCREMENT for table `behavioral_profiles`
+--
+ALTER TABLE `behavioral_profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `developmental_profiles`
+--
+ALTER TABLE `developmental_profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `grade_levels`
 --
 ALTER TABLE `grade_levels`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `parents_guardians`
+--
+ALTER TABLE `parents_guardians`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `school_year`
@@ -274,7 +452,7 @@ ALTER TABLE `sections`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -285,6 +463,45 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `academic_profiles`
+--
+ALTER TABLE `academic_profiles`
+  ADD CONSTRAINT `academic_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `academic_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
+  ADD CONSTRAINT `academic_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
+  ADD CONSTRAINT `attendance_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `behavioral_profiles`
+--
+ALTER TABLE `behavioral_profiles`
+  ADD CONSTRAINT `behavioral_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `behavioral_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
+  ADD CONSTRAINT `behavioral_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `developmental_profiles`
+--
+ALTER TABLE `developmental_profiles`
+  ADD CONSTRAINT `developmental_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `developmental_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
+  ADD CONSTRAINT `developmental_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `parents_guardians`
+--
+ALTER TABLE `parents_guardians`
+  ADD CONSTRAINT `parents_guardians_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `parents_guardians_ibfk_2` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `sections`
