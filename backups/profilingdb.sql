@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 04, 2026 at 08:55 AM
+-- Generation Time: Jul 06, 2026 at 05:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -106,7 +106,10 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (282, 116, 'teacher', 'Deleting Student Behavior', 'Student Behavioral', NULL, '5', 'Mark Lester Raguindin Deleted Student Behavioral ', '::1', 'success', '2026-07-04 06:26:44'),
 (283, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 06:48:35'),
 (284, 116, 'teacher', 'Deleting Student Behavior', 'Student Behavioral', NULL, '6', 'Mark Lester Raguindin Deleted Student Behavioral ', '::1', 'success', '2026-07-04 06:48:38'),
-(285, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 06:52:31');
+(285, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 06:52:31'),
+(286, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-06 15:00:35'),
+(287, 116, 'teacher', 'Deleting Developmental Profile', 'Developmental', 3, NULL, 'Mark Lester Raguindin Deleted student developmental for ', '::1', 'success', '2026-07-06 15:04:22'),
+(288, 116, 'teacher', 'Deleting Developmental Profile', 'Developmental', 2, NULL, 'Mark Lester Raguindin Deleted student developmental for ', '::1', 'success', '2026-07-06 15:04:25');
 
 -- --------------------------------------------------------
 
@@ -430,7 +433,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=286;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=289;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
@@ -442,7 +445,7 @@ ALTER TABLE `behavioral_profiles`
 -- AUTO_INCREMENT for table `developmental_profiles`
 --
 ALTER TABLE `developmental_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `grade_levels`

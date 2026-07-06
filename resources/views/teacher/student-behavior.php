@@ -38,6 +38,14 @@ AuthRole::allowOnly(['teacher']);
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
+    <?php if (!empty($filtered_student)): ?>
+      <?php $filteredName = trim($filtered_student['first_name'] . ' ' . ($filtered_student['middle_name'] ?? '') . ' ' . $filtered_student['last_name']); ?>
+      <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>Showing behavior records for <strong><?= htmlspecialchars($filteredName); ?></strong> only.</span>
+        <a href="student-behavior.php" class="btn btn-sm btn-outline-secondary">Clear filter</a>
+      </div>
+    <?php endif; ?>
+
     <div class="text-end">
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createStudentBehavioralModal">Record Student Behavior</button>
     </div>
@@ -242,7 +250,6 @@ AuthRole::allowOnly(['teacher']);
             <tr>
               <th>#</th>
               <th>Student Name</th>
-              <th>Observation Date</th>
               <th>Category</th>
               <th>Observation</th>
               <th>Intervention</th>
@@ -272,7 +279,6 @@ AuthRole::allowOnly(['teacher']);
                 >
                   <td><?php echo $index + 1; ?></td>
                   <td><?php echo htmlspecialchars($student_behavioral_profile['student_first_name'] . ' ' . $student_behavioral_profile['student_last_name']); ?></td>
-                  <td><?php echo htmlspecialchars($student_behavioral_profile['observation_date']); ?></td>
                   <td><?php echo htmlspecialchars($student_behavioral_profile['category']); ?></td>
                   <td><?php echo htmlspecialchars($student_behavioral_profile['observation']); ?></td>
                   <td><?php echo htmlspecialchars($student_behavioral_profile['intervention']); ?></td>

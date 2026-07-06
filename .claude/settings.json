@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo \"exit: $?\")",
+      "Bash(php -l \"/c/xampp/htdocs/eduProfileV.2/resources/views/teacher/students.php\")",
+      "Bash(php -l \"/c/xampp/htdocs/eduProfileV.2/app/controllers/teacher/StudentsController.php\")",
+      "Bash(node -c \"/c/xampp/htdocs/eduProfileV.2/public/js/teacher/students.js\")",
+      "Bash(node --check \"/c/xampp/htdocs/eduProfileV.2/public/js/teacher/students.js\")",
+      "Bash(echo \"exit:$?\")"
+    ]
+  }
+}

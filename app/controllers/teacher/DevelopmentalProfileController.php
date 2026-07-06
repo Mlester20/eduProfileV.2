@@ -4,13 +4,13 @@ session_start();
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
-require_once __DIR__ . '/../../models/teacher/StudentBehavioralProfileModel.php';
+require_once __DIR__ . '/../../models/teacher/StudentDevelopmentalProfileModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
-require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
+require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
-    class StudentBehaviorProfileController extends Controller{
+    class DevelopmentalProfileController extends Controller{
         protected $auditLogs;
         protected $sy;
         protected $students;
@@ -18,19 +18,16 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
         public function __construct($con){
             parent::__construct(
-                new StudentBehavioralProfileModel($con)
+                new StudentDevelopmentalProfileModel($con)
             );
             $this->auditLogs = new AuditLogs($con);
             $this->sy = new SchoolYearModel($con);
-            $this->students = new StudentsModel($con);
             $this->studentService = new StudentService($con);
         }
 
         public function index($student_id = null){
-            if(!isset($_SESSION['id'])){
-                return [];
-            }
-            return $this->model->index((int) $_SESSION['id'], $student_id);
+            $teacher_id = $_SESSION['id'];
+            return $this->model->index($teacher_id, $student_id);
         }
 
         public function getActiveSy(){
@@ -52,23 +49,23 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
                         $_SESSION['role'] ?? 'unknown',
-                        'Updating Student Behavioral',
-                        'Student Behavioral',
+                        'Creating new Developmental Profile',
+                        'Developmental',
                         null,
                         null,
-                        $_SESSION['full_name'] . ' Added Student Behavioral to ' . $data['student_id']
+                        $_SESSION['full_name'] . ' Created student developmental for ' . $data['id']   
                     );
-                    FlashMessage::setFlash("success", "Student Behavior Added Successfully!");
-                    header("Location: ../../../resources/views/teacher/student-behavior.php");
-                    exit();
+                    FlashMessage::setFlash("success", "Student Developmental Created Successfully!");
+                    header("Location: ../../../resources/views/teacher/student-developmental.php");
+                    exit();                
                 }else{
-                    FlashMessage::setFlash("error", "Something went wrong try again!");
-                    header("Location: ../../../resources/views/teacher/student-behavior.php");
-                    exit();
+                    FlashMessage::setFlash("error", "Something went wrong try again.");
+                    header("Location: ../../../resources/views/teacher/student-developmental.php");
+                    exit();                
                 }
             }catch(Exception $e){
-                error_log("Error creating student behavioral " . $e->getMessage());
-            }         
+                error_log("Error creating developmental " . $e->getMessage());
+            }
         }
 
         public function update($id, $data){
@@ -77,21 +74,22 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
                         $_SESSION['role'] ?? 'unknown',
-                        'Updating Student Behavior',
-                        'Student Behavioral',
+                        'Updating Developmental Profile',
+                        'Developmental',
                         $id,
-                        $_SESSION['full_name'] . ' Updated a student behavioral ' . $data['student_id'] 
+                        null,
+                        $_SESSION['full_name'] . ' updating student developmental for ' . $data['id']   
                     );
-                    FlashMessage::setFlash("success", "Student Behavioral Updated Successfully!");
-                    header("Location: ../../../resources/views/teacher/student-behavior.php");
+                    FlashMessage::setFlash("success", "Student Developmental Updated Successfully!");
+                    header("Location: ../../../resources/views/teacher/student-developmental.php");
                     exit();
                 }else{
                     FlashMessage::setFlash("error", "Something went wrong try again.");
-                    header("Location: ../../../resources/views/teacher/student-behavior.php");
+                    header("Location: ../../../resources/views/teacher/student-developmental.php");
                     exit();                
                 }
             }catch(Exception $e){
-                error_log("Error updating student " . $e->getMessage());
+                error_log("Error updating developmental profile " . $e->getMessage());
             }
         }
 
@@ -101,26 +99,30 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
                         $_SESSION['role'] ?? 'unknown',
-                        'Deleting Student Behavior',
-                        'Student Behavioral',
-                        null,
+                        'Deleting Developmental Profile',
+                        'Developmental',
                         $id,
-                        $_SESSION['full_name'] . ' Deleted Student Behavioral '  
+                        null,
+                        $_SESSION['full_name'] . ' Deleted student developmental for '   
                     );
-                    FlashMessage::setFlash('success', 'Student behavioral record deleted successfully.');
-                    header('Location: ../../../resources/views/teacher/student-behavior.php');
+                    FlashMessage::setFlash("success", "Student Developmental Deleted Successfully!");
+                    header("Location: ../../../resources/views/teacher/student-developmental.php");
                     exit();
-                }
+                }else{
+                    FlashMessage::setFlash("error", "Something went wrong try again.");
+                    header("Location: ../../../resources/views/teacher/student-developmental.php");
+                    exit();                
+                }                
             }catch(Exception $e){
-                error_log("Error deleting student behavioral record: " . $e->getMessage());
+                error_log("Error deleting development profile " . $e->getMessage());
             }
         }
     }
 
     try{
-        $controller = new StudentBehaviorProfileController($con);
+        $controller = new DevelopmentalProfileController($con);
         $filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-        $student_behavioral_profiles = $controller->index($filter_student_id);
+        $developmentals = $controller->index($filter_student_id);
         $active_sy = $controller->getActiveSy();
         $students = $controller->getStudents();
         $filtered_student = null;
@@ -134,43 +136,39 @@ require_once __DIR__ . '/../../../database/config/config.php';
         }
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            if(isset($_POST['create_student_behavioral'])){
+            if(isset($_POST['create_developmental_profile'])){
                 $controller->create(
                     [
                         'student_id' => $_POST['student_id'],
                         'school_year_id' => $_POST['school_year_id'],
-                        'observation_date' => $_POST['observation_date'],
-                        'category' => $_POST['category'],
+                        'domain' => $_POST['domain'],
                         'observation' => $_POST['observation'],
-                        'intervention' => $_POST['intervention'],
-                        'remarks' => $_POST['remarks'],
+                        'recommendation' => $_POST['recommendation'],
                         'recorded_by' => $_SESSION['id']
                     ]
                 );
             }
 
-            if(isset($_POST['update_student_behavioral'])){
-                $student_behavioral_id = $_POST['id'];
+            if(isset($_POST['update_developmental_profile'])){
+                $developmental_id = $_POST['id'];
                 $controller->update(
-                    $student_behavioral_id,
+                    $developmental_id,
                     [
                         'student_id' => $_POST['student_id'],
                         'school_year_id' => $_POST['school_year_id'],
-                        'observation_date' => $_POST['observation_date'],
-                        'category' => $_POST['category'],
+                        'domain' => $_POST['domain'],
                         'observation' => $_POST['observation'],
-                        'intervention' => $_POST['intervention'],
-                        'remarks' => $_POST['remarks'],
+                        'recommendation' => $_POST['recommendation'],
                         'recorded_by' => $_SESSION['id']
                     ]
                 );
             }
-        
-            if(isset($_POST['delete_behavior_profile'])){
-                $behavioral_id = $_POST['id'];
-                $controller->delete($behavioral_id);
+
+            if(isset($_POST['delete_developmental'])){
+                $developmental_id = $_POST['id'];
+                $controller->delete($developmental_id);
             }
         }
     }catch(Exception $e){
-        error_log("Error in StudentBehaviorProfileController: " . $e->getMessage());
+        error_log("Error while initializing the controller " . $e->getMessage());
     }
