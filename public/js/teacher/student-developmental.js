@@ -103,29 +103,30 @@ function setupStudentAutocomplete(searchInputId, selectId, suggestionsId){
 const createStudentAutocomplete = setupStudentAutocomplete('student_id_search', 'student_id', 'student_id_suggestions')
 const editStudentAutocomplete = setupStudentAutocomplete('edit_student_id_search', 'edit_student_id', 'edit_student_id_suggestions')
 
-function editStudentBehavioral(id, student_id, school_year_id, observation_date, category, observation, intervention, remarks, recorded_by){
-    document.getElementById('edit_student_behavioral_id').value = id
+function editStudentDevelopmental(id, student_id, school_year_id, domain, observation, recommendation, recorded_by){
+    document.getElementById('edit_student_developmental_id').value = id
     if(editStudentAutocomplete){
         editStudentAutocomplete.setSelection(student_id)
     }else{
         document.getElementById('edit_student_id').value = student_id
     }
     document.getElementById('edit_school_year_id').value = school_year_id
-    document.getElementById('edit_observation_date').value = observation_date
-    document.getElementById('edit_category').value = category
+    document.getElementById('edit_domain').value = domain
     document.getElementById('edit_observation').value = observation
-    document.getElementById('edit_intervention').value = intervention
-    document.getElementById('edit_remarks').value = remarks
+    document.getElementById('edit_recommendation').value = recommendation
     document.getElementById('edit_recorded_by').value = recorded_by
 }
 
-function viewStudentBehavioral(studentName, schoolYear, observationDate, category, observation, intervention, remarks, recordedBy){
-    document.getElementById('view_student_name').textContent = studentName
-    document.getElementById('view_school_year').textContent = schoolYear
-    document.getElementById('view_observation_date').textContent = observationDate
-    document.getElementById('view_category').textContent = category
-    document.getElementById('view_observation').textContent = observation
-    document.getElementById('view_intervention').textContent = intervention
-    document.getElementById('view_remarks').textContent = remarks
-    document.getElementById('view_recorded_by').textContent = recordedBy
-}
+document.querySelectorAll('.edit-developmental-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        editStudentDevelopmental(
+            btn.dataset.id,
+            btn.dataset.studentId,
+            btn.dataset.schoolYearId,
+            btn.dataset.domain,
+            btn.dataset.observation,
+            btn.dataset.recommendation,
+            btn.dataset.recordedBy
+        )
+    })
+})

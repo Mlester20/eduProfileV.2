@@ -67,11 +67,23 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </ul>
         </li>
 
-        <!-- Observations -->
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">Observations</span>
+        </li>
+
+        <!-- Developmental -->
+        <li class="menu-item <?php echo ($currentPage === 'student-developmental.php') ? 'active' : ''; ?>">
+          <a href="student-developmental.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-note"></i>
+            <div data-i18n="Developmental">Student Developmental</div>
+          </a>
+        </li>
+
+        <!-- Behavior -->
         <li class="menu-item <?php echo ($currentPage === 'student-behavior.php') ? 'active' : ''; ?>">
           <a href="student-behavior.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Observations">Student Behavior</div>
+            <div data-i18n="Behavior">Student Behavior</div>
           </a>
         </li>
 

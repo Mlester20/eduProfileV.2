@@ -274,6 +274,99 @@ AuthRole::allowOnly(['teacher']);
         </div>
     </div>
 
+    <!-- view modal -->
+    <div class="modal fade" id="viewStudentModal" tabindex="-1" aria-labelledby="viewStudentLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewStudentLabel">Student Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#view_tab_profile" type="button">Profile</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_behavior" type="button">Behavior Records</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_developmental" type="button">Developmental Records</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="view_tab_profile">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">LRN</label>
+                                    <p class="mb-0" id="view_student_lrn"></p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Student Name</label>
+                                    <p class="mb-0" id="view_student_full_name"></p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Grade Level & Section</label>
+                                    <p class="mb-0" id="view_student_section"></p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">School Year</label>
+                                    <p class="mb-0" id="view_student_school_year"></p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Age</label>
+                                    <p class="mb-0" id="view_student_age"></p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Gender</label>
+                                    <p class="mb-0" id="view_student_gender"></p>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label fw-bold">Address</label>
+                                    <p class="mb-0" id="view_student_address"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="view_tab_behavior">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Category</th>
+                                            <th>Observation</th>
+                                            <th>Intervention</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="view_behavior_records"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="view_tab_developmental">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>School Year</th>
+                                            <th>Domain</th>
+                                            <th>Observation</th>
+                                            <th>Recommendation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="view_developmental_records"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card mt-4">
       <h5 class="card-header">Manage Students</h5>
         <div class="table-responsive nowrap">
@@ -285,7 +378,6 @@ AuthRole::allowOnly(['teacher']);
                 <th>Student Name</th>
                 <th>Grade Level & Section</th>
                 <th>Age</th>
-                <th>Address</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -299,21 +391,35 @@ AuthRole::allowOnly(['teacher']);
               ?>
               <?php if (!empty($rows)): ?>
                 <?php foreach ($rows as $index => $student): ?>
-                  <tr>
+                  <tr
+                    role="button"
+                    style="cursor: pointer;"
+                    data-bs-toggle="modal"
+                    data-bs-target="#viewStudentModal"
+                    onclick="viewStudent(
+                        '<?php echo $student['id']; ?>',
+                        '<?php echo $student['lrn']; ?>',
+                        '<?php echo htmlspecialchars($student['full_name']); ?>',
+                        '<?php echo htmlspecialchars($student['grade_name'] . ' - ' . $student['section_name']); ?>',
+                        '<?php echo htmlspecialchars($student['school_year']); ?>',
+                        '<?php echo StudentsAge::calculateAge($student['birth_date']); ?>',
+                        '<?php echo $student['gender']; ?>',
+                        '<?php echo htmlspecialchars($student['address']); ?>'
+                    )"
+                  >
                     <td><?php echo $offset + $index + 1; ?></td>
                     <td><?php echo htmlspecialchars($student['lrn']); ?></td>
                     <td><?php echo htmlspecialchars($student['full_name']); ?></td>
                     <td><?php echo htmlspecialchars($student['grade_name'] . ' - ' . $student['section_name']); ?></td>
                     <!-- dynamic age based on the birth date -->
                     <td><?php echo StudentsAge::calculateAge($student['birth_date']); ?></td>
-                    <td><?php echo htmlspecialchars($student['address']); ?></td>
                     <td>
                       <!-- update button -->
-                      <button 
+                      <button
                         class="btn btn-sm btn-warning"
                         data-bs-toggle="modal"
                         data-bs-target="#editStudentModal"
-                        onclick="editStudent(
+                        onclick="event.stopPropagation(); editStudent(
                           '<?php echo $student['id']; ?>',
                           '<?php echo $student['lrn']; ?>',
                           '<?php echo $student['first_name']; ?>',
@@ -335,11 +441,11 @@ AuthRole::allowOnly(['teacher']);
                       <!-- delete method -->
                       <form action="../../../app/controllers/teacher/StudentsController.php" method="post" class="d-inline">
                         <input type="hidden" name="id" value="<?= htmlspecialchars($student['id']) ?>">
-                        <button 
-                          type="submit" 
+                        <button
+                          type="submit"
                           class="btn btn-sm btn-danger"
                           name="delete_student"
-                          onclick="return confirm('Are you sure you want to delete this student? this action cannot be undone.');"
+                          onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this student? this action cannot be undone.');"
                         >
                           Delete
                         </button>
@@ -387,6 +493,10 @@ AuthRole::allowOnly(['teacher']);
 <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="../../../public/assets/vendor/js/menu.js"></script>
 <script src="../../../public/assets/js/main.js"></script>
+<script>
+    const studentBehaviorRecords = <?php echo json_encode($behavior_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+    const studentDevelopmentalRecords = <?php echo json_encode($developmental_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+</script>
 <script src="../../../public/js/teacher/home.js"></script>
 <script src="../../../public/js/teacher/students.js"></script>
 </body>
