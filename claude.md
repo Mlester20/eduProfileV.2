@@ -1,86 +1,100 @@
-# Task: New StudentService for Teacher-Scoped, Searchable Student Dropdown
+Implement full CRUD for "Attendance" following the EXACT same architecture and coding 
+style as my existing StudentBehavioralProfileModel.php (attached as reference). Do not 
+deviate from its conventions — same property naming, same query structure, same 
+error handling, same bind_param style.
 
-## Context
+REFERENCE FILE (StudentBehavioralProfileModel.php) — mirror this pattern exactly:
+- extends Model, protected properties for each table name used in joins
+  (e.g. protected $behavioral_profiles = 'behavioral_profiles'; protected $student = 'students'; 
+  protected $sections = 'sections'; protected $school_year = 'school_year'; protected $users = 'users';)
+- index($teacher_id, $student_id = null): SELECT with LEFT JOINs to students -> sections 
+  -> school_year -> users, WHERE sec.adviser_id = ?, optionally AND {table}.student_id = ? 
+  when $student_id is passed. Conditional bind_param depending on whether $student_id is null.
+- create($data): INSERT with bind_param, wrapped in try/catch, error_log on failure, return true on success.
+- update($id, $data): UPDATE ... WHERE id = ?, same bind_param/try-catch/error_log style.
+- delete($id): DELETE ... WHERE id = ?, same try/catch/error_log style.
+- Uses $this->con->prepare(), get_result(), fetch_all(MYSQLI_ASSOC) for reads.
 
-MVC PHP app (mysqli, no framework, Sneat Bootstrap admin template). Files to read before touching anything:
+ALSO read the abstract Controller class (constructor takes $model; abstract index(), 
+create($data), update($id, $data), delete($id)) and the base Model class (constructor 
+takes mysqli $con) — Attendance must follow the same abstraction.
 
-- `app/models/teacher/StudentsModel.php`
-- `app/models/Model.php` — base class, just holds `$con`
-- `app/controllers/teacher/StudentBehaviorProfileController.php`
-- `app/models/teacher/StudentBehavioralProfileModel.php`
-- `resources/views/teacher/student-behavior.php`
-- `public/js/teacher/student-behavioral.js`
-- `app/models/admin/SchoolYearModel.php`
+DATABASE SCHEMA (from profilingdb.sql):
 
-## Confirmed schema (verified against `profilingdb.sql`)
-
-```sql
-CREATE TABLE `students` (
-  `id` int(11) NOT NULL,
-  `lrn` varchar(20) DEFAULT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `middle_name` varchar(100) DEFAULT NULL,
-  `last_name` varchar(100) NOT NULL,
-  `suffix` varchar(20) DEFAULT NULL,
-  `birth_date` date NOT NULL,
-  `gender` enum('Male','Female') NOT NULL,
-  `address` varchar(50) DEFAULT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `grade_level_id` int(11) NOT NULL,
-  `section_id` int(11) NOT NULL,
-  `recorded_by` int(11) NOT NULL
+CREATE TABLE attendance (
+  id int(11) PK AUTO_INCREMENT,
+  student_id int(11) NOT NULL,          -- FK -> students.id (ON DELETE CASCADE)
+  school_year_id int(11) NOT NULL,      -- FK -> school_year.id
+  attendance_date date NOT NULL,
+  status enum('Present','Absent','Late','Excused') NOT NULL,
+  remarks text DEFAULT NULL,
+  recorded_by int(11) NOT NULL,         -- FK -> users.id (teacher who recorded it)
+  created_at timestamp DEFAULT current_timestamp()
 );
 
-CREATE TABLE `sections` (
-  `id` int(11) NOT NULL,
-  `grade_level_id` int(11) NOT NULL,
-  `section_name` varchar(100) NOT NULL,
-  `adviser_id` int(11) DEFAULT NULL   -- FK to users.id, the teacher
-);
+students (id, ..., section_id FK -> sections.id, ...)
+sections (id, grade_level_id, section_name, adviser_id FK -> users.id, ...)
 
-CREATE TABLE `grade_levels` (
-  `id` int(11) NOT NULL,
-  `grade_name` varchar(50) NOT NULL
-);
-```
+OWNERSHIP RULE (same as behavioral_profiles): a student is only "under" a teacher when
+students.section_id = sections.id AND sections.adviser_id = <teacher_id>. Every 
+attendance query must be scoped through this same join/WHERE chain so a teacher can 
+never read, edit, or delete another teacher's students' attendance.
 
-There is **no `academic_history` table in this project** — ignore any earlier reference to it. The relationship is direct and one hop:
+FILES TO CREATE:
 
-**Confirmed business rule:** when a teacher creates a student record, the section is auto-assigned to that teacher's own advisory section (the "Grade Level & Section" field is shown locked/read-only in the student-creation form, pre-filled with the teacher's section — the teacher never picks a different section). So `students.section_id` is always already scoped to the section the recording teacher advises. This means filtering by `sections.adviser_id = <teacher>` is sufficient and correct — no need to also check `recorded_by`.
+1. AttendanceModel.php (extends Model)
+   - protected $attendance = 'attendance'; protected $student = 'students'; 
+     protected $sections = 'sections'; protected $school_year = 'school_year'; 
+     protected $users = 'users';
+   - index($teacher_id, $student_id = null)
+     SELECT a.*, s.first_name AS student_first_name, s.middle_name AS student_middle_name,
+     s.last_name AS student_last_name, s.suffix AS student_suffix, 
+     sy.school_year AS school_year, u.full_name AS recorded_by
+     FROM attendance a
+     LEFT JOIN students s ON a.student_id = s.id
+     LEFT JOIN sections sec ON s.section_id = sec.id
+     LEFT JOIN school_year sy ON a.school_year_id = sy.id
+     LEFT JOIN users u ON a.recorded_by = u.id
+     WHERE sec.adviser_id = ?
+     [AND a.student_id = ? if $student_id given]
+   - create($data): INSERT INTO attendance (student_id, school_year_id, attendance_date, 
+     status, remarks, recorded_by) VALUES (?, ?, ?, ?, ?, ?) — bind_param types "iisssi"
+   - update($id, $data): UPDATE attendance SET student_id = ?, school_year_id = ?, 
+     attendance_date = ?, status = ?, remarks = ?, recorded_by = ? WHERE id = ? — 
+     bind_param "iisssi i" (id last)
+   - delete($id): DELETE FROM attendance WHERE id = ?
+   - Same try/catch + error_log("Error [action] attendance record: " . $e->getMessage()) 
+     pattern as the reference file for every method.
+   - Add a getById($id, $teacher_id) following the same join/WHERE pattern as index(), 
+     used internally before update/delete to confirm ownership if needed — only if this 
+     matches how other models in the project (if any) do ownership checks before write ops; 
+     otherwise keep create/update/delete as plain as the reference file and rely on 
+     the Controller/Service layer to validate student_id ownership beforehand.
 
-## Goal
+2. AttendanceController.php — extends Controller, implements index(), create($data), 
+   update($id, $data), delete($id) exactly matching the abstract signatures, delegating 
+   to AttendanceModel (or AttendanceService if that's how other modules — e.g. behavioral 
+   profiles — wire their Controller layer; check for a StudentBehavioralProfileController.php 
+   or similar to confirm before assuming).
 
-Create a **new service class** (do not modify `StudentsModel.php`'s existing methods) that returns only students belonging to the logged-in teacher's advisory section(s), and make the student dropdown in the behavior-profile create/edit modals searchable instead of a long plain scroll list.
+3. AttendanceService.php — only include this layer if other modules in the project 
+   actually use a Service class between Controller and Model (check for e.g. 
+   StudentBehavioralProfileService.php). If found, mirror its structure for validation 
+   (status must be one of Present/Absent/Late/Excused, attendance_date required and valid, 
+   student_id/school_year_id required integers) before calling the Model.
 
-## Requirements
+4. attendance.php — entry point, bootstraps mysqli connection + session, instantiates 
+   Model -> Controller (-> Service if applicable), routes HTTP method to the matching 
+   Controller method, reads $_GET/$_POST/php://input the same way other entry files in 
+   the project do (check e.g. student_behavioral.php or similar for the exact convention).
 
-### 1. New `app/services/StudentService.php`
-- `class StudentService extends Model` — same lightweight pattern as any model in this codebase (constructor just needs `$con`, inherited from `Model`). Create `app/services/` if it doesn't exist yet and tell me.
-- Method: `getStudentsByAdviser(int $teacherId, ?int $schoolYearId = null): array`
-  - Join `students` to `sections` on `students.section_id = sections.id`, filter `sections.adviser_id = ?`.
-  - If `$schoolYearId` is passed, additionally filter `students.school_year_id = ?`.
-  - Also join `grade_levels` (on `sections.grade_level_id` or `students.grade_level_id` — check which one is authoritative, they should agree since section is auto-assigned; flag it if they ever don't) so returned rows include `grade_name` and `section_name`, matching the same field shape `StudentsModel::index()` already returns — the view shouldn't need to change how it reads `$student['...']`.
-  - Follow `StudentsModel.php`'s exact conventions: prepared statements, `bind_param`, try/catch with `error_log()`, return `[]` on failure (not `null`/`false`).
-- Keep this service minimal — one filtered query method, nothing else.
+REQUIREMENTS:
+- mysqli + prepared statements only, no PDO, no raw string concatenation of values.
+- Match indentation, brace style, and variable naming exactly as shown in 
+  StudentBehavioralProfileModel.php.
+- Every read/write on attendance must be scoped to sec.adviser_id = teacher_id.
+- If you can't find a Controller/Service counterpart for behavioral_profiles or another 
+  module to confirm the exact layering, ask me to upload those files before proceeding 
+  instead of guessing.
 
-### 2. Controller — `StudentBehaviorProfileController.php`
-- Add `$this->studentService = new StudentService($con);` in the constructor, alongside the existing `$this->students = new StudentsModel($con)`.
-- Change `getStudents()` to call `$this->studentService->getStudentsByAdviser($_SESSION['id'], $activeSchoolYearId)` instead of `$this->students->index()`.
-- Check `SchoolYearModel::getActiveSy()`'s actual return shape (single associative row vs. array of rows) before extracting the school year id — don't assume.
-- If the teacher has no section where they're `adviser_id`, return an empty array — the view's existing `empty($students)` check already handles that.
-
-### 3. View — `resources/views/teacher/student-behavior.php`
-- Both `#student_id` (create modal) and `#edit_student_id` (edit modal) selects currently loop `$students` as plain `<option>`s. Keep the underlying `<select>` intact (needed for form submission and for `editStudentBehavioral()` to set its value), but make it searchable.
-- Check `public/assets/vendor/libs/` first for an already-bundled searchable-select library (Sneat templates often ship `select2` or `tom-select`). Use it if present. Only build a custom vanilla-JS search-filter (a text input that filters visible `<option>`s live) if nothing is already bundled — don't add a new CDN/npm dependency the rest of the project doesn't already use.
-- Apply the same treatment to both modals.
-
-### 4. JS — `public/js/teacher/student-behavioral.js`
-- If a searchable-select library wraps the native `<select>`, verify `editStudentBehavioral()`'s `document.getElementById('edit_student_id').value = student_id` still visually updates the widget's displayed selection when the edit modal opens — some libraries need their own "set selected" call in addition to the native `.value` assignment, or the visible dropdown will show the wrong student even though the underlying `<select>` value is technically correct.
-
-## Constraints
-
-- Do not modify existing methods in `StudentsModel.php` — additive only, via the new service.
-- Do not modify `behavioral_profiles` table or `StudentBehavioralProfileModel.php`.
-- Do not reintroduce or reference `academic_history` — it doesn't exist in this project.
-- Match existing conventions: mysqli prepared statements, try/catch + `error_log()`, `$_SESSION`-based auth, `FlashMessage` helper, Bootstrap modal structure already in the view.
-- After implementing, show me a diff summary of every file changed/created, and explicitly confirm: (a) what `getActiveSy()` actually returns, (b) whether `sections.grade_level_id` and `students.grade_level_id` ever disagree in real data, (c) whether a searchable-select library was already bundled or you built a custom one, (d) any teacher in `users` with no matching `sections.adviser_id` yet (so I know which teachers still need a section assignment before this feature is useful to them).
+Show me the full code for all files.

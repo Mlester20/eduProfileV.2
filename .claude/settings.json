@@ -6,7 +6,19 @@
       "Bash(php -l \"/c/xampp/htdocs/eduProfileV.2/app/controllers/teacher/StudentsController.php\")",
       "Bash(node -c \"/c/xampp/htdocs/eduProfileV.2/public/js/teacher/students.js\")",
       "Bash(node --check \"/c/xampp/htdocs/eduProfileV.2/public/js/teacher/students.js\")",
-      "Bash(echo \"exit:$?\")"
+      "Bash(echo \"exit:$?\")",
+      "Bash(php -l \"app/controllers/teacher/AttendanceController.php\")",
+      "Bash(php -l \"app/models/teacher/AttendanceModel.php\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"SELECT COUNT\\(*\\) AS row_count FROM attendance;\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"SELECT @@sql_mode;\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"SELECT id, student_id, attendance_date, status FROM attendance;\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb)",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"SELECT id, student_id, attendance_date, session, status FROM attendance;\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"SHOW CREATE TABLE attendance\\\\G\")",
+      "Bash(php -l app/models/teacher/AttendanceModel.php)",
+      "Bash(php -l app/controllers/teacher/AttendanceController.php)",
+      "Bash(node -c public/js/teacher/attendance.js)",
+      "Bash(node --check public/js/teacher/attendance.js)"
     ]
   }
 }

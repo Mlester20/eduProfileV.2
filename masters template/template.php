@@ -1,9 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../../app/middleware/Auth.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
-require_once __DIR__ . '/../../../database/config/config.php';
-
+require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
 ?>
 

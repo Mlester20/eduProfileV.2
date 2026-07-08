@@ -87,6 +87,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
+        <!-- Attendance -->
+        <li class="menu-item <?php echo ($currentPage === 'attendance.php') ? 'active' : ''; ?>">
+          <a href="attendance.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-calendar-check"></i>
+            <div data-i18n="Attendance">Attendance</div>
+          </a>
+        </li>
+
       </ul>
     </aside>
     <!-- / Menu -->
