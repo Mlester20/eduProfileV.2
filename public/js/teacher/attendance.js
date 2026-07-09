@@ -18,9 +18,13 @@ document.addEventListener('DOMContentLoaded', function(){
         const sessionValue = sessionFilter ? sessionFilter.value : ''
         const statusValue = statusFilter ? statusFilter.value : ''
         const dateValue = dateFilter ? dateFilter.value : ''
+        const morningStatus = row.getAttribute('data-morning-status') || ''
+        const afternoonStatus = row.getAttribute('data-afternoon-status') || ''
         const matchesStudent = !studentValue || row.getAttribute('data-student') === studentValue
-        const matchesSession = !sessionValue || row.getAttribute('data-session') === sessionValue
-        const matchesStatus = !statusValue || row.getAttribute('data-status') === statusValue
+        const matchesSession = !sessionValue ||
+            (sessionValue === 'Morning' && morningStatus !== '') ||
+            (sessionValue === 'Afternoon' && afternoonStatus !== '')
+        const matchesStatus = !statusValue || morningStatus === statusValue || afternoonStatus === statusValue
         const matchesDate = !dateValue || row.getAttribute('data-date') === dateValue
         return matchesStudent && matchesSession && matchesStatus && matchesDate
     }
@@ -89,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function(){
             if(!emptyRow){
                 emptyRow = document.createElement('tr')
                 emptyRow.id = 'historyFilterEmptyRow'
-                emptyRow.innerHTML = '<td colspan="7" class="text-center text-muted">No records match your filters.</td>'
+                emptyRow.innerHTML = '<td colspan="6" class="text-center text-muted">No records match your filters.</td>'
                 historyBody.appendChild(emptyRow)
             }
             emptyRow.style.display = ''

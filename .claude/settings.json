@@ -18,7 +18,12 @@
       "Bash(php -l app/models/teacher/AttendanceModel.php)",
       "Bash(php -l app/controllers/teacher/AttendanceController.php)",
       "Bash(node -c public/js/teacher/attendance.js)",
-      "Bash(node --check public/js/teacher/attendance.js)"
+      "Bash(node --check public/js/teacher/attendance.js)",
+      "Bash(php -l \"c:\\\\xampp\\\\htdocs\\\\eduProfileV.2\\\\app\\\\models\\\\teacher\\\\AttendanceModel.php\")",
+      "Bash(php -l \"c:\\\\xampp\\\\htdocs\\\\eduProfileV.2\\\\app\\\\controllers\\\\teacher\\\\AttendanceController.php\")",
+      "Bash(php -l \"c:\\\\xampp\\\\htdocs\\\\eduProfileV.2\\\\resources\\\\views\\\\teacher\\\\attendance.php\")",
+      "Bash(node --check \"c:\\\\xampp\\\\htdocs\\\\eduProfileV.2\\\\public\\\\js\\\\teacher\\\\attendance.js\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost/eduProfileV.2/resources/views/teacher/attendance.php)"
     ]
   }
 }

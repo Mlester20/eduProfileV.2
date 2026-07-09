@@ -28,6 +28,13 @@ require_once __DIR__ . '/../../../database/config/config.php';
             return $this->model->index((int) $_SESSION['id'], $student_id, $session);
         }
 
+        public function history($filters = []){
+            if(!isset($_SESSION['id'])){
+                return [];
+            }
+            return $this->model->getHistoryGrouped((int) $_SESSION['id'], $filters);
+        }
+
         public function getStudents(){
             if(!isset($_SESSION['id'])){
                 return [];

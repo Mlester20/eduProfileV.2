@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
 
 $controller = new AttendanceController($con);
-$attendance_records = $controller->index();
+$attendance_records = $controller->history();
 $students = $controller->getStudents();
 ?>
 
@@ -53,6 +53,7 @@ $students = $controller->getStudents();
     .status-badge-Absent  { color: #dc3545; font-weight: 600; }
     .status-badge-Late    { color: #d39e00; font-weight: 600; }
     .status-badge-Excused { color: #0d6efd; font-weight: 600; }
+    .status-badge-empty   { color: #adb5bd; font-weight: 400; }
     .session-group {
       display: inline-flex;
       gap: 4px;
@@ -126,35 +127,56 @@ $students = $controller->getStudents();
                   <th>#</th>
                   <th>Student Name</th>
                   <th>Date</th>
-                  <th>Session</th>
-                  <th>Status</th>
+                  <th>Morning</th>
+                  <th>Afternoon</th>
                   <th>Remarks</th>
-                  <th>Recorded By</th>
                 </tr>
               </thead>
               <tbody id="historyTableBody">
                 <?php if (!empty($attendance_records)): ?>
                   <?php foreach ($attendance_records as $index => $record): ?>
-                    <?php $recordStudentName = trim($record['student_first_name'] . ' ' . ($record['student_middle_name'] ?? '') . ' ' . $record['student_last_name'] . ' ' . ($record['student_suffix'] ?? '')); ?>
+                    <?php
+                      $recordStudentName = trim($record['student_first_name'] . ' ' . ($record['student_middle_name'] ?? '') . ' ' . $record['student_last_name'] . ' ' . ($record['student_suffix'] ?? ''));
+                      $morningStatus = $record['morning_status'] ?? null;
+                      $afternoonStatus = $record['afternoon_status'] ?? null;
+                      $morningRemarks = trim($record['morning_remarks'] ?? '');
+                      $afternoonRemarks = trim($record['afternoon_remarks'] ?? '');
+                      if ($morningRemarks !== '' && $afternoonRemarks !== '') {
+                          $remarksDisplay = 'AM: ' . $morningRemarks . ' / PM: ' . $afternoonRemarks;
+                      } else {
+                          $remarksDisplay = $morningRemarks !== '' ? $morningRemarks : $afternoonRemarks;
+                      }
+                    ?>
                     <tr
                       class="history-row"
                       data-student="<?= htmlspecialchars($recordStudentName) ?>"
-                      data-status="<?= htmlspecialchars($record['status']) ?>"
                       data-date="<?= htmlspecialchars($record['attendance_date']) ?>"
-                      data-session="<?= htmlspecialchars($record['session']) ?>"
+                      data-morning-status="<?= htmlspecialchars($morningStatus ?? '') ?>"
+                      data-afternoon-status="<?= htmlspecialchars($afternoonStatus ?? '') ?>"
                     >
                       <td><?= $index + 1 ?></td>
                       <td><?= htmlspecialchars($recordStudentName) ?></td>
                       <td><?= htmlspecialchars($record['attendance_date']) ?></td>
-                      <td><?= htmlspecialchars($record['session']) ?></td>
-                      <td><span class="status-badge-<?= htmlspecialchars($record['status']) ?>"><?= htmlspecialchars($record['status']) ?></span></td>
-                      <td><?= htmlspecialchars($record['remarks'] ?? '') ?></td>
-                      <td><?= htmlspecialchars($record['recorded_by'] ?? '') ?></td>
+                      <td>
+                        <?php if ($morningStatus): ?>
+                          <span class="status-badge-<?= htmlspecialchars($morningStatus) ?>"><?= htmlspecialchars($morningStatus) ?></span>
+                        <?php else: ?>
+                          <span class="status-badge-empty">&mdash;</span>
+                        <?php endif; ?>
+                      </td>
+                      <td>
+                        <?php if ($afternoonStatus): ?>
+                          <span class="status-badge-<?= htmlspecialchars($afternoonStatus) ?>"><?= htmlspecialchars($afternoonStatus) ?></span>
+                        <?php else: ?>
+                          <span class="status-badge-empty">&mdash;</span>
+                        <?php endif; ?>
+                      </td>
+                      <td><?= htmlspecialchars($remarksDisplay) ?></td>
                     </tr>
                   <?php endforeach; ?>
                 <?php else: ?>
                   <tr>
-                    <td colspan="7" class="text-center">No attendance records found.</td>
+                    <td colspan="6" class="text-center">No attendance records found.</td>
                   </tr>
                 <?php endif; ?>
               </tbody>

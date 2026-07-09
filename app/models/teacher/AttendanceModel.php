@@ -50,6 +50,75 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        public function getHistoryGrouped($teacher_id, $filters = []){
+            try{
+                $student_id = $filters['student_id'] ?? null;
+                $date = $filters['date'] ?? null;
+                $status = $filters['status'] ?? null;
+                $session = $filters['session'] ?? null;
+
+                $query = "SELECT
+                    a.student_id,
+                    a.attendance_date,
+                    s.first_name AS student_first_name,
+                    s.middle_name AS student_middle_name,
+                    s.last_name AS student_last_name,
+                    s.suffix AS student_suffix,
+                    MAX(CASE WHEN a.session = 'Morning' THEN a.status END) AS morning_status,
+                    MAX(CASE WHEN a.session = 'Afternoon' THEN a.status END) AS afternoon_status,
+                    MAX(CASE WHEN a.session = 'Morning' THEN a.remarks END) AS morning_remarks,
+                    MAX(CASE WHEN a.session = 'Afternoon' THEN a.remarks END) AS afternoon_remarks
+                    FROM {$this->attendance} a
+                    LEFT JOIN {$this->student} s ON a.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE sec.adviser_id = ?
+                ";
+
+                $types = "i";
+                $params = [$teacher_id];
+
+                if($student_id !== null){
+                    $query .= " AND a.student_id = ?";
+                    $types .= "i";
+                    $params[] = $student_id;
+                }
+                if($date !== null){
+                    $query .= " AND a.attendance_date = ?";
+                    $types .= "s";
+                    $params[] = $date;
+                }
+
+                $query .= " GROUP BY a.student_id, a.attendance_date";
+
+                $having = [];
+                if($status !== null){
+                    $having[] = "(morning_status = ? OR afternoon_status = ?)";
+                    $types .= "ss";
+                    $params[] = $status;
+                    $params[] = $status;
+                }
+                if($session === 'Morning'){
+                    $having[] = "morning_status IS NOT NULL";
+                }elseif($session === 'Afternoon'){
+                    $having[] = "afternoon_status IS NOT NULL";
+                }
+                if(!empty($having)){
+                    $query .= " HAVING " . implode(" AND ", $having);
+                }
+
+                $query .= " ORDER BY a.attendance_date DESC, s.last_name ASC";
+
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param($types, ...$params);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log("Error fetching grouped attendance history: " . $e->getMessage());
+                return [];
+            }
+        }
+
         public function create($data){
             try{
                 $insert = "INSERT INTO {$this->attendance}(student_id, school_year_id, attendance_date, session, status, remarks, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
