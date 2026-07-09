@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 09, 2026 at 02:35 PM
+-- Generation Time: Jul 09, 2026 at 03:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -57,16 +57,6 @@ CREATE TABLE `attendance` (
   `recorded_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `attendance`
---
-
-INSERT INTO `attendance` (`id`, `student_id`, `school_year_id`, `attendance_date`, `session`, `status`, `remarks`, `recorded_by`, `created_at`) VALUES
-(5, 3, 8, '2026-07-08', 'Morning', 'Present', NULL, 116, '2026-07-08 13:26:47'),
-(6, 4, 8, '2026-07-08', 'Morning', 'Present', NULL, 116, '2026-07-08 13:26:47'),
-(7, 3, 8, '2026-07-08', 'Afternoon', 'Late', NULL, 116, '2026-07-08 13:27:03'),
-(8, 4, 8, '2026-07-08', 'Afternoon', 'Absent', NULL, 116, '2026-07-08 13:27:03');
 
 -- --------------------------------------------------------
 
@@ -124,7 +114,23 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (289, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (2 students)', '::1', 'success', '2026-07-08 13:03:11'),
 (290, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (4 students)', '::1', 'success', '2026-07-08 13:16:29'),
 (291, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (2 records)', '::1', 'success', '2026-07-08 13:26:47'),
-(292, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (2 records)', '::1', 'success', '2026-07-08 13:27:03');
+(292, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (2 records)', '::1', 'success', '2026-07-08 13:27:03'),
+(293, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-09 (4 records)', '::1', 'success', '2026-07-09 12:44:08'),
+(294, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Test Teacher Added Health Profile for 3', 'UNKNOWN', 'success', '2026-07-09 13:21:26'),
+(295, 116, 'teacher', 'Updating Student Health', 'Student Health', 1, 'Test Teacher Updated a Health Profile record 3', '', 'UNKNOWN', 'success', '2026-07-09 13:21:26'),
+(296, 116, 'teacher', 'Deleting Student Health', 'Student Health', NULL, '1', 'Test Teacher Deleted Health Profile record ', 'UNKNOWN', 'success', '2026-07-09 13:21:26'),
+(297, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 3', '::1', 'success', '2026-07-09 13:23:12'),
+(298, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 3', '::1', 'success', '2026-07-09 13:23:15'),
+(299, 116, 'teacher', 'Deleting Student Health', 'Student Health', NULL, '3', 'Mark Lester Raguindin Deleted Health Profile record ', '::1', 'success', '2026-07-09 13:23:26'),
+(300, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 4', '::1', 'success', '2026-07-09 13:24:20'),
+(301, 116, 'teacher', 'Updating Student Health', 'Student Health', 2, 'Test Teacher Updated a Health Profile record 3', '', 'UNKNOWN', 'success', '2026-07-09 13:33:36'),
+(302, 116, 'teacher', 'Deleting Student Health', 'Student Health', NULL, '2', 'Test Teacher Deleted Health Profile record ', 'UNKNOWN', 'success', '2026-07-09 13:33:36'),
+(303, 116, 'teacher', 'Deleting Student Health', 'Student Health', NULL, '4', 'Mark Lester Raguindin Deleted Health Profile record ', '::1', 'success', '2026-07-09 13:35:45'),
+(306, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 3', '::1', 'success', '2026-07-09 13:40:05'),
+(307, 116, 'teacher', 'Deleting Student Health', 'Student Health', NULL, '7', 'Mark Lester Raguindin Deleted Health Profile record ', '::1', 'success', '2026-07-09 13:53:23'),
+(308, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 3', '::1', 'success', '2026-07-09 13:56:31'),
+(309, 116, 'teacher', 'Updating Student Health', 'Student Health', 8, 'Mark Lester Raguindin Updated a Health Profile record 3', '', '::1', 'success', '2026-07-09 13:56:49'),
+(310, 116, 'teacher', 'Deleting Student Health', 'Student Health', NULL, '8', 'Mark Lester Raguindin Deleted Health Profile record ', '::1', 'success', '2026-07-09 13:56:55');
 
 -- --------------------------------------------------------
 
@@ -412,6 +418,7 @@ ALTER TABLE `grade_levels`
 --
 ALTER TABLE `health_profiles`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_student_health_profile` (`student_id`),
   ADD KEY `student_id` (`student_id`),
   ADD KEY `school_year_id` (`school_year_id`),
   ADD KEY `recorded_by` (`recorded_by`);
@@ -476,13 +483,13 @@ ALTER TABLE `academic_profiles`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=293;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=311;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
@@ -506,7 +513,7 @@ ALTER TABLE `grade_levels`
 -- AUTO_INCREMENT for table `health_profiles`
 --
 ALTER TABLE `health_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
