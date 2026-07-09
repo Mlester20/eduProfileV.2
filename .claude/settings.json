@@ -23,7 +23,13 @@
       "Bash(php -l \"c:\\\\xampp\\\\htdocs\\\\eduProfileV.2\\\\app\\\\controllers\\\\teacher\\\\AttendanceController.php\")",
       "Bash(php -l \"c:\\\\xampp\\\\htdocs\\\\eduProfileV.2\\\\resources\\\\views\\\\teacher\\\\attendance.php\")",
       "Bash(node --check \"c:\\\\xampp\\\\htdocs\\\\eduProfileV.2\\\\public\\\\js\\\\teacher\\\\attendance.js\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost/eduProfileV.2/resources/views/teacher/attendance.php)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost/eduProfileV.2/resources/views/teacher/attendance.php)",
+      "Bash(grep -n -i \"health_profiles\\\\|behavioral_profiles\\\\|CREATE TABLE \\\\`students\\\\`\\\\|CREATE TABLE \\\\`sections\\\\`\\\\|CREATE TABLE \\\\`school_year\\\\`\\\\|CREATE TABLE \\\\`users\\\\`\" \"c:/xampp/htdocs/eduProfileV.2/backups/profilingdb.sql\")",
+      "Bash(command -v node)",
+      "Bash(node --check public/js/teacher/student-health.js)",
+      "Bash(php -r ' *)",
+      "Bash(php -l resources/views/teacher/student-health.php)",
+      "Bash(grep -o '\\\\.on=function\\([a-zA-Z,]*\\){[^}]*}' public/assets/vendor/js/bootstrap.js)"
     ]
   }
 }
