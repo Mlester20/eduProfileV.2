@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 06, 2026 at 05:51 PM
+-- Generation Time: Jul 09, 2026 at 02:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -51,11 +51,22 @@ CREATE TABLE `attendance` (
   `student_id` int(11) NOT NULL,
   `school_year_id` int(11) NOT NULL,
   `attendance_date` date NOT NULL,
+  `session` enum('Morning','Afternoon') NOT NULL,
   `status` enum('Present','Absent','Late','Excused') NOT NULL,
   `remarks` text DEFAULT NULL,
   `recorded_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`id`, `student_id`, `school_year_id`, `attendance_date`, `session`, `status`, `remarks`, `recorded_by`, `created_at`) VALUES
+(5, 3, 8, '2026-07-08', 'Morning', 'Present', NULL, 116, '2026-07-08 13:26:47'),
+(6, 4, 8, '2026-07-08', 'Morning', 'Present', NULL, 116, '2026-07-08 13:26:47'),
+(7, 3, 8, '2026-07-08', 'Afternoon', 'Late', NULL, 116, '2026-07-08 13:27:03'),
+(8, 4, 8, '2026-07-08', 'Afternoon', 'Absent', NULL, 116, '2026-07-08 13:27:03');
 
 -- --------------------------------------------------------
 
@@ -109,7 +120,11 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (285, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 3', '::1', 'success', '2026-07-04 06:52:31'),
 (286, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-06 15:00:35'),
 (287, 116, 'teacher', 'Deleting Developmental Profile', 'Developmental', 3, NULL, 'Mark Lester Raguindin Deleted student developmental for ', '::1', 'success', '2026-07-06 15:04:22'),
-(288, 116, 'teacher', 'Deleting Developmental Profile', 'Developmental', 2, NULL, 'Mark Lester Raguindin Deleted student developmental for ', '::1', 'success', '2026-07-06 15:04:25');
+(288, 116, 'teacher', 'Deleting Developmental Profile', 'Developmental', 2, NULL, 'Mark Lester Raguindin Deleted student developmental for ', '::1', 'success', '2026-07-06 15:04:25'),
+(289, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (2 students)', '::1', 'success', '2026-07-08 13:03:11'),
+(290, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (4 students)', '::1', 'success', '2026-07-08 13:16:29'),
+(291, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (2 records)', '::1', 'success', '2026-07-08 13:26:47'),
+(292, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-08 (2 records)', '::1', 'success', '2026-07-08 13:27:03');
 
 -- --------------------------------------------------------
 
@@ -175,6 +190,31 @@ CREATE TABLE `grade_levels` (
 
 INSERT INTO `grade_levels` (`id`, `grade_name`, `created_at`, `updated_at`) VALUES
 (5, 'Grade 1', '2026-06-28 14:50:48', '2026-06-28 14:50:48');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `health_profiles`
+--
+
+CREATE TABLE `health_profiles` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `height_cm` decimal(5,2) DEFAULT NULL,
+  `weight_kg` decimal(5,2) DEFAULT NULL,
+  `bmi` decimal(5,2) DEFAULT NULL,
+  `bmi_classification` enum('Severely Wasted','Wasted','Normal','Overweight','Obese') DEFAULT NULL,
+  `blood_type` varchar(5) DEFAULT NULL,
+  `allergies` text DEFAULT NULL,
+  `medical_conditions` text DEFAULT NULL,
+  `vision_screening_result` varchar(100) DEFAULT NULL,
+  `hearing_screening_result` varchar(100) DEFAULT NULL,
+  `immunization_status` text DEFAULT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -332,7 +372,7 @@ ALTER TABLE `academic_profiles`
 --
 ALTER TABLE `attendance`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
+  ADD UNIQUE KEY `uniq_student_date_session` (`student_id`,`attendance_date`,`session`),
   ADD KEY `school_year_id` (`school_year_id`),
   ADD KEY `recorded_by` (`recorded_by`);
 
@@ -366,6 +406,15 @@ ALTER TABLE `developmental_profiles`
 ALTER TABLE `grade_levels`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `grade_name` (`grade_name`);
+
+--
+-- Indexes for table `health_profiles`
+--
+ALTER TABLE `health_profiles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
 
 --
 -- Indexes for table `parents_guardians`
@@ -427,13 +476,13 @@ ALTER TABLE `academic_profiles`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=289;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=293;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
@@ -452,6 +501,12 @@ ALTER TABLE `developmental_profiles`
 --
 ALTER TABLE `grade_levels`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `health_profiles`
+--
+ALTER TABLE `health_profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
@@ -518,6 +573,14 @@ ALTER TABLE `developmental_profiles`
   ADD CONSTRAINT `developmental_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `developmental_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
   ADD CONSTRAINT `developmental_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `health_profiles`
+--
+ALTER TABLE `health_profiles`
+  ADD CONSTRAINT `health_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `health_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
+  ADD CONSTRAINT `health_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `parents_guardians`
