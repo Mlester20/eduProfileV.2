@@ -29,7 +29,17 @@
       "Bash(node --check public/js/teacher/student-health.js)",
       "Bash(php -r ' *)",
       "Bash(php -l resources/views/teacher/student-health.php)",
-      "Bash(grep -o '\\\\.on=function\\([a-zA-Z,]*\\){[^}]*}' public/assets/vendor/js/bootstrap.js)"
+      "Bash(grep -o '\\\\.on=function\\([a-zA-Z,]*\\){[^}]*}' public/assets/vendor/js/bootstrap.js)",
+      "Bash(grep -n \"CREATE TABLE \\\\`students\\\\`\" -A 30 \"c:/xampp/htdocs/eduProfileV.2/backups/profilingdb.sql\")",
+      "Bash(grep -n \"achievements_profiles\\\\|CREATE TABLE \\\\`behavioral_profiles\\\\`\\\\|CREATE TABLE \\\\`academic_profiles\\\\`\" -A 20 \"c:/xampp/htdocs/eduProfileV.2/backups/profilingdb.sql\")",
+      "Bash(which mysql *)",
+      "Read(//c/xampp/mysql/bin/**)",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"DESCRIBE students;\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"DESCRIBE achievements_profiles;\")",
+      "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"SELECT id FROM students LIMIT 1; SELECT id FROM school_year LIMIT 1; SELECT id FROM users LIMIT 1;\")",
+      "Bash(\"/c/xampp/php/php.exe\" \"C:/Users/User/AppData/Local/Temp/claude/c--xampp-htdocs-eduProfileV-2/c2e3ec44-ac34-460a-aa3c-fb93abba4c54/scratchpad/test_achievement_model.php\")",
+      "Bash(\"/c/xampp/php/php.exe\" \"C:/Users/User/AppData/Local/Temp/claude/c--xampp-htdocs-eduProfileV-2/c2e3ec44-ac34-460a-aa3c-fb93abba4c54/scratchpad/test_teacher_achievement.php\")",
+      "Bash(\"/c/xampp/php/php.exe\" \"C:/Users/User/AppData/Local/Temp/claude/c--xampp-htdocs-eduProfileV-2/c2e3ec44-ac34-460a-aa3c-fb93abba4c54/scratchpad/test_dedupe.php\")"
     ]
   }
 }

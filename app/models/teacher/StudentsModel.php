@@ -83,6 +83,25 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        /**
+         * Check if a student exists, regardless of adviser
+         * @return bool
+         */
+
+        public function exists($studentId){
+            try{
+                $query = "SELECT id FROM {$this->students} WHERE id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $studentId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->num_rows > 0;
+            }catch(Exception $e){
+                error_log("Error " . $e->getMessage());
+                return false;
+            }
+        }
+
         public function create($data){
             try{
                 $insert = "INSERT INTO {$this->students}(lrn, first_name, middle_name, last_name, suffix, birth_date, gender, address, school_year_id, grade_level_id, section_id, recorded_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
