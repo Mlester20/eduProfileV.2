@@ -25,7 +25,10 @@ require_once __DIR__ . '/../../../database/config/config.php';
         }
 
         public function students(){
-            return $this->studentsModel->index();
+            if(!isset($_SESSION['id'])){
+                return [];
+            }
+            return $this->studentsModel->index((int) $_SESSION['id']);
         }
 
         public function create($data){

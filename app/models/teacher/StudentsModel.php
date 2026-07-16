@@ -8,7 +8,7 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $users = 'users';
 
-        public function index(){
+        public function index($teacher_id, $student_id = null){
             try{
                 $query = "SELECT
                     s.*,
@@ -21,8 +21,17 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                     LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
                     LEFT JOIN {$this->users} u ON s.recorded_by = u.id
+                    WHERE ss.adviser_id = ?
                 ";
+                if($student_id !== null){
+                    $query .= " AND s.id = ?";
+                }
                 $stmt = $this->con->prepare($query);
+                if($student_id !== null){
+                    $stmt->bind_param("ii", $teacher_id, $student_id);
+                }else{
+                    $stmt->bind_param("i", $teacher_id);
+                }
                 $stmt->execute();
                 $result = $stmt->get_result();
                 return $result->fetch_all(MYSQLI_ASSOC);
@@ -173,7 +182,7 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function getPage(int $limit, int $offset): array {
+        public function getPage(int $limit, int $offset, int $teacher_id): array {
             try {
                 $query = "SELECT
                     s.*,
@@ -186,9 +195,10 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                     LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
                     LEFT JOIN {$this->users} u ON s.recorded_by = u.id
+                    WHERE ss.adviser_id = ?
                     LIMIT ? OFFSET ?";
                 $stmt = $this->con->prepare($query);
-                $stmt->bind_param('ii', $limit, $offset);
+                $stmt->bind_param('iii', $teacher_id, $limit, $offset);
                 $stmt->execute();
                 return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             } catch (Exception $e) {
@@ -197,10 +207,15 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function countAll(): int {
+        public function countAll(int $teacher_id): int {
             try {
                 $count = 0;
-                $stmt = $this->con->prepare("SELECT COUNT(*) FROM {$this->students}");
+                $query = "SELECT COUNT(*)
+                    FROM {$this->students} s
+                    LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
+                    WHERE ss.adviser_id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param('i', $teacher_id);
                 $stmt->execute();
                 $stmt->bind_result($count);
                 $stmt->fetch();
