@@ -102,7 +102,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">Attendance</span>
+          <span class="menu-header-text">Academic Records</span>
         </li>
 
         <!-- Attendance -->
@@ -115,6 +115,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <li class="menu-item">
               <a href="attendance.php" class="menu-link">
                 <div data-i18n="Error">Attendance</div>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <!-- Academic -->
+        <li class="menu-item <?php echo ($currentPage === 'academic.php') ? 'active' : ''; ?>">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bxs-book"></i>
+            <div data-i18n="Academic">Academic Records</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item">
+              <a href="academic.php" class="menu-link">
+                <div data-i18n="Error">Academic Records</div>
               </a>
             </li>
           </ul>
@@ -137,8 +151,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
               </a>
             </li>
           </ul>
-        </li>
-
+        </li>   
       </ul>
     </aside>
     <!-- / Menu -->

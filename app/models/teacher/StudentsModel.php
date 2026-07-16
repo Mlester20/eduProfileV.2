@@ -69,6 +69,29 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        /**
+         * Check if a student belongs to the given teacher's advisory section
+         * @return bool
+         */
+
+        public function belongsToAdviser($studentId, $teacherId){
+            try{
+                $query = "SELECT s.id
+                    FROM {$this->students} s
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE s.id = ? AND sec.adviser_id = ?
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $studentId, $teacherId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->num_rows > 0;
+            }catch(Exception $e){
+                error_log("Error " . $e->getMessage());
+                return false;
+            }
+        }
+
         public function create($data){
             try{
                 $insert = "INSERT INTO {$this->students}(lrn, first_name, middle_name, last_name, suffix, birth_date, gender, address, school_year_id, grade_level_id, section_id, recorded_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
