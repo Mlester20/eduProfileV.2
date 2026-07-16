@@ -133,6 +133,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
           </ul>
         </li>
+        <!-- Achievements -->
+        <li class="menu-item <?php echo ($currentPage === 'achievement-profile.php') ? 'active' : ''; ?>">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bxs-medal"></i>
+            <div data-i18n="Academic">Student Achiements</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item">
+              <a href="achievement-profile.php" class="menu-link">
+                <div data-i18n="Error">Achievements</div>
+              </a>
+            </li>
+          </ul>
+        </li>
 
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Healths</span>

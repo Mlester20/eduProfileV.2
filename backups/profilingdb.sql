@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 10, 2026 at 05:38 PM
+-- Generation Time: Jul 15, 2026 at 02:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -35,6 +35,27 @@ CREATE TABLE `academic_profiles` (
   `grading_period` enum('1st Quarter','2nd Quarter','3rd Quarter','4th Quarter') NOT NULL,
   `grade` decimal(5,2) NOT NULL,
   `remarks` text DEFAULT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `achievements_profiles`
+--
+
+CREATE TABLE `achievements_profiles` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `title` varchar(150) NOT NULL,
+  `category` enum('Academic','Sports','Leadership','Arts & Culture','Co-Curricular','Community Service','Other') NOT NULL,
+  `level` enum('School','District','Division','Regional','National','International') NOT NULL,
+  `description` text DEFAULT NULL,
+  `date_received` date NOT NULL,
+  `awarding_body` varchar(150) DEFAULT NULL,
   `recorded_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -445,6 +466,15 @@ ALTER TABLE `academic_profiles`
   ADD KEY `recorded_by` (`recorded_by`);
 
 --
+-- Indexes for table `achievements_profiles`
+--
+ALTER TABLE `achievements_profiles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
+
+--
 -- Indexes for table `attendance`
 --
 ALTER TABLE `attendance`
@@ -560,6 +590,12 @@ ALTER TABLE `academic_profiles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `achievements_profiles`
+--
+ALTER TABLE `achievements_profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
@@ -642,6 +678,14 @@ ALTER TABLE `academic_profiles`
   ADD CONSTRAINT `academic_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `academic_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
   ADD CONSTRAINT `academic_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `achievements_profiles`
+--
+ALTER TABLE `achievements_profiles`
+  ADD CONSTRAINT `achievements_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `achievements_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
+  ADD CONSTRAINT `achievements_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `attendance`
