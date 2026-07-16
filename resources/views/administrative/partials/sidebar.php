@@ -37,6 +37,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <span class="menu-header-text">Student Records</span>
         </li>
 
+        <!-- Achievements -->
+        <li class="menu-item <?php echo ($currentPage === 'achievement-profile.php') ? 'active' : ''; ?>">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bxs-medal"></i>
+            <div data-i18n="Achievements">Achievements</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item">
+              <a href="achievement-profile.php" class="menu-link">
+                <div data-i18n="Achievements">Achievement Profiles</div>
+              </a>
+            </li>
+          </ul>
+        </li>
 
       </ul>
     </aside>
