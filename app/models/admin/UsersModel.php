@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function index(){
             try{
-                $query = "SELECT id, full_name, email, role FROM {$this->users} WHERE ORDER BY id ASC";
+                $query = "SELECT id, full_name, email, role FROM {$this->users} ORDER BY id ASC";
                 $stmt = $this->con->prepare($query);
                 $stmt->execute();
                 $users = $stmt->get_result();

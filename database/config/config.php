@@ -7,7 +7,7 @@
         private $host = 'localhost';
         private $user = 'root';
         private $password = '';
-        private $dbname = 'profilingdb';
+        private $dbname = 'studentprofiledb';
         private $conn;
 
         public function __construct(){
