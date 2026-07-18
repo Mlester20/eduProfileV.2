@@ -1,5 +1,8 @@
 <?php
 
+    //define base_url for production later on
+    define('BASE_URL', 'eduProfileV.2');
+
     class Database{
         private $host = 'localhost';
         private $user = 'root';
