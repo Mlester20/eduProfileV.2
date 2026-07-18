@@ -37,19 +37,32 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <span class="menu-header-text">Student Records</span>
         </li>
 
-        <!-- Achievements -->
-        <li class="menu-item <?php echo ($currentPage === 'achievement-profile.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bxs-medal"></i>
-            <div data-i18n="Achievements">Achievements</div>
+        <!-- Compiled Records -->
+        <li class="menu-item <?php echo ($currentPage === 'compiled-records.php') ? 'active' : ''; ?>">
+          <a href="compiled-records.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-spreadsheet"></i>
+            <div data-i18n="Compiled Records">Compiled Records</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="achievement-profile.php" class="menu-link">
-                <div data-i18n="Achievements">Achievement Profiles</div>
-              </a>
-            </li>
-          </ul>
+        </li>
+
+        <!-- Learner Profile -->
+        <li class="menu-item <?php echo ($currentPage === 'learner-profile.php') ? 'active' : ''; ?>">
+          <a href="learner-profile.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-id-card"></i>
+            <div data-i18n="Learner Profile">Learner Profile</div>
+          </a>
+        </li>
+
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">School Year</span>
+        </li>
+
+        <!-- Student Rollover -->
+        <li class="menu-item <?php echo ($currentPage === 'student-rollover.php') ? 'active' : ''; ?>">
+          <a href="student-rollover.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-transfer"></i>
+            <div data-i18n="Student Rollover">Student Rollover</div>
+          </a>
         </li>
 
       </ul>

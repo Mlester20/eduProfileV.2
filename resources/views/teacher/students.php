@@ -54,54 +54,56 @@ AuthRole::allowOnly(['teacher']);
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-header" id="createStudentLabel">Add Student</h5>
-                    <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/StudentsController.php" method="post">
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="lrn" class="form-label">LRN</label>
-                            <input class="form-control" type="text" name="lrn" id="lrn" placeholder="Enter LRN">
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="lrn" class="form-label">LRN</label>
+                                <input class="form-control" type="text" name="lrn" id="lrn" placeholder="e.g., 123456789012" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="birth_date" class="form-label">Birth Date</label>
+                                <input class="form-control" type="date" name="birth_date" id="birth_date" required>
+                            </div>
                         </div>
 
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
                                 <label for="first_name" class="form-label">First Name</label>
-                                <input class="form-control" type="text" name="first_name" id="first_name" placeholder="First name">
+                                <input class="form-control" type="text" name="first_name" id="first_name" placeholder="e.g., Juan" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="middle_name" class="form-label">Middle Name</label>
-                                <input class="form-control" type="text" name="middle_name" id="middle_name" placeholder="Middle name">
+                                <input class="form-control" type="text" name="middle_name" id="middle_name" placeholder="e.g., Liwaliw">
                             </div>
                         </div>
 
                         <div class="row g-3">
                             <div class="col-md-8 mb-3">
                                 <label for="last_name" class="form-label">Last Name</label>
-                                <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Last name">
+                                <input class="form-control" type="text" name="last_name" id="last_name" placeholder="e.g., Dela Cruz" required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="suffix" class="form-label">Suffix</label>
-                                <input class="form-control" type="text" name="suffix" id="suffix" placeholder="Jr., Sr.">
+                                <input class="form-control" type="text" name="suffix" id="suffix" placeholder="e.g., Jr., Sr.">
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="birth_date" class="form-label">Birth Date</label>
-                            <input class="form-control" type="date" name="birth_date" id="birth_date">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select class="form-select" name="gender" id="gender">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <input class="form-control" type="text" name="address" id="address" placeholder="House No., Street, Barangay">
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" name="gender" id="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input class="form-control" type="text" name="address" id="address" placeholder="e.g., 123 Main St, Barangay Example">
+                            </div>
                         </div>
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
@@ -151,7 +153,7 @@ AuthRole::allowOnly(['teacher']);
                         <input type="hidden" name="recorded_by" value="<?php echo isset($_SESSION['id']) ? (int) $_SESSION['id'] : ''; ?>">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary" name="create_student">
                             Save
                         </button>
@@ -166,14 +168,20 @@ AuthRole::allowOnly(['teacher']);
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-header" id="editStudentLabel">Edit Student</h5>
-                    <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/StudentsController.php" method="post">
                   <input type="hidden" name="id" id="edit_student_id">
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="lrn" class="form-label">LRN</label>
-                            <input class="form-control" type="text" name="lrn" id="edit_lrn" placeholder="Enter LRN">
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="lrn" class="form-label">LRN</label>
+                                <input class="form-control" type="text" name="lrn" id="edit_lrn" placeholder="Enter LRN">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="birth_date" class="form-label">Birth Date</label>
+                                <input class="form-control" type="date" name="birth_date" id="edit_birth_date">
+                            </div>
                         </div>
 
                         <div class="row g-3">
@@ -198,23 +206,19 @@ AuthRole::allowOnly(['teacher']);
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="birth_date" class="form-label">Birth Date</label>
-                            <input class="form-control" type="date" name="birth_date" id="edit_birth_date">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select class="form-select" name="gender" id="edit_gender">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <input class="form-control" type="text" name="address" id="edit_address" placeholder="House No., Street, Barangay">
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" name="gender" id="edit_gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input class="form-control" type="text" name="address" id="edit_address" placeholder="House No., Street, Barangay">
+                            </div>
                         </div>
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
@@ -485,18 +489,18 @@ AuthRole::allowOnly(['teacher']);
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
-<script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
-<script src="../../../public/assets/vendor/js/bootstrap.js"></script>
-<script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-<script src="../../../public/assets/vendor/js/menu.js"></script>
-<script src="../../../public/assets/js/main.js"></script>
-<script>
-    const studentBehaviorRecords = <?php echo json_encode($behavior_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
-    const studentDevelopmentalRecords = <?php echo json_encode($developmental_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
-</script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
+    <script src="../../../public/assets/vendor/js/bootstrap.js"></script>
+    <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../../../public/assets/vendor/js/menu.js"></script>
+    <script src="../../../public/assets/js/main.js"></script>
+    <script>
+        const studentBehaviorRecords = <?php echo json_encode($behavior_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+        const studentDevelopmentalRecords = <?php echo json_encode($developmental_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+    </script>
 <script src="../../../public/js/teacher/home.js"></script>
 <script src="../../../public/js/teacher/students.js"></script>
 </body>

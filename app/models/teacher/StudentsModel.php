@@ -21,7 +21,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                     LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
                     LEFT JOIN {$this->users} u ON s.recorded_by = u.id
-                    WHERE ss.adviser_id = ?
+                    WHERE ss.adviser_id = ? AND s.status = 'active'
                 ";
                 if($student_id !== null){
                     $query .= " AND s.id = ?";
@@ -79,7 +79,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 $query = "SELECT s.id
                     FROM {$this->students} s
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE s.id = ? AND sec.adviser_id = ?
+                    WHERE s.id = ? AND sec.adviser_id = ? AND s.status = 'active'
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $studentId, $teacherId);
@@ -108,6 +108,30 @@ require_once __DIR__ . '/../../core/Model.php';
             }catch(Exception $e){
                 error_log("Error " . $e->getMessage());
                 return false;
+            }
+        }
+
+        /**
+         * Full name for a student id, regardless of adviser/status — used to
+         * resolve a bare id (e.g. from an audit log description) back into a
+         * readable name. Returns null if the row is gone (e.g. deleted).
+         */
+
+        public function getFullNameById($studentId){
+            try{
+                $query = "SELECT first_name, middle_name, last_name, suffix FROM {$this->students} WHERE id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $studentId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                if(!$row){
+                    return null;
+                }
+                return trim($row['first_name'] . ' ' . ($row['middle_name'] ?? '') . ' ' . $row['last_name'] . ' ' . ($row['suffix'] ?? ''));
+            }catch(Exception $e){
+                error_log("Error " . $e->getMessage());
+                return null;
             }
         }
 
@@ -195,7 +219,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                     LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
                     LEFT JOIN {$this->users} u ON s.recorded_by = u.id
-                    WHERE ss.adviser_id = ?
+                    WHERE ss.adviser_id = ? AND s.status = 'active'
                     LIMIT ? OFFSET ?";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param('iii', $teacher_id, $limit, $offset);
@@ -213,7 +237,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 $query = "SELECT COUNT(*)
                     FROM {$this->students} s
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
-                    WHERE ss.adviser_id = ?";
+                    WHERE ss.adviser_id = ? AND s.status = 'active'";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param('i', $teacher_id);
                 $stmt->execute();

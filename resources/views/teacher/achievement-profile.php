@@ -235,9 +235,16 @@ AuthRole::allowOnly(['teacher']);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($achievementProfiles as $index => $profile): ?>
+                    <?php
+                        $achievementRows   = $achievementProfiles['data']         ?? [];
+                        $achievementPage   = $achievementProfiles['current_page'] ?? 1;
+                        $achievementPages  = $achievementProfiles['total_pages']  ?? 1;
+                        $achievementPer    = $achievementProfiles['per_page']     ?? 10;
+                        $achievementOffset = ($achievementPage - 1) * $achievementPer;
+                    ?>
+                    <?php foreach($achievementRows as $index => $profile): ?>
                         <tr>
-                            <td><?php echo $index + 1; ?></td>
+                            <td><?php echo $achievementOffset + $index + 1; ?></td>
                             <td><?php echo htmlspecialchars($profile['student_first_name'] . ' ' . $profile['student_middle_name'] . ' ' . $profile['student_last_name'] . ' ' . $profile['student_suffix']); ?></td>
                             <td><?php echo htmlspecialchars($profile['school_year']); ?></td>
                             <td><?php echo htmlspecialchars($profile['title']); ?></td>
@@ -283,6 +290,26 @@ AuthRole::allowOnly(['teacher']);
                 </tbody>
             </table>
         </div>
+
+        <?php if ($achievementPages > 1): ?>
+        <div class="card-footer">
+          <nav>
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item <?php echo $achievementPage <= 1 ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $achievementPage - 1; ?>">&laquo;</a>
+              </li>
+              <?php for ($p = 1; $p <= $achievementPages; $p++): ?>
+                <li class="page-item <?php echo $p === $achievementPage ? 'active' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                </li>
+              <?php endfor; ?>
+              <li class="page-item <?php echo $achievementPage >= $achievementPages ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $achievementPage + 1; ?>">&raquo;</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <?php endif; ?>
     </div>
 
 

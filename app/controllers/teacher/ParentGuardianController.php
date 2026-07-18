@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/teacher/ParentGuardianModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class ParentGuardianController extends Controller{
@@ -20,8 +21,12 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->studentsModel = new StudentsModel($con);
         }
 
-        public function index(){
-            return $this->model->index();
+        public function index($page = 1){
+            $perPage = 10;
+            $offset = Paginator::offset($page, $perPage);
+            $rows = $this->model->getPage($perPage, $offset);
+            $total = $this->model->countAll();
+            return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
         }
 
         public function students(){
@@ -112,7 +117,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
     try{
         $controller = new ParentGuardianController($con);
-        $parentGuardians = $controller->index();
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $parentGuardians = $controller->index($page);
         $students = $controller->students();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){

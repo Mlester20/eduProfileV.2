@@ -25,7 +25,7 @@ if($isAjax){
                 echo json_encode(['success' => (bool) $record, 'data' => $record]);
             }else{
                 $student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-                echo json_encode(['success' => true, 'data' => $controller->index($student_id)]);
+                echo json_encode(['success' => true, 'data' => $controller->index($student_id)['data']]);
             }
             break;
 
@@ -71,7 +71,8 @@ if($isAjax){
     exit();
 }
 
-$health_records = $controller->index();
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$health_records = $controller->index(null, $page);
 $students = $controller->getStudents();
 $students_without_profile = $controller->getStudentsWithoutHealthProfile();
 $active_sy = $controller->getActiveSy();
@@ -388,8 +389,15 @@ $active_school_year_id = !empty($active_sy) ? $active_sy[0]['id'] : null;
             </tr>
           </thead>
           <tbody>
-            <?php if(!empty($health_records)): ?>
-              <?php foreach($health_records as $index => $record): ?>
+            <?php
+                $healthRows   = $health_records['data']         ?? [];
+                $healthPage   = $health_records['current_page'] ?? 1;
+                $healthPages  = $health_records['total_pages']  ?? 1;
+                $healthPer    = $health_records['per_page']     ?? 10;
+                $healthOffset = ($healthPage - 1) * $healthPer;
+            ?>
+            <?php if(!empty($healthRows)): ?>
+              <?php foreach($healthRows as $index => $record): ?>
                 <?php
                   $rowStudentName = trim($record['student_first_name'] . ' ' . ($record['student_middle_name'] ?? '') . ' ' . $record['student_last_name'] . ' ' . ($record['student_suffix'] ?? ''));
                   $badgeClass = 'bmi-badge-' . strtolower(str_replace(' ', '-', $record['bmi_classification'] ?? ''));
@@ -411,7 +419,7 @@ $active_school_year_id = !empty($active_sy) ? $active_sy[0]['id'] : null;
                       '<?= htmlspecialchars($record['immunization_status'] ?? '') ?>'
                   )"
                 >
-                  <td><?= $index + 1 ?></td>
+                  <td><?= $healthOffset + $index + 1 ?></td>
                   <td><?= htmlspecialchars($rowStudentName) ?></td>
                   <td><?= htmlspecialchars($record['height_cm']) ?></td>
                   <td><?= htmlspecialchars($record['weight_kg']) ?></td>
@@ -456,6 +464,26 @@ $active_school_year_id = !empty($active_sy) ? $active_sy[0]['id'] : null;
           </tbody>
         </table>
       </div>
+
+      <?php if ($healthPages > 1): ?>
+      <div class="card-footer">
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item <?php echo $healthPage <= 1 ? 'disabled' : ''; ?>">
+              <a class="page-link" href="?page=<?php echo $healthPage - 1; ?>">&laquo;</a>
+            </li>
+            <?php for ($p = 1; $p <= $healthPages; $p++): ?>
+              <li class="page-item <?php echo $p === $healthPage ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+              </li>
+            <?php endfor; ?>
+            <li class="page-item <?php echo $healthPage >= $healthPages ? 'disabled' : ''; ?>">
+              <a class="page-link" href="?page=<?php echo $healthPage + 1; ?>">&raquo;</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <?php endif; ?>
     </div>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>

@@ -40,6 +40,39 @@ require_once __DIR__ . '/../core/Model.php';
                 return false;
             }
         }
+
+        public function getRecentByUser($user_id, $limit = 10) {
+            try {
+                $query = "SELECT * FROM audit_logs WHERE user_id = ? ORDER BY created_at DESC, id DESC LIMIT ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $user_id, $limit);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            } catch (Exception $e) {
+                error_log("Error fetching recent audit logs: " . $e->getMessage());
+                return [];
+            }
+        }
+
+        /** School-wide activity feed (no user filter) — for the administrative dashboard. */
+        public function getRecent($limit = 10) {
+            try {
+                $query = "SELECT al.*, u.full_name AS actor_name
+                    FROM audit_logs al
+                    LEFT JOIN users u ON al.user_id = u.id
+                    ORDER BY al.created_at DESC, al.id DESC
+                    LIMIT ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $limit);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            } catch (Exception $e) {
+                error_log("Error fetching recent audit logs: " . $e->getMessage());
+                return [];
+            }
+        }
     }
 
 ?>

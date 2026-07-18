@@ -56,7 +56,11 @@ AuthRole::allowOnly(['teacher']);
                     <div class="modal-body">
                         <input type="hidden" name="recorded_by" value="">
                         <div class="mb-3">
-                            <label for="student_id" class="form-label">Student</label>
+                            <label for="student_id_search" class="form-label">Student</label>
+                            <div class="position-relative">
+                                <input type="text" class="form-control" id="student_id_search" placeholder="Search student..." autocomplete="off">
+                                <div id="student_id_suggestions" class="list-group shadow-sm position-absolute w-100" style="top: 100%; left: 0; z-index: 5; max-height: 200px; overflow-y: auto; display: none;"></div>
+                            </div>
                             <select class="form-select" name="student_id" id="student_id" required>
                                 <option value="" selected disabled>-- Select Student --</option>
                                 <?php foreach ($students as $student): ?>
@@ -155,7 +159,11 @@ AuthRole::allowOnly(['teacher']);
                         <input type="hidden" name="recorded_by" value="">
 
                         <div class="mb-3">
-                            <label for="student_id" class="form-label">Student</label>
+                            <label for="edit_student_id_search" class="form-label">Student</label>
+                            <div class="position-relative">
+                                <input type="text" class="form-control" id="edit_student_id_search" placeholder="Search student..." autocomplete="off">
+                                <div id="edit_student_id_suggestions" class="list-group shadow-sm position-absolute w-100" style="top: 100%; left: 0; z-index: 5; max-height: 200px; overflow-y: auto; display: none;"></div>
+                            </div>
                             <select class="form-select" name="student_id" id="edit_student_id" required>
                                 <option value="" selected disabled>-- Select Student --</option>
                                 <?php foreach ($students as $student): ?>
@@ -253,10 +261,17 @@ AuthRole::allowOnly(['teacher']);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($parentGuardians)) : ?>
-                        <?php foreach ($parentGuardians as $index => $parentGuardian) : ?>
+                    <?php
+                        $pgRows   = $parentGuardians['data']         ?? [];
+                        $pgPage   = $parentGuardians['current_page'] ?? 1;
+                        $pgPages  = $parentGuardians['total_pages']  ?? 1;
+                        $pgPer    = $parentGuardians['per_page']     ?? 10;
+                        $pgOffset = ($pgPage - 1) * $pgPer;
+                    ?>
+                    <?php if (!empty($pgRows)) : ?>
+                        <?php foreach ($pgRows as $index => $parentGuardian) : ?>
                             <tr>
-                                <td><?= $index + 1 ?></td>
+                                <td><?= $pgOffset + $index + 1 ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['student_first_name'] . ' ' . $parentGuardian['student_middle_name'] . ' ' . $parentGuardian['student_last_name'] . ' ' . $parentGuardian['student_suffix']) ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['guardian_name']) ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['guardian_contact']) ?></td>
@@ -301,6 +316,26 @@ AuthRole::allowOnly(['teacher']);
                 </tbody>
             </table>
         </div>
+
+        <?php if ($pgPages > 1): ?>
+        <div class="card-footer">
+          <nav>
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item <?php echo $pgPage <= 1 ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $pgPage - 1; ?>">&laquo;</a>
+              </li>
+              <?php for ($p = 1; $p <= $pgPages; $p++): ?>
+                <li class="page-item <?php echo $p === $pgPage ? 'active' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                </li>
+              <?php endfor; ?>
+              <li class="page-item <?php echo $pgPage >= $pgPages ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $pgPage + 1; ?>">&raquo;</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <?php endif; ?>
     </div>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>

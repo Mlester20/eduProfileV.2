@@ -23,7 +23,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON a.school_year_id = sy.id
                     LEFT JOIN {$this->users} u ON a.recorded_by = u.id
-                    WHERE sec.adviser_id = ?
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
                 if($student_id !== null){
                     $query .= " AND a.student_id = ?";
@@ -71,7 +71,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->attendance} a
                     LEFT JOIN {$this->student} s ON a.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE sec.adviser_id = ?
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
 
                 $types = "i";
@@ -190,7 +190,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->attendance} att_am ON att_am.student_id = s.id AND att_am.attendance_date = ? AND att_am.session = 'Morning'
                     LEFT JOIN {$this->attendance} att_pm ON att_pm.student_id = s.id AND att_pm.attendance_date = ? AND att_pm.session = 'Afternoon'
-                    WHERE sec.adviser_id = ?
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
                     ORDER BY s.last_name ASC, s.first_name ASC
                 ";
                 $stmt = $this->con->prepare($query);
@@ -219,7 +219,7 @@ require_once __DIR__ . '/../../core/Model.php';
         }
 
         private function belongsToTeacher($student_id, $teacher_id){
-            $query = "SELECT s.id FROM {$this->student} s LEFT JOIN {$this->sections} sec ON s.section_id = sec.id WHERE s.id = ? AND sec.adviser_id = ?";
+            $query = "SELECT s.id FROM {$this->student} s LEFT JOIN {$this->sections} sec ON s.section_id = sec.id WHERE s.id = ? AND sec.adviser_id = ? AND s.status = 'active'";
             $stmt = $this->con->prepare($query);
             $stmt->bind_param("ii", $student_id, $teacher_id);
             $stmt->execute();

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 15, 2026 at 02:35 PM
+-- Generation Time: Jul 18, 2026 at 04:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `profilingdb`
+-- Database: `studentprofiledb`
 --
 
 -- --------------------------------------------------------
@@ -39,6 +39,13 @@ CREATE TABLE `academic_profiles` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `academic_profiles`
+--
+
+INSERT INTO `academic_profiles` (`id`, `student_id`, `school_year_id`, `subject_name`, `grading_period`, `grade`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
+(3, 18, 8, 'English 1', '1st Quarter', 85.00, 'passed', 117, '2026-07-18 07:28:03', '2026-07-18 07:28:03');
 
 -- --------------------------------------------------------
 
@@ -78,15 +85,6 @@ CREATE TABLE `attendance` (
   `recorded_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `attendance`
---
-
-INSERT INTO `attendance` (`id`, `student_id`, `school_year_id`, `attendance_date`, `session`, `status`, `remarks`, `recorded_by`, `created_at`) VALUES
-(1, 3, 8, '2026-07-09', 'Morning', 'Present', NULL, 116, '2026-07-09 15:10:45'),
-(2, 4, 8, '2026-07-09', 'Morning', 'Present', NULL, 116, '2026-07-09 15:10:45'),
-(3, 10, 8, '2026-07-09', 'Morning', 'Present', NULL, 116, '2026-07-09 15:10:45');
 
 -- --------------------------------------------------------
 
@@ -176,7 +174,21 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (323, 117, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'teacher 1 Added Gia  Guerra', '::1', 'success', '2026-07-10 15:33:27'),
 (324, 117, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'teacher 1 Added Parent/Guardian Rio Del Rosario', '::1', 'success', '2026-07-10 15:35:03'),
 (325, 117, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'teacher 1 Added Student Behavioral to 14', '::1', 'success', '2026-07-10 15:35:38'),
-(326, 117, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'teacher 1 Created student developmental for ', '::1', 'success', '2026-07-10 15:36:12');
+(326, 117, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'teacher 1 Created student developmental for ', '::1', 'success', '2026-07-10 15:36:12'),
+(327, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 13', '::1', 'success', '2026-07-16 08:24:07'),
+(328, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 12', '::1', 'success', '2026-07-16 08:24:10'),
+(329, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 11', '::1', 'success', '2026-07-16 08:24:47'),
+(330, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 10', '::1', 'success', '2026-07-16 08:24:54'),
+(331, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 4', '::1', 'success', '2026-07-16 08:24:58'),
+(332, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 3', '::1', 'success', '2026-07-16 08:25:00'),
+(333, 117, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'teacher 1 Added Health Profile for 14', '::1', 'success', '2026-07-18 07:02:43'),
+(334, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-18 07:13:51'),
+(335, 117, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'teacher 1 Added Mark Lester  Raguindin', '::1', 'success', '2026-07-18 07:26:40'),
+(336, 117, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'teacher 1 Created student developmental for ', '::1', 'success', '2026-07-18 07:27:10'),
+(337, 117, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'teacher 1 Added Student Behavioral to 18', '::1', 'success', '2026-07-18 07:27:41'),
+(338, 117, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'teacher 1 Added an academic profile for student ID: 18', '::1', 'success', '2026-07-18 07:28:03'),
+(339, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-18 07:28:27'),
+(340, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-18 12:39:00');
 
 -- --------------------------------------------------------
 
@@ -203,8 +215,7 @@ CREATE TABLE `behavioral_profiles` (
 --
 
 INSERT INTO `behavioral_profiles` (`id`, `student_id`, `school_year_id`, `observation_date`, `category`, `observation`, `intervention`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(7, 3, 8, '2026-07-04', 'Test Category', 'Test Observation', 'Test Intervention', 'Test', 116, '2026-07-04 06:52:31', '2026-07-04 06:52:31'),
-(8, 14, 8, '2026-07-10', 'Test', 'Test', 'Test', 'Very Good', 117, '2026-07-10 15:35:38', '2026-07-10 15:35:38');
+(9, 18, 8, '2002-12-20', 'Test', 'Test', 'Test', 'Test', 117, '2026-07-18 07:27:41', '2026-07-18 07:27:41');
 
 -- --------------------------------------------------------
 
@@ -229,7 +240,7 @@ CREATE TABLE `developmental_profiles` (
 --
 
 INSERT INTO `developmental_profiles` (`id`, `student_id`, `school_year_id`, `domain`, `observation`, `recommendation`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(4, 14, 8, 'Language', 'Fluent in English', 'Keep Learning English\r\n', 117, '2026-07-10 15:36:12', '2026-07-10 15:36:12');
+(5, 18, 8, 'Physical', 'Test', 'Test', 117, '2026-07-18 07:27:10', '2026-07-18 07:27:10');
 
 -- --------------------------------------------------------
 
@@ -299,13 +310,6 @@ CREATE TABLE `parents_guardians` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `parents_guardians`
---
-
-INSERT INTO `parents_guardians` (`id`, `student_id`, `recorded_by`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_relationship`, `guardian_contact`, `created_at`, `updated_at`) VALUES
-(4, 14, 117, 'George Guerra', '', '', 'Rio Del Rosario', 'House Wife', '', 'Rio Del Rosario', 'Mother', '', '2026-07-10 15:35:03', '2026-07-10 15:35:03');
-
 -- --------------------------------------------------------
 
 --
@@ -327,8 +331,8 @@ CREATE TABLE `school_year` (
 --
 
 INSERT INTO `school_year` (`id`, `school_year`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-(8, '2026-2027', '2026-06-08', '2027-04-05', 'active', '2026-05-15 05:40:37', '2026-07-09 15:54:54'),
-(14, '2027-2028', '2027-06-01', '2028-04-01', 'inactive', '2026-07-09 15:17:37', '2026-07-09 15:54:48');
+(8, '2026-2027', '2026-06-08', '2027-04-05', 'active', '2026-05-15 05:40:37', '2026-07-18 07:14:04'),
+(14, '2027-2028', '2027-06-01', '2028-04-01', 'inactive', '2026-07-09 15:17:37', '2026-07-18 07:14:04');
 
 -- --------------------------------------------------------
 
@@ -396,6 +400,7 @@ CREATE TABLE `students` (
   `grade_level_id` int(11) NOT NULL,
   `section_id` int(11) NOT NULL,
   `recorded_by` int(11) NOT NULL,
+  `status` enum('active','archived') NOT NULL DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -404,14 +409,10 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `gender`, `address`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(3, '20242111365', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2002-12-20', 'Male', 'Rizal, Roxas, Isabela', 8, 5, 2, 116, '2026-07-01 15:00:28', '2026-07-01 15:00:28'),
-(4, '20242110364', 'Armando', 'Suguitan', 'Raguindin', 'Jr', '2004-10-14', 'Male', 'Santiago City, Isabela', 8, 5, 2, 116, '2026-07-01 15:03:38', '2026-07-01 15:03:38'),
-(10, '10243435000', 'Zeth Jefferson', 'Valdez', 'Guerra', 'Jr', '2012-06-05', 'Male', 'San-Antonio, Burgos, Isabela', 8, 5, 2, 116, '2026-07-09 15:10:25', '2026-07-09 15:10:25'),
-(11, '10243435000', 'Zeth Jefferson', 'Valdez', 'Guerra', 'Jr', '2012-06-05', 'Male', 'San-Antonio, Burgos, Isabela', 14, 5, 2, 3, '2026-07-09 15:18:43', '2026-07-09 15:18:43'),
-(12, '20242110364', 'Armando', 'Suguitan', 'Raguindin', 'Jr', '2004-10-14', 'Male', 'Santiago City, Isabela', 14, 5, 2, 3, '2026-07-09 15:18:43', '2026-07-09 15:18:43'),
-(13, '20242111365', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2002-12-20', 'Male', 'Rizal, Roxas, Isabela', 14, 5, 2, 3, '2026-07-09 15:18:43', '2026-07-09 15:18:43'),
-(14, '0943588103', 'Gia ', 'Del Rosario', 'Guerra', '', '2017-08-23', 'Female', 'Rizal, Santiago City, Isabela', 8, 5, 8, 117, '2026-07-10 15:33:27', '2026-07-10 15:33:27');
+INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `gender`, `address`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `created_at`, `updated_at`) VALUES
+(18, '102034445', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2026-07-18', 'Male', 'Samonte Quezon', 8, 5, 8, 117, 'archived', '2026-07-18 07:26:40', '2026-07-18 07:28:27'),
+(19, '102034445', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2026-07-18', 'Male', 'Samonte Quezon', 14, 5, 8, 3, 'active', '2026-07-18 07:28:27', '2026-07-18 07:28:27'),
+(20, '20242110365', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2002-12-20', 'Male', 'Rizal, Roxas, Isabela', 8, 5, 2, 116, 'active', '2026-07-18 12:39:00', '2026-07-18 12:39:00');
 
 -- --------------------------------------------------------
 
@@ -587,7 +588,7 @@ ALTER TABLE `_migrations`
 -- AUTO_INCREMENT for table `academic_profiles`
 --
 ALTER TABLE `academic_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `achievements_profiles`
@@ -605,19 +606,19 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=327;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=341;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
 --
 ALTER TABLE `behavioral_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `developmental_profiles`
 --
 ALTER TABLE `developmental_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `grade_levels`
@@ -629,7 +630,7 @@ ALTER TABLE `grade_levels`
 -- AUTO_INCREMENT for table `health_profiles`
 --
 ALTER TABLE `health_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
@@ -647,19 +648,19 @@ ALTER TABLE `school_year`
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `section_teacher_assignments`
 --
 ALTER TABLE `section_teacher_assignments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`

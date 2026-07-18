@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../models/teacher/StudentDevelopmentalProfileModel.p
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class DevelopmentalProfileController extends Controller{
@@ -25,9 +26,16 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->studentService = new StudentService($con);
         }
 
-        public function index($student_id = null){
-            $teacher_id = $_SESSION['id'];
-            return $this->model->index($teacher_id, $student_id);
+        public function index($student_id = null, $page = 1){
+            $perPage = 10;
+            if(!isset($_SESSION['id'])){
+                return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
+            }
+            $teacherId = (int) $_SESSION['id'];
+            $offset = Paginator::offset($page, $perPage);
+            $rows = $this->model->getPage($teacherId, $perPage, $offset, $student_id);
+            $total = $this->model->countAll($teacherId, $student_id);
+            return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
         }
 
         public function getActiveSy(){
@@ -122,7 +130,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
     try{
         $controller = new DevelopmentalProfileController($con);
         $filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-        $developmentals = $controller->index($filter_student_id);
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $developmentals = $controller->index($filter_student_id, $page);
         $active_sy = $controller->getActiveSy();
         $students = $controller->getStudents();
         $filtered_student = null;

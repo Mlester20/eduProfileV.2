@@ -46,10 +46,6 @@ require_once __DIR__ . '/../../../database/config/config.php';
             return $this->sy->getActiveSy();
         }
 
-        public function getSchoolYears(){
-            return $this->sy->index();
-        }
-
         public function getMySections(){
             $teacherId = $_SESSION['id'] ?? null;
             if (!$teacherId) {
@@ -165,7 +161,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
     try{
         $controller = new StudentsController($con);
         $students = $controller->index();
-        $school_years = $controller->getSchoolYears();
+        $school_years = $controller->activeSy();
         $my_sections = $controller->getMySections();
 
         $behavior_by_student = [];

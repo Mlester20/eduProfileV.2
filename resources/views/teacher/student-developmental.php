@@ -212,10 +212,17 @@ AuthRole::allowOnly(['teacher']);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if(!empty($developmentals)): ?>
-                        <?php foreach($developmentals as $index => $developmental): ?>
+                    <?php
+                        $developmentalRows   = $developmentals['data']         ?? [];
+                        $developmentalPage   = $developmentals['current_page'] ?? 1;
+                        $developmentalPages  = $developmentals['total_pages']  ?? 1;
+                        $developmentalPer    = $developmentals['per_page']     ?? 10;
+                        $developmentalOffset = ($developmentalPage - 1) * $developmentalPer;
+                    ?>
+                    <?php if(!empty($developmentalRows)): ?>
+                        <?php foreach($developmentalRows as $index => $developmental): ?>
                             <tr>
-                                <td><?php echo $index + 1; ?></td>
+                                <td><?php echo $developmentalOffset + $index + 1; ?></td>
                                 <td><?= htmlspecialchars($developmental['student_first_name'] . ' ' . $developmental['student_last_name']); ?></td>
                                 <td><?= htmlspecialchars($developmental['school_year']); ?></td>
                                 <td><?= htmlspecialchars($developmental['domain']); ?></td>
@@ -258,6 +265,27 @@ AuthRole::allowOnly(['teacher']);
                 </tbody>
             </table>
         </div>
+
+        <?php $developmentalQuery = $filter_student_id !== null ? 'student_id=' . $filter_student_id . '&' : ''; ?>
+        <?php if ($developmentalPages > 1): ?>
+        <div class="card-footer">
+          <nav>
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item <?php echo $developmentalPage <= 1 ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?<?php echo $developmentalQuery; ?>page=<?php echo $developmentalPage - 1; ?>">&laquo;</a>
+              </li>
+              <?php for ($p = 1; $p <= $developmentalPages; $p++): ?>
+                <li class="page-item <?php echo $p === $developmentalPage ? 'active' : ''; ?>">
+                  <a class="page-link" href="?<?php echo $developmentalQuery; ?>page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                </li>
+              <?php endfor; ?>
+              <li class="page-item <?php echo $developmentalPage >= $developmentalPages ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?<?php echo $developmentalQuery; ?>page=<?php echo $developmentalPage + 1; ?>">&raquo;</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <?php endif; ?>
     </div>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>

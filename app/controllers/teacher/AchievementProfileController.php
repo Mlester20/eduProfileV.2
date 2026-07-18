@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
+require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
@@ -25,11 +26,16 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->studentService = new StudentService($con);
         }
 
-        public function index($student_id = null){
+        public function index($student_id = null, $page = 1){
+            $perPage = 10;
             if(!isset($_SESSION['id'])){
-                return [];
+                return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
             }
-            return $this->model->index((int) $_SESSION['id'], $student_id);
+            $teacherId = (int) $_SESSION['id'];
+            $offset = Paginator::offset($page, $perPage);
+            $rows = $this->model->getPage($teacherId, $perPage, $offset, $student_id);
+            $total = $this->model->countAll($teacherId, $student_id);
+            return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
         }
 
         public function getStudents(){
@@ -136,7 +142,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
     try{
         $controller = new AchievementProfileController($con);
-        $achievementProfiles = $controller->index();
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $achievementProfiles = $controller->index(null, $page);
         $students = $controller->getStudents();
         $school_years = $controller->getSchoolYears();
         $activeSchoolYear = $controller->getActiveSchoolYear();

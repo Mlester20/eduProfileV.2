@@ -20,7 +20,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON hp.school_year_id = sy.id
-                    WHERE sec.adviser_id = ?
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
                 if($student_id !== null){
                     $query .= " AND hp.student_id = ?";
@@ -40,6 +40,66 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        public function getPage($teacher_id, $limit, $offset, $student_id = null){
+            try{
+                $query = "SELECT
+                    hp.*,
+                    s.first_name AS student_first_name,
+                    s.middle_name AS student_middle_name,
+                    s.last_name AS student_last_name,
+                    s.suffix AS student_suffix,
+                    sy.school_year AS school_year
+                    FROM {$this->health_profiles} hp
+                    LEFT JOIN {$this->student} s ON hp.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    LEFT JOIN {$this->school_year} sy ON hp.school_year_id = sy.id
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                ";
+                if($student_id !== null){
+                    $query .= " AND hp.student_id = ?";
+                }
+                $query .= " ORDER BY hp.id DESC LIMIT ? OFFSET ?";
+                $stmt = $this->con->prepare($query);
+                if($student_id !== null){
+                    $stmt->bind_param("iiii", $teacher_id, $student_id, $limit, $offset);
+                }else{
+                    $stmt->bind_param("iii", $teacher_id, $limit, $offset);
+                }
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log("Error fetching student health records page: " . $e->getMessage());
+                return [];
+            }
+        }
+
+        public function countAll($teacher_id, $student_id = null){
+            try{
+                $query = "SELECT COUNT(*) AS total
+                    FROM {$this->health_profiles} hp
+                    LEFT JOIN {$this->student} s ON hp.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                ";
+                if($student_id !== null){
+                    $query .= " AND hp.student_id = ?";
+                }
+                $stmt = $this->con->prepare($query);
+                if($student_id !== null){
+                    $stmt->bind_param("ii", $teacher_id, $student_id);
+                }else{
+                    $stmt->bind_param("i", $teacher_id);
+                }
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return (int) ($result->fetch_assoc()['total'] ?? 0);
+            }catch(Exception $e){
+                error_log("Error counting student health records: " . $e->getMessage());
+                return 0;
+            }
+        }
+
         public function getById($id, $teacher_id){
             try{
                 $query = "SELECT
@@ -53,7 +113,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON hp.school_year_id = sy.id
-                    WHERE hp.id = ? AND sec.adviser_id = ?
+                    WHERE hp.id = ? AND sec.adviser_id = ? AND s.status = 'active'
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $id, $teacher_id);
@@ -135,7 +195,7 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function belongsToTeacher($student_id, $teacher_id){
             try{
-                $query = "SELECT s.id FROM {$this->student} s LEFT JOIN {$this->sections} sec ON s.section_id = sec.id WHERE s.id = ? AND sec.adviser_id = ?";
+                $query = "SELECT s.id FROM {$this->student} s LEFT JOIN {$this->sections} sec ON s.section_id = sec.id WHERE s.id = ? AND sec.adviser_id = ? AND s.status = 'active'";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $student_id, $teacher_id);
                 $stmt->execute();
@@ -174,7 +234,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->health_profiles} hp
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE sec.adviser_id = ?
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("i", $teacher_id);

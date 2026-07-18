@@ -194,9 +194,16 @@ AuthRole::allowOnly(['teacher']);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($academicProfiles as $index => $profile): ?>
+                    <?php
+                        $academicRows   = $academicProfiles['data']         ?? [];
+                        $academicPage   = $academicProfiles['current_page'] ?? 1;
+                        $academicPages  = $academicProfiles['total_pages']  ?? 1;
+                        $academicPer    = $academicProfiles['per_page']     ?? 10;
+                        $academicOffset = ($academicPage - 1) * $academicPer;
+                    ?>
+                    <?php foreach($academicRows as $index => $profile): ?>
                         <tr>
-                            <td><?php echo $index + 1; ?></td>
+                            <td><?php echo $academicOffset + $index + 1; ?></td>
                             <td><?php echo htmlspecialchars($profile['student_first_name'] . ' ' . $profile['student_middle_name'] . ' ' . $profile['student_last_name'] . ' ' . $profile['student_suffix']); ?></td>
                             <td><?php echo htmlspecialchars($profile['subject_name']); ?></td>
                             <td><?php echo htmlspecialchars($profile['grading_period']); ?></td>
@@ -237,6 +244,26 @@ AuthRole::allowOnly(['teacher']);
                 </tbody>
             </table>
         </div>
+
+        <?php if ($academicPages > 1): ?>
+        <div class="card-footer">
+          <nav>
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item <?php echo $academicPage <= 1 ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $academicPage - 1; ?>">&laquo;</a>
+              </li>
+              <?php for ($p = 1; $p <= $academicPages; $p++): ?>
+                <li class="page-item <?php echo $p === $academicPage ? 'active' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                </li>
+              <?php endfor; ?>
+              <li class="page-item <?php echo $academicPage >= $academicPages ? 'disabled' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $academicPage + 1; ?>">&raquo;</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <?php endif; ?>
     </div>
 
 

@@ -29,6 +29,45 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        public function getPage($limit, $offset){
+            try{
+                $query = "SELECT
+                    pg.*,
+                    s.first_name AS student_first_name,
+                    s.middle_name AS student_middle_name,
+                    s.last_name AS student_last_name,
+                    s.suffix AS student_suffix,
+                    u.full_name AS recorded_by
+                    FROM {$this->parent_guardian} pg
+                    LEFT JOIN {$this->students} s ON pg.student_id = s.id
+                    LEFT JOIN {$this->users} u ON pg.recorded_by = u.id
+                    ORDER BY pg.id DESC
+                    LIMIT ? OFFSET ?
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $limit, $offset);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log("Error " . $e->getMessage());
+                return [];
+            }
+        }
+
+        public function countAll(){
+            try{
+                $query = "SELECT COUNT(*) AS total FROM {$this->parent_guardian}";
+                $stmt = $this->con->prepare($query);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return (int) ($result->fetch_assoc()['total'] ?? 0);
+            }catch(Exception $e){
+                error_log("Error " . $e->getMessage());
+                return 0;
+            }
+        }
+
         public function create($data){
             try{
                 $insert = "INSERT INTO {$this->parent_guardian}(student_id, recorded_by, father_name, father_occupation, father_contact, mother_name, mother_occupation, mother_contact, guardian_name, guardian_relationship, guardian_contact) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

@@ -165,7 +165,19 @@ $currentPage = basename($_SERVER['PHP_SELF']);
               </a>
             </li>
           </ul>
-        </li>   
+        </li>
+
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">History</span>
+        </li>
+
+        <!-- Past Records -->
+        <li class="menu-item <?php echo ($currentPage === 'past-records.php') ? 'active' : ''; ?>">
+          <a href="past-records.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-history"></i>
+            <div data-i18n="Past Records">Past Records</div>
+          </a>
+        </li>
       </ul>
     </aside>
     <!-- / Menu -->

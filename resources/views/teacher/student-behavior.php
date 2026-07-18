@@ -258,8 +258,15 @@ AuthRole::allowOnly(['teacher']);
             </tr>
           </thead>
           <tbody>
-            <?php if(!empty($student_behavioral_profiles)): ?>
-              <?php foreach($student_behavioral_profiles as $index => $student_behavioral_profile): ?>
+            <?php
+                $behaviorRows   = $student_behavioral_profiles['data']         ?? [];
+                $behaviorPage   = $student_behavioral_profiles['current_page'] ?? 1;
+                $behaviorPages  = $student_behavioral_profiles['total_pages']  ?? 1;
+                $behaviorPer    = $student_behavioral_profiles['per_page']     ?? 10;
+                $behaviorOffset = ($behaviorPage - 1) * $behaviorPer;
+            ?>
+            <?php if(!empty($behaviorRows)): ?>
+              <?php foreach($behaviorRows as $index => $student_behavioral_profile): ?>
                 <?php $viewStudentName = trim($student_behavioral_profile['student_first_name'] . ' ' . ($student_behavioral_profile['student_middle_name'] ?? '') . ' ' . $student_behavioral_profile['student_last_name'] . ' ' . ($student_behavioral_profile['student_suffix'] ?? '')); ?>
                 <tr
                   role="button"
@@ -277,7 +284,7 @@ AuthRole::allowOnly(['teacher']);
                       '<?= htmlspecialchars($student_behavioral_profile['recorded_by']) ?>'
                   )"
                 >
-                  <td><?php echo $index + 1; ?></td>
+                  <td><?php echo $behaviorOffset + $index + 1; ?></td>
                   <td><?php echo htmlspecialchars($student_behavioral_profile['student_first_name'] . ' ' . $student_behavioral_profile['student_last_name']); ?></td>
                   <td><?php echo htmlspecialchars($student_behavioral_profile['category']); ?></td>
                   <td><?php echo htmlspecialchars($student_behavioral_profile['observation']); ?></td>
@@ -316,15 +323,36 @@ AuthRole::allowOnly(['teacher']);
                     </form>
                   </td>
                 </tr>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="8" class="text-center">No student behavioral profiles found.</td>
+              </tr>
+            <?php endif; ?>
           </tbody>
-          <?php endforeach; ?>
-          <?php else: ?>
-            <tr>
-              <td colspan="8" class="text-center">No student behavioral profiles found.</td>
-            </tr>
-          <?php endif; ?>
         </table>
       </div>
+
+      <?php $behaviorQuery = $filter_student_id !== null ? 'student_id=' . $filter_student_id . '&' : ''; ?>
+      <?php if ($behaviorPages > 1): ?>
+      <div class="card-footer">
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item <?php echo $behaviorPage <= 1 ? 'disabled' : ''; ?>">
+              <a class="page-link" href="?<?php echo $behaviorQuery; ?>page=<?php echo $behaviorPage - 1; ?>">&laquo;</a>
+            </li>
+            <?php for ($p = 1; $p <= $behaviorPages; $p++): ?>
+              <li class="page-item <?php echo $p === $behaviorPage ? 'active' : ''; ?>">
+                <a class="page-link" href="?<?php echo $behaviorQuery; ?>page=<?php echo $p; ?>"><?php echo $p; ?></a>
+              </li>
+            <?php endfor; ?>
+            <li class="page-item <?php echo $behaviorPage >= $behaviorPages ? 'disabled' : ''; ?>">
+              <a class="page-link" href="?<?php echo $behaviorQuery; ?>page=<?php echo $behaviorPage + 1; ?>">&raquo;</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <?php endif; ?>
     </div>
 
 

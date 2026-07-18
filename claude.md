@@ -1,153 +1,151 @@
-Implement full CRUD for "Student Health Profile" following the EXACT same MVC architecture, 
-naming conventions, and coding style already established in this project (mirror 
-StudentBehavioralProfileModel.php and the Attendance module for reference — read those 
-files first before writing any code).
+# Task: Administrative "Compiled Records" Module + `students.status` Archive Column
 
-FILES TO CREATE:
-1. StudentHealthModel.php
-2. StudentHealthController.php
-3. StudentHealthService.php  (new — create this even though older modules like 
-   StudentBehavioralProfileModel didn't have one, since BMI calculation validation 
-   and business rules belong in a Service layer, not the Model or Controller)
-4. student-health.php
-5. student-health.js
+## IMPORTANT correction from earlier discussion
+The actual role string stored in `users.role` for this role is
+**`administrative`** (confirmed from `profilingdb.sql` — see the `users`
+table seed data: `id 3, full_name 'Administrative', role 'administrative'`,
+and `audit_logs` entries like `role: 'administrative'`). Any earlier prompt
+in this thread that said `administrative_assistant` was a placeholder guess
+— use `AuthRole::allowOnly(['administrative'])`, not
+`administrative_assistant`, when guarding views/controllers for this role.
 
-CONTEXT — read before coding:
-1. Read the abstract `Controller` class (constructor takes $model; abstract index(), 
-   create($data), update($id, $data), delete($id)).
-2. Read the base `Model` class (constructor takes mysqli $con).
-3. Read StudentBehavioralProfileModel.php for the exact Model pattern to copy: 
-   property-per-table naming (protected $health_profiles = 'health_profiles'; etc.), 
-   LEFT JOIN chain through students -> sections -> WHERE sec.adviser_id = ? for 
-   teacher-scoped ownership, try/catch + error_log() per method, mysqli prepared 
-   statements with bind_param.
-4. Read the Attendance module (AttendanceModel.php / AttendanceController.php / 
-   attendance.php) for how a Service layer + entry-point routing was structured most 
-   recently in this project — follow that same shape for StudentHealthService.php 
-   and student-health.php.
+## MANDATORY — read the actual codebase first, don't assume structure
+Before writing anything:
+1. Read the full current schema in `profilingdb.sql` — pay special
+   attention to `section_teacher_assignments` (section_id, teacher_id,
+   school_year_id), `sections` (has its own `adviser_id`), `school_year`
+   (has a `status` enum: active/inactive/archived), `students`, and every
+   `*_profiles` table (`academic_profiles`, `achievements_profiles`,
+   `behavioral_profiles`, `developmental_profiles`, `health_profiles`) plus
+   `attendance`.
+2. **Find the existing "rollover to new school year" feature.** It already
+   exists — `audit_logs` shows a real action: `'Rolling over students to
+   new school year'` under module `'Students'`, performed by the
+   `administrative` role. Locate the controller/model that implements this
+   (search for something like a Students/Rollover controller/model under
+   the administrative area) and read it fully — do not write a new rollover
+   flow from scratch, extend the existing one.
+3. Read `AcademicProfileModel.php` / `AcademicProfileController.php` /
+   `academic.php` (teacher module) again for the base MVC conventions
+   (bind_param style, try/catch + error_log, FlashMessage + redirect,
+   Bootstrap modal markup) — the new administrative module should still
+   follow this same coding style even though its query logic differs.
+4. Check `app/middleware/Auth.php` for how `AuthRole::allowOnly()` role
+   strings are validated, and confirm `administrative` is already a
+   recognized role there (it appears to be, based on audit_logs usage).
 
-DATABASE TABLE (already designed, create this if it doesn't exist yet in your DB):
+---
 
-CREATE TABLE `health_profiles` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `height_cm` decimal(5,2) DEFAULT NULL,
-  `weight_kg` decimal(5,2) DEFAULT NULL,
-  `bmi` decimal(5,2) DEFAULT NULL,
-  `bmi_classification` enum('Severely Wasted','Wasted','Normal','Overweight','Obese') DEFAULT NULL,
-  `blood_type` varchar(5) DEFAULT NULL,
-  `allergies` text DEFAULT NULL,
-  `medical_conditions` text DEFAULT NULL,
-  `vision_screening_result` varchar(100) DEFAULT NULL,
-  `hearing_screening_result` varchar(100) DEFAULT NULL,
-  `immunization_status` text DEFAULT NULL,
-  `recorded_by` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+## Part 1 — Add `students.status` (archive column)
 
-FK: student_id -> students(id) ON DELETE CASCADE, school_year_id -> school_year(id), 
-recorded_by -> users(id). Same pattern as behavioral_profiles/developmental_profiles.
+```sql
+ALTER TABLE `students`
+  ADD COLUMN `status` enum('active','archived') NOT NULL DEFAULT 'active'
+  AFTER `recorded_by`;
+```
 
-OWNERSHIP RULE: same as every other module — a student is only under a teacher when 
-students.section_id = sections.id AND sections.adviser_id = <teacher_id>. All 
-queries must be scoped through this join.
+Reasoning: there is intentionally no `enrollment_history` table in this
+system (out of scope — no registrar-driven enrollment tracking). Instead,
+based on the existing rollover behavior already observed in the data (a
+student who moves to a new school year gets a **new row** in `students`
+with a new `school_year_id`, keeping the old row intact for historical
+records — see `students` id 10 (SY 8, original) vs id 11 (SY 14, rolled-over
+copy) in the seed data), the **old row** should now be marked
+`status = 'archived'` once it has been rolled over, since it no longer
+represents the student's current standing — it just stays in the DB so its
+`academic_profiles` / `attendance` / `behavioral_profiles` / etc. (which are
+still foreign-keyed to that old `student_id`) remain intact for compiled/
+historical reporting.
 
-BMI AUTO-CALCULATION (student-health.js) — CLIENT-SIDE ONLY:
-- The form has height_cm and weight_kg input fields. BMI and BMI classification are 
-  NOT manually entered — they must be READ-ONLY fields that auto-compute and update 
-  live via JavaScript as the teacher types.
-- Formula: BMI = weight_kg / ((height_cm / 100) ** 2), rounded to 2 decimal places.
-- Recalculate on every 'input' event on both height_cm and weight_kg fields. If either 
-  field is empty or 0, leave BMI blank instead of showing NaN/Infinity.
-- Classification thresholds (standard adult BMI-for-age reference used by this system's 
-  enum — Severely Wasted / Wasted / Normal / Overweight / Obese):
-    < 16.0            -> Severely Wasted
-    16.0 - 18.4        -> Wasted
-    18.5 - 24.9         -> Normal
-    25.0 - 29.9          -> Overweight
-    >= 30.0                -> Obese
-  NOTE: these are simplified adult BMI cutoffs. Real DepEd Nutritional Status uses 
-  BMI-for-age percentile charts (different per age/sex). Flag this in your code comments 
-  so it's easy to swap in an age/sex-based lookup table later if needed — for now, use 
-  the simplified thresholds above since that's what the enum values map to.
-- Update the bmi_classification text field/badge live alongside the BMI number, with 
-  the same color-coded style already used elsewhere in this project (e.g. Attendance 
-  status colors: red/yellow/green/blue-style semantics — pick similarly intuitive 
-  colors here, e.g. red for Severely Wasted/Obese extremes, green for Normal).
-- On form submit, send the JS-calculated bmi and bmi_classification values along with 
-  height_cm/weight_kg to the backend — but the backend must NOT blindly trust these; 
-  recompute and validate server-side too (see Service layer below) so a tampered 
-  client request can't insert a fake BMI/classification pair.
+### 1a. Update the existing rollover logic
+In the rollover method you located in step 2 above: after successfully
+inserting the new student row for the new school year, **update the
+original student row's `status` to `'archived'`** in the same
+transaction/flow (don't leave this as a separate manual step). Keep the
+newly-inserted row's `status` as `'active'` (the column default already
+handles this).
 
-BACKEND:
+### 1b. Filter archived students out of teacher-facing views
+Everywhere a teacher currently lists/selects students (e.g.
+`AcademicProfileModel::index()`, `StudentsModel` listing, any student
+dropdown used for Add modals across the teacher module), add
+`AND s.status = 'active'` (or `students.status = 'active'`, matching
+whatever alias is used in that query) to the WHERE clause, so archived/
+rolled-over students stop appearing in active-year workflows. Go through
+each teacher model that queries `students` and apply this consistently —
+list out which files you changed.
 
-1. StudentHealthModel.php
-   - protected $health_profiles = 'health_profiles'; protected $student = 'students'; 
-     protected $sections = 'sections'; protected $school_year = 'school_year';
-   - index($teacher_id, $student_id = null): SELECT hp.*, s.first_name AS 
-     student_first_name, s.middle_name AS student_middle_name, s.last_name AS 
-     student_last_name, s.suffix AS student_suffix, sy.school_year AS school_year 
-     FROM health_profiles hp LEFT JOIN students s ON hp.student_id = s.id 
-     LEFT JOIN sections sec ON s.section_id = sec.id LEFT JOIN school_year sy ON 
-     hp.school_year_id = sy.id WHERE sec.adviser_id = ? [AND hp.student_id = ? if given]
-   - getById($id, $teacher_id): same join pattern, WHERE hp.id = ? AND sec.adviser_id = ?
-   - create($data): INSERT INTO health_profiles (student_id, school_year_id, height_cm, 
-     weight_kg, bmi, bmi_classification, blood_type, allergies, medical_conditions, 
-     vision_screening_result, hearing_screening_result, immunization_status, recorded_by) 
-     VALUES (...) with matching bind_param types
-   - update($id, $data): UPDATE health_profiles SET ... WHERE id = ?
-   - delete($id): DELETE FROM health_profiles WHERE id = ?
-   - Same try/catch + error_log("Error [action] health profile: " . $e->getMessage()) 
-     pattern as StudentBehavioralProfileModel.php for every method.
+---
 
-2. StudentHealthService.php (NEW)
-   - Sits between Controller and Model. Responsibilities:
-     - Validate student_id, school_year_id required and are integers.
-     - Verify student_id belongs to the logged-in teacher (via the same 
-       students->sections->adviser_id ownership check) before allowing create/update — 
-       reuse/query the Model or a shared helper for this, do not skip it.
-     - SERVER-SIDE RECOMPUTE of BMI: given height_cm and weight_kg from the request, 
-       recalculate bmi and bmi_classification using the same formula/thresholds as the 
-       JS, and OVERWRITE whatever bmi/bmi_classification values the client sent — never 
-       trust client-calculated BMI directly.
-     - Validate height_cm and weight_kg are positive numbers within a sane range 
-       (e.g. height 50-250 cm, weight 5-200 kg) — reject with a clear error otherwise.
-     - Validate blood_type against a known set if provided (A+, A-, B+, B-, AB+, AB-, O+, O-) 
-       or allow null.
-     - Return consistent success/error arrays to the Controller.
+## Part 2 — Administrative "Compiled Records" module
 
-3. StudentHealthController.php
-   - extends Controller, implements index(), create($data), update($id, $data), 
-     delete($id) matching the abstract signatures.
-   - Delegates all logic to StudentHealthService (not directly to the Model).
-   - Pulls teacher_id from session and passes it down.
+### Access model — how this differs from the teacher module
+A teacher only sees their own advisees' data (`sections.adviser_id =
+teacher_id`, or via `section_teacher_assignments` — confirm which of the
+two the codebase actually uses for teacher-scoping today, since both exist
+in the schema, and mirror whichever one is the real source of truth).
 
-4. student-health.php
-   - Entry point: bootstraps mysqli connection + session, instantiates 
-     Model -> Service -> Controller, routes HTTP method (GET=index, POST=create, 
-     PUT/PATCH=update, DELETE=delete) to the Controller, matching how attendance.php 
-     does its routing/input parsing (php://input for JSON, $_GET for query params).
-   - Renders the list/table of health records for the teacher's students plus a 
-     form (with the readonly BMI/classification fields wired to student-health.js).
+The `administrative` role has **no such restriction** — they compile
+records across **all** teachers and **all** sections, since their job is to
+consolidate what every teacher entered over the school year. So every query
+in this new module joins across `students` → `sections` →
+`section_teacher_assignments` (to resolve which teacher is/was assigned to
+that section for that school year — this is how you determine "sino ang
+assigned teachers" per section/year, don't hardcode or guess it) → the
+relevant `*_profiles` table, with **no adviser/teacher_id filter** — only
+the filters below.
 
-5. student-health.js
-   - Handles the live BMI calculation described above.
-   - Handles form submit via fetch/AJAX to student-health.php, following the same 
-     request/response conventions already used by attendance's JS (check its fetch 
-     calls, payload shape, and success/error handling to match style).
-   - Handles populating the form for edit mode (fetch existing record, recompute BMI 
-     display from stored height/weight on load).
+### Required filters
+1. **Category** — which record type to view. Since there's no single
+   unified "records" table, this filter switches which table the query
+   reads from: `Academic`, `Behavioral`, `Developmental`, `Health`,
+   `Attendance`, `Achievements` (map directly to `academic_profiles`,
+   `behavioral_profiles`, `developmental_profiles`, `health_profiles`,
+   `attendance`, `achievements_profiles`). Build one method per category
+   (e.g. `getAcademicRecords($schoolYearId, $sectionId)`, etc.) rather than
+   trying to force all six into one generic query — they have different
+   columns.
+2. **School Year** — filter by `school_year_id` (reuse `SchoolYearModel`,
+   don't re-query school years ad hoc).
+3. **Section** — filter by `section_id`. The section dropdown options
+   should be scoped to the selected school year (a section's active
+   assignment can change per year via `section_teacher_assignments`).
 
-REQUIREMENTS:
-- mysqli + prepared statements only, no raw string concatenation of values.
-- BMI/classification are always server-recomputed in the Service layer regardless of 
-  what the client sends — this is non-negotiable, treat client BMI as display-only.
-- Every query scoped to sec.adviser_id = teacher_id, same as every other module.
-- Match existing naming, indentation, and error-handling conventions from 
-  StudentBehavioralProfileModel.php and the Attendance module.
-- If you're unsure how the Attendance module wired its Service/Controller/entry-point 
-  layering, ask me to confirm before guessing.
+Each result row should also surface **which teacher recorded/is assigned**
+(join `users` on the profile row's `recorded_by`, and/or on
+`section_teacher_assignments.teacher_id` for the section) — display the
+teacher's name so admin can see whose data they're compiling, even though
+they aren't restricted by it.
 
-Show me the full code for all five files.
+### Files to build
+Follow the same directory convention already used for the teacher module,
+under the administrative equivalent (confirm the actual folder name — it
+may be `admin`, `administrative`, or something else already established in
+the codebase; check where the rollover controller/model from Part 1 lives
+and put these alongside it):
+- Model — compiled-records queries per category as described above.
+- Controller — `index()` accepting `category`, `school_year_id`,
+  `section_id` request params, calling the matching model method, guarded
+  by `AuthRole::allowOnly(['administrative'])`.
+- View — one page with three filter dropdowns (Category, School Year,
+  Section) and a results table whose columns adapt to the selected
+  category (e.g. Academic shows Subject/Grading Period/Grade; Attendance
+  shows Date/Session/Status; Achievements shows Title/Level/Date Received,
+  etc.). Use the same table/card markup style as `academic.php`.
+
+### Constraints for this part
+- No adviser/teacher-scoping filter anywhere in this module's queries —
+  that's the entire point of the role.
+- Don't modify the underlying `*_profiles` tables or teacher-side CRUD —
+  this module is read-only compilation/reporting, not an editing surface,
+  unless a specific edit requirement is stated later.
+- Reuse `SchoolYearModel` and existing `Section`-related models if they
+  already exist rather than duplicating queries.
+
+## Deliverables
+1. Migration/ALTER statement for `students.status` + confirmation it was
+   applied.
+2. Updated rollover controller/model: archives the old row post-rollover.
+3. List of every teacher-side query updated to filter `status = 'active'`.
+4. New administrative compiled-records Model/Controller/View with the
+   Category/School Year/Section filters described above.
