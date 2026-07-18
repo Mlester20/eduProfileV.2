@@ -30,7 +30,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         }
 
         public function getStudents(){
-            return $this->studentsModel->index();
+            return $this->studentsModel->index($_SESSION['id'] ?? null);
         }
 
         public function getSchoolYears(){
