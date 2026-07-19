@@ -85,6 +85,18 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
           </ul>
         </li>
+
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">System</span>
+        </li>
+
+        <!-- Audit Log -->
+        <li class="menu-item <?php echo ($currentPage === 'audit-log.php') ? 'active' : ''; ?>">
+          <a href="audit-log.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-history"></i>
+            <div data-i18n="Audit Log">System Audit Log</div>
+          </a>
+        </li>
       </ul>
     </aside>
     <!-- / Menu -->

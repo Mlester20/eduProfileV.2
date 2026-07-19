@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../models/teacher/StudentBehavioralProfileModel.php'
 require_once __DIR__ . '/../../models/teacher/StudentDevelopmentalProfileModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class StudentsController extends Controller{
@@ -175,6 +176,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         }
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            Csrf::requireValidOnPost('../../../resources/views/teacher/students.php');
             if(isset($_POST['create_student'])){
                 $controller->create(
                     [

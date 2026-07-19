@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/teacher/ParentGuardianController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
 ?>
@@ -53,6 +54,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/ParentGuardianController.php" method="post">
+                    <?= Csrf::field() ?>
                     <div class="modal-body">
                         <input type="hidden" name="recorded_by" value="">
                         <div class="mb-3">
@@ -154,6 +156,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/ParentGuardianController.php" method="post">
+                    <?= Csrf::field() ?>
                     <input type="hidden" name="id" id="edit_parent_id" value="<?= htmlspecialchars($parentGuardian['id'] ?? '') ?>">
                     <div class="modal-body">
                         <input type="hidden" name="recorded_by" value="">
@@ -296,6 +299,7 @@ AuthRole::allowOnly(['teacher']);
                                     >Edit</button>
                                     
                                     <form action="../../../app/controllers/teacher/ParentGuardianController.php" method="post" class="d-inline">
+                                        <?= Csrf::field() ?>
                                         <input type="hidden" name="id" value="<?= htmlspecialchars($parentGuardian['id']); ?>">
                                         <button 
                                             type="submit" 

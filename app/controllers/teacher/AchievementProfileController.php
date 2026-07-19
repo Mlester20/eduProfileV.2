@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../core/Controller.php';
@@ -149,6 +150,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         $activeSchoolYear = $controller->getActiveSchoolYear();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            Csrf::requireValidOnPost('../../../resources/views/teacher/achievement-profile.php');
             $achievement_id = $_POST['id'] ?? null;
 
             if(isset($_POST['add_achievement'])){

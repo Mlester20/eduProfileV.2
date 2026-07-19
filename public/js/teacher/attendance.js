@@ -310,10 +310,12 @@ document.addEventListener('DOMContentLoaded', function(){
             saveBtn.disabled = true
             saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...'
 
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+
             fetch('../../../app/api/teacher/attendance-save-bulk.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ attendance_date: date, records: records })
+                body: JSON.stringify({ attendance_date: date, records: records, csrf_token: csrfToken })
             })
                 .then(function(response){ return response.json() })
                 .then(function(data){

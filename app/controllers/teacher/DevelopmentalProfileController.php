@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../models/teacher/StudentDevelopmentalProfileModel.p
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
@@ -145,6 +146,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         }
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            Csrf::requireValidOnPost('../../../resources/views/teacher/student-developmental.php');
             if(isset($_POST['create_developmental_profile'])){
                 $controller->create(
                     [

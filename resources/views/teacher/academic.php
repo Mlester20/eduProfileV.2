@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/teacher/AcademicProfileController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
 ?>
@@ -52,6 +53,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/AcademicProfileController.php" method="post">
+                    <?= Csrf::field() ?>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -119,6 +121,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/AcademicProfileController.php" method="post">
+                    <?= Csrf::field() ?>
                     <input type="hidden" name="id" id="edit_academic_id">
                     <div class="modal-body">
                         <div class="row">
@@ -228,6 +231,7 @@ AuthRole::allowOnly(['teacher']);
                                 </button>
                                 
                                 <form action="../../../app/controllers/teacher/AcademicProfileController.php" method="post" class="d-inline">
+                                    <?= Csrf::field() ?>
                                 
                                     <input type="hidden" name="id" value="<?php echo $profile['id']; ?>">
                                     <button 

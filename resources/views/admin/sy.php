@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/admin/SchoolYearController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['admin']);
 ?>
@@ -58,6 +59,7 @@ AuthRole::allowOnly(['admin']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/admin/SchoolYearController.php" method="POST">
+                    <?= Csrf::field() ?>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="school_year" class="form-label">School Year</label>
@@ -92,6 +94,7 @@ AuthRole::allowOnly(['admin']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/admin/SchoolYearController.php" method="POST">
+                    <?= Csrf::field() ?>
                     <input type="hidden" name="id" id="edit_sy_id">
                     <div class="modal-body">
                         <div class="mb-3">
@@ -177,6 +180,7 @@ AuthRole::allowOnly(['admin']);
                       Edit
                     </button>
                     <form action="../../../app/controllers/admin/SchoolYearController.php" method="POST" style="display:inline-block;">
+                        <?= Csrf::field() ?>
                       <input type="hidden" name="id" value="<?= htmlspecialchars($sy['id']); ?>">
                       <button 
                           type="submit" 

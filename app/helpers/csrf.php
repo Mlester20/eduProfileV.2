@@ -27,4 +27,18 @@ class Csrf {
             exit();
         }
     }
+
+    /**
+     * Verifies a token passed explicitly (e.g. from a decoded JSON body) and
+     * responds with a 403 JSON error instead of redirecting. For AJAX/fetch
+     * endpoints where a Location redirect would break the caller.
+     */
+    public static function requireValidJson(?string $token): void {
+        if (!self::isValid($token)) {
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Invalid or missing CSRF token. Please refresh the page and try again.']);
+            exit();
+        }
+    }
 }

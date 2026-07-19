@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../middleware/Auth.php';
 
     class SchoolYearController extends Controller{
@@ -104,6 +105,7 @@ require_once __DIR__ . '/../../middleware/Auth.php';
     }
 
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        Csrf::requireValidOnPost('../../../resources/views/admin/sy.php');
         if(isset($_POST['create_sy'])){
             $controller->create([
                 'school_year' => $_POST['school_year'],

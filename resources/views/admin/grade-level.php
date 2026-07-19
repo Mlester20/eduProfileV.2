@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/admin/GradeLevelsController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['admin']);
 
@@ -53,6 +54,7 @@ AuthRole::allowOnly(['admin']);
                     <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/admin/GradeLevelsController.php" method="post">
+                    <?= Csrf::field() ?>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="grade_level" class="form-label">Grade Level</label>
@@ -86,6 +88,7 @@ AuthRole::allowOnly(['admin']);
                     <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/admin/GradeLevelsController.php" method="post">
+                    <?= Csrf::field() ?>
                     <input type="hidden" name="id" id="edit_grade_level_id">
                     <div class="modal-body">
                         <div class="mb-3">
@@ -141,6 +144,7 @@ AuthRole::allowOnly(['admin']);
                                     </button>
 
                                     <form action="../../../app/controllers/admin/GradeLevelsController.php" method="post" style="display: inline;">
+                                        <?= Csrf::field() ?>
                                         <input type="hidden" name="id" value="<?= htmlspecialchars($grade_level['id']); ?>" >
 
                                         <button 

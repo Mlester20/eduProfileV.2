@@ -73,6 +73,103 @@ require_once __DIR__ . '/../core/Model.php';
                 return [];
             }
         }
+
+        /**
+         * Builds the shared WHERE clause + bind params for the audit log
+         * browser's filters, so getPageFiltered()/countFiltered() stay in
+         * sync instead of duplicating the filter logic twice.
+         */
+        private function buildFilterClause($filters) {
+            $where = [];
+            $types = '';
+            $params = [];
+
+            if (!empty($filters['module'])) {
+                $where[] = 'al.module = ?';
+                $types .= 's';
+                $params[] = $filters['module'];
+            }
+            if (!empty($filters['role'])) {
+                $where[] = 'al.role = ?';
+                $types .= 's';
+                $params[] = $filters['role'];
+            }
+            if (!empty($filters['date_from'])) {
+                $where[] = 'al.created_at >= ?';
+                $types .= 's';
+                $params[] = $filters['date_from'] . ' 00:00:00';
+            }
+            if (!empty($filters['date_to'])) {
+                $where[] = 'al.created_at <= ?';
+                $types .= 's';
+                $params[] = $filters['date_to'] . ' 23:59:59';
+            }
+            if (!empty($filters['search'])) {
+                $where[] = '(al.action LIKE ? OR al.description LIKE ? OR u.full_name LIKE ?)';
+                $like = '%' . $filters['search'] . '%';
+                $types .= 'sss';
+                $params[] = $like;
+                $params[] = $like;
+                $params[] = $like;
+            }
+
+            $clause = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+            return [$clause, $types, $params];
+        }
+
+        /** Paginated, filterable audit log listing for the admin System Audit Log page. */
+        public function getPageFiltered($limit, $offset, $filters = []) {
+            try {
+                [$whereClause, $types, $params] = $this->buildFilterClause($filters);
+
+                $query = "SELECT al.*, u.full_name AS actor_name
+                    FROM audit_logs al
+                    LEFT JOIN users u ON al.user_id = u.id
+                    {$whereClause}
+                    ORDER BY al.created_at DESC, al.id DESC
+                    LIMIT ? OFFSET ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param($types . 'ii', ...[...$params, $limit, $offset]);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            } catch (Exception $e) {
+                error_log("Error fetching filtered audit logs: " . $e->getMessage());
+                return [];
+            }
+        }
+
+        public function countFiltered($filters = []) {
+            try {
+                [$whereClause, $types, $params] = $this->buildFilterClause($filters);
+
+                $query = "SELECT COUNT(*) AS total
+                    FROM audit_logs al
+                    LEFT JOIN users u ON al.user_id = u.id
+                    {$whereClause}";
+                $stmt = $this->con->prepare($query);
+                if ($types) {
+                    $stmt->bind_param($types, ...$params);
+                }
+                $stmt->execute();
+                $row = $stmt->get_result()->fetch_assoc();
+                return (int) ($row['total'] ?? 0);
+            } catch (Exception $e) {
+                error_log("Error counting filtered audit logs: " . $e->getMessage());
+                return 0;
+            }
+        }
+
+        /** Distinct module values, for the audit log page's Module filter dropdown. */
+        public function getDistinctModules() {
+            try {
+                $result = $this->con->query("SELECT DISTINCT module FROM audit_logs ORDER BY module ASC");
+                return array_column($result->fetch_all(MYSQLI_ASSOC), 'module');
+            } catch (Exception $e) {
+                error_log("Error fetching distinct modules: " . $e->getMessage());
+                return [];
+            }
+        }
     }
 
 ?>

@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . '/../../../app/controllers/teacher/StudentHealthController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
@@ -37,6 +38,7 @@ if($isAjax){
                 echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
                 break;
             }
+            Csrf::requireValidJson($data['csrf_token'] ?? null);
             echo json_encode($controller->create($data));
             break;
 
@@ -49,6 +51,7 @@ if($isAjax){
                 echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
                 break;
             }
+            Csrf::requireValidJson($data['csrf_token'] ?? null);
             echo json_encode($controller->update((int) $data['id'], $data));
             break;
 
@@ -61,6 +64,7 @@ if($isAjax){
                 echo json_encode(['success' => false, 'message' => 'Missing record id.']);
                 break;
             }
+            Csrf::requireValidJson($data['csrf_token'] ?? null);
             echo json_encode($controller->delete($id));
             break;
 
@@ -90,6 +94,7 @@ $active_school_year_id = !empty($active_sy) ? $active_sy[0]['id'] : null;
 >
 <head>
   <meta charset="utf-8" />
+  <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
   <title><?php require_once __DIR__ . '/../../../app/helpers/title.php'; ?> | Student Health Profiles</title>
   <meta name="description" content="" />

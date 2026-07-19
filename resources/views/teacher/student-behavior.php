@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/teacher/StudentBehaviorProfileController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
 ?>
@@ -59,6 +60,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/StudentBehaviorProfileController.php" method="post">
+                    <?= Csrf::field() ?>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -94,7 +96,13 @@ AuthRole::allowOnly(['teacher']);
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="category" class="form-label">Category</label>
-                                <input type="text" class="form-control" id="category" name="category" required>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="" selected disabled>Select category</option>
+                                    <option value="Positive Behavior">Positive Behavior</option>
+                                    <option value="Disciplinary">Disciplinary</option>
+                                    <option value="Social-Emotional">Social-Emotional</option>
+                                    <option value="Other">Other</option>
+                                </select>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="observation" class="form-label">Observation</label>
@@ -128,6 +136,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/StudentBehaviorProfileController.php" method="post">
+                    <?= Csrf::field() ?>
                   <input type="hidden" name="id" id="edit_student_behavioral_id">
                     <div class="modal-body">
                         <div class="row">
@@ -164,7 +173,13 @@ AuthRole::allowOnly(['teacher']);
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="edit_category" class="form-label">Category</label>
-                                <input type="text" class="form-control" id="edit_category" name="category" required>
+                                <select class="form-select" id="edit_category" name="category" required>
+                                    <option value="" selected disabled>Select category</option>
+                                    <option value="Positive Behavior">Positive Behavior</option>
+                                    <option value="Disciplinary">Disciplinary</option>
+                                    <option value="Social-Emotional">Social-Emotional</option>
+                                    <option value="Other">Other</option>
+                                </select>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="edit_observation" class="form-label">Observation</label>
@@ -312,6 +327,7 @@ AuthRole::allowOnly(['teacher']);
                     </button>
 
                     <form action="../../../app/controllers/teacher/StudentBehaviorProfileController.php" method="post" class="d-inline">
+                        <?= Csrf::field() ?>
                       <input type="hidden" name="id" value="<?= htmlspecialchars($student_behavioral_profile['id']); ?>">
                         <button
                           type="submit"

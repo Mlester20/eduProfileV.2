@@ -2,6 +2,8 @@
 session_start();
 require_once __DIR__ . '/../../../app/controllers/teacher/AttendanceController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
+require_once __DIR__ . '/../../../database/config/config.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
 
@@ -21,6 +23,7 @@ $students = $controller->getStudents();
 >
 <head>
   <meta charset="utf-8" />
+  <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
   <title><?php require_once __DIR__ . '/../../../app/helpers/title.php'; ?> | Attendance</title>
   <meta name="description" content="" />

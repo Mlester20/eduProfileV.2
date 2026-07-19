@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/teacher/ParentGuardianModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
@@ -122,6 +123,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         $students = $controller->students();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            Csrf::requireValidOnPost('../../../resources/views/teacher/parent-guardian.php');
             if(isset($_POST['create_parent_guardian'])){
                 $controller->create(
                     [

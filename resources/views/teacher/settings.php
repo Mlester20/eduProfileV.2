@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/models/UpdateProfileModel.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
@@ -130,6 +131,7 @@ $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? 
                         <h5 class="card-title mb-4">Update Profile</h5>
 
                         <form action="../../../app/controllers/UpdateProfile.php" method="POST" enctype="multipart/form-data">
+                            <?= Csrf::field() ?>
                             <!-- BASIC INFORMATION -->
                             <div class="mb-4">
                                 <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.75rem; letter-spacing: 0.5px;">Basic Information</h6>

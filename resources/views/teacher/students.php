@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/teacher/StudentsController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/helpers/StudentsAge.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
@@ -57,6 +58,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/StudentsController.php" method="post">
+                    <?= Csrf::field() ?>
                     <div class="modal-body">
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
@@ -171,6 +173,7 @@ AuthRole::allowOnly(['teacher']);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/teacher/StudentsController.php" method="post">
+                    <?= Csrf::field() ?>
                   <input type="hidden" name="id" id="edit_student_id">
                     <div class="modal-body">
                         <div class="row g-3">
@@ -444,6 +447,7 @@ AuthRole::allowOnly(['teacher']);
 
                       <!-- delete method -->
                       <form action="../../../app/controllers/teacher/StudentsController.php" method="post" class="d-inline">
+                          <?= Csrf::field() ?>
                         <input type="hidden" name="id" value="<?= htmlspecialchars($student['id']) ?>">
                         <button
                           type="submit"

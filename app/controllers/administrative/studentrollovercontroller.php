@@ -3,6 +3,7 @@ session_start();
 require_once __DIR__ . '/../../models/administrative/studentrollovermodel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../middleware/Auth.php';
 require_once __DIR__ . '/../../core/Controller.php';
@@ -88,6 +89,7 @@ AuthRole::allowOnly(['administrative']);
         $school_years = $controller->getSchoolYears();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rollover_students'])){
+            Csrf::requireValidOnPost('../../../resources/views/administrative/student-rollover.php');
             $controller->create(
                 [
                     'student_ids' => $_POST['student_ids'] ?? [],

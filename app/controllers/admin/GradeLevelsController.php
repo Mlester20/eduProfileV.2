@@ -105,6 +105,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         $grade_levels = $controller->index();
         
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            Csrf::requireValidOnPost('../../../resources/views/admin/grade-level.php');
 
             if(isset($_POST['create_grade_level'])){
                 $controller->create(

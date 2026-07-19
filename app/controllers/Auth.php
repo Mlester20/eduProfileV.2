@@ -4,6 +4,7 @@ session_start();
 require_once __DIR__ . '/../../app/models/AuthModel.php';
 require_once __DIR__ . '/../../database/config/config.php';
 require_once __DIR__ . '/../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../app/helpers/csrf.php';
 require_once __DIR__ . '/../core/Model.php';
 
 class AuthController extends Model{
@@ -21,6 +22,7 @@ class AuthController extends Model{
     public function handle(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            Csrf::requireValidOnPost('../../../index.php');
             $this->login();
         }
     }

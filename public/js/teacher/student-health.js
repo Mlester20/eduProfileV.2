@@ -182,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function submitHealthProfile(url, method, payload){
+        payload.csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         fetch(url, {
             method: method,
             headers: {
@@ -312,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ id: id })
+                body: JSON.stringify({ id: id, csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content') })
             })
                 .then(function(response){ return response.json() })
                 .then(function(data){

@@ -2,6 +2,7 @@
 session_start();
 
 require_once __DIR__ . '/../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../app/helpers/csrf.php';
 require_once __DIR__ . '/../models/UpdateProfileModel.php';
 require_once __DIR__ . '/../../database/config/config.php';
 
@@ -13,6 +14,7 @@ if (!isset($_SESSION['id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Csrf::requireValidOnPost($_SERVER['HTTP_REFERER'] ?? '../../../index.php');
     $updateProfileModel = new UpdateProfileModel($con);
     
     $userId = $_SESSION['id'];

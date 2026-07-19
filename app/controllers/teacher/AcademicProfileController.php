@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../core/Controller.php';
@@ -144,6 +145,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         $school_years = $controller->getSchoolYears();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            Csrf::requireValidOnPost('../../../resources/views/teacher/academic.php');
             $academic_id = $_POST['id'] ?? null;
 
             if(isset($_POST['add_academic_profile'])){

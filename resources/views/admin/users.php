@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../../app/controllers/admin/UsersController.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['admin']);
 ?>
@@ -63,6 +64,7 @@ AuthRole::allowOnly(['admin']);
                 </div>
                 <div class="modal-body">
                     <form id="userForm" method="POST" action="../../../app/controllers/admin/UsersController.php">
+                        <?= Csrf::field() ?>
                         <div class="mb-3">
                             <label for="fullName" class="form-label">Full Name</label>
                             <input type="text" class="form-control" id="fullName" name="full_name" placeholder="e.g., Juan Dela-Cruz" required>
@@ -102,6 +104,7 @@ AuthRole::allowOnly(['admin']);
                 </div>
                 <div class="modal-body">
                     <form id="editUserForm" method="POST" action="../../../app/controllers/admin/UsersController.php">
+                        <?= Csrf::field() ?>
                         <input type="hidden" id="editUserId" name="id">
                         <div class="mb-3">
                             <label for="editFullName" class="form-label">Full Name</label>
@@ -165,6 +168,7 @@ AuthRole::allowOnly(['admin']);
                                 </button>
                                 
                                 <form action="../../../app/controllers/admin/UsersController.php" method="POST" style="display: inline;">
+                                    <?= Csrf::field() ?>
                                     <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>">
                                     <button 
                                         type="submit" 

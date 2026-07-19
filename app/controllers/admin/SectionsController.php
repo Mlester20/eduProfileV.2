@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../models/admin/UsersModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class SectionsController extends Controller{
@@ -120,6 +121,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         $grade_levels = $controller->getGradeLevel();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            Csrf::requireValidOnPost('../../../resources/views/admin/sections.php');
             if(isset($_POST['create_section'])){
                 $controller->create(
                     [

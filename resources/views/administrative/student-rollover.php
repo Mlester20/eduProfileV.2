@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/administrative/studentrollovercontroller.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
 ?>
@@ -60,6 +61,7 @@ AuthRole::allowOnly(['administrative']);
                 <p class="text-muted mb-0">No active students found for the selected school year.</p>
             <?php else: ?>
                 <form action="../../../app/controllers/administrative/studentrollovercontroller.php" method="post">
+                    <?= Csrf::field() ?>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="new_school_year_id" class="form-label">Roll Over To</label>

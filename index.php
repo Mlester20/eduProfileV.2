@@ -2,6 +2,7 @@
 session_start();
 
 require_once __DIR__ . '/app/helpers/flashMessage.php';
+require_once __DIR__ . '/app/helpers/csrf.php';
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +63,7 @@ require_once __DIR__ . '/app/helpers/flashMessage.php';
               <p class="auth-desc">Sign in to your account to access the student profiling system.</p>
 
               <form id="formAuthentication" class="mb-3" action="/app/controllers/Auth.php" method="POST">
+                <?= Csrf::field() ?>
 
                 <div class="mb-3">
                   <label for="email" class="auth-label">Email Address</label>

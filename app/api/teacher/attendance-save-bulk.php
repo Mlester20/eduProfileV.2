@@ -4,6 +4,7 @@ session_start();
 require_once __DIR__ . '/../../../database/config/config.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/controllers/teacher/AttendanceController.php';
 
 AuthRole::allowOnly(['teacher']);
@@ -23,6 +24,8 @@ if (!is_array($data)) {
     echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
     exit();
 }
+
+Csrf::requireValidJson($data['csrf_token'] ?? null);
 
 $controller = new AttendanceController($con);
 echo json_encode($controller->saveBulk($data));
