@@ -168,6 +168,18 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">Alerts</span>
+        </li>
+
+        <!-- At-Risk Students -->
+        <li class="menu-item <?php echo ($currentPage === 'at-risk.php') ? 'active' : ''; ?>">
+          <a href="at-risk.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-error-circle"></i>
+            <div data-i18n="At-Risk Students">At-Risk Students</div>
+          </a>
+        </li>
+
+        <li class="menu-header small text-uppercase">
           <span class="menu-header-text">History</span>
         </li>
 

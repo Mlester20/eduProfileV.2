@@ -1,16 +1,18 @@
 <?php
 
     /**
-     * Calls the Gemini API to turn computed at-risk metrics into a short
-     * narrative insight. Only ever receives aggregate counts (grade level,
-     * section, failing/absence/disciplinary counts) — never the student's
-     * name — so no personally-identifiable data leaves the server.
+     * Calls the Gemini API to turn computed metrics into short narrative
+     * text — either a per-student at-risk insight or a school-wide
+     * dashboard summary. Both only ever receive aggregate counts (grade
+     * level, section, failing/absence/disciplinary counts) — never a
+     * student's name — so no personally-identifiable data leaves the
+     * server.
      */
 
     class GeminiService{
         const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
-        private static function buildPrompt($metrics){
+        private static function buildInsightPrompt($metrics){
             $lines = [];
             $lines[] = "You are assisting a school administrator reviewing a learner flagged as at-risk.";
             $lines[] = "Grade level: " . ($metrics['grade_name'] ?? 'unknown');
@@ -22,7 +24,32 @@
             return implode("\n", $lines);
         }
 
-        public static function generateInsight($metrics){
+        private static function buildSummaryPrompt($metrics){
+            $lines = [];
+            $lines[] = "You are assisting a school administrator with a high-level overview of their school for the current school year.";
+            $lines[] = "School year: " . ($metrics['school_year'] ?? 'unknown');
+            $lines[] = "Active learners: " . (int) ($metrics['active_learners'] ?? 0);
+            $lines[] = "Archived learners: " . (int) ($metrics['archived_learners'] ?? 0);
+            $lines[] = "Total sections: " . (int) ($metrics['total_sections'] ?? 0);
+            $lines[] = "Sections without an assigned adviser: " . (int) ($metrics['sections_without_adviser'] ?? 0);
+            $lines[] = "Learners currently flagged at-risk: " . (int) ($metrics['at_risk_count'] ?? 0);
+            $lines[] = "  - of which failing academically: " . (int) ($metrics['at_risk_failing'] ?? 0);
+            $lines[] = "  - of which have chronic absences: " . (int) ($metrics['at_risk_absences'] ?? 0);
+            $lines[] = "  - of which have repeated disciplinary incidents: " . (int) ($metrics['at_risk_disciplinary'] ?? 0);
+
+            $byLocation = $metrics['at_risk_by_location'] ?? [];
+            if(!empty($byLocation)){
+                $lines[] = "At-risk learners by grade level and section:";
+                foreach($byLocation as $line){
+                    $lines[] = "  - " . $line;
+                }
+            }
+
+            $lines[] = "Write a brief (3-4 sentence), professional executive summary for the administrator. Explicitly name the specific grade level(s) and section(s) that have at-risk learners (from the breakdown above) so the administrator immediately knows where to focus, rather than speaking only in generalities. Highlight the most important pattern or concern and recommend one focus area for the coming weeks. Do not simply restate the raw counts. Do not mention any individual learner (you were not given any names).";
+            return implode("\n", $lines);
+        }
+
+        private static function callApi($prompt){
             $secretsFile = __DIR__ . '/../../database/config/secrets.php';
             if(!defined('GEMINI_API_KEY') && file_exists($secretsFile)){
                 require_once $secretsFile;
@@ -33,7 +60,6 @@
             }
 
             try{
-                $prompt = self::buildPrompt($metrics);
                 $payload = json_encode([
                     'contents' => [
                         ['parts' => [['text' => $prompt]]]
@@ -67,5 +93,13 @@
                 error_log("GeminiService: " . $e->getMessage());
                 return null;
             }
+        }
+
+        public static function generateInsight($metrics){
+            return self::callApi(self::buildInsightPrompt($metrics));
+        }
+
+        public static function generateDashboardSummary($metrics){
+            return self::callApi(self::buildSummaryPrompt($metrics));
         }
     }

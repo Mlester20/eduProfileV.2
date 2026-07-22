@@ -4,6 +4,7 @@ session_start();
 require_once __DIR__ . '/../../models/administrative/learnerprofilemodel.php';
 require_once __DIR__ . '/../../models/administrative/compiledrecordsmodel.php';
 require_once __DIR__ . '/../../models/administrative/atriskmodel.php';
+require_once __DIR__ . '/../../models/administrative/dashboardsummarymodel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../models/admin/UsersModel.php';
@@ -24,6 +25,7 @@ AuthRole::allowOnly(['administrative']);
         protected $learnerProfileModel;
         protected $compiledRecordsModel;
         protected $atRiskModel;
+        protected $dashboardSummaryModel;
         protected $schoolYearModel;
         protected $sectionsModel;
         protected $usersModel;
@@ -33,6 +35,7 @@ AuthRole::allowOnly(['administrative']);
             $this->learnerProfileModel = new LearnerProfileModel($con);
             $this->compiledRecordsModel = new CompiledRecordsModel($con);
             $this->atRiskModel = new AtRiskModel($con);
+            $this->dashboardSummaryModel = new DashboardSummaryModel($con);
             $this->schoolYearModel = new SchoolYearModel($con);
             $this->sectionsModel = new SectionsModel($con);
             $this->usersModel = new UsersModel($con);
@@ -72,5 +75,56 @@ AuthRole::allowOnly(['administrative']);
 
         public function getRecentActivity($limit = 8){
             return $this->auditLogs->getRecent($limit);
+        }
+
+        /**
+         * Aggregate counts for the dashboard AI summary prompt — reuses
+         * getStats() plus a breakdown of *why* students are flagged
+         * at-risk, tallied from the same AtRiskModel::getAtRiskLearners()
+         * rows the At-Risk page already fetches (no new SQL).
+         */
+
+        public function getSummaryMetrics(){
+            $stats = $this->getStats();
+            $activeSyId = $stats['active_school_year']['id'] ?? null;
+
+            $atRiskLearners = $this->atRiskModel->getAtRiskLearners($activeSyId);
+            $failing = 0;
+            $absences = 0;
+            $disciplinary = 0;
+            $byLocation = [];
+            foreach($atRiskLearners as $learner){
+                if((int) $learner['failing_count'] >= 1) $failing++;
+                if((int) $learner['absence_count'] >= AtRiskModel::CHRONIC_ABSENCE_THRESHOLD) $absences++;
+                if((int) $learner['disciplinary_count'] >= AtRiskModel::DISCIPLINARY_THRESHOLD) $disciplinary++;
+
+                $location = trim(($learner['grade_name'] ?? 'Unknown grade') . ' - ' . ($learner['section_name'] ?? 'Unknown section'));
+                $byLocation[$location] = ($byLocation[$location] ?? 0) + 1;
+            }
+
+            $atRiskByLocation = [];
+            foreach($byLocation as $location => $count){
+                $atRiskByLocation[] = "{$location}: {$count} learner(s)";
+            }
+
+            return [
+                'school_year' => $stats['active_school_year']['school_year'] ?? 'unknown',
+                'active_learners' => $stats['active_learners'],
+                'archived_learners' => $stats['archived_learners'],
+                'total_sections' => $stats['total_sections'],
+                'sections_without_adviser' => count($stats['sections_without_adviser']),
+                'at_risk_count' => $stats['at_risk_count'],
+                'at_risk_failing' => $failing,
+                'at_risk_absences' => $absences,
+                'at_risk_disciplinary' => $disciplinary,
+                'at_risk_by_location' => $atRiskByLocation,
+            ];
+        }
+
+        public function getCachedSummary($schoolYearId){
+            if($schoolYearId === null){
+                return null;
+            }
+            return $this->dashboardSummaryModel->getSummary($schoolYearId);
         }
     }

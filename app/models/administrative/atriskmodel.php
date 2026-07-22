@@ -27,7 +27,7 @@ require_once __DIR__ . '/../../core/Model.php';
          * record tables per student rather than listing individual records.
          */
 
-        private function buildQuery($schoolYearId, $sectionId, $selectExtra = '', $studentId = null){
+        private function buildQuery($schoolYearId, $sectionId, $selectExtra = '', $studentId = null, $teacherId = null){
             $types = "";
             $params = [];
 
@@ -89,6 +89,17 @@ require_once __DIR__ . '/../../core/Model.php';
                 $types .= "i";
                 $params[] = $studentId;
             }
+            if($teacherId !== null){
+                // Scopes to this teacher's own advisees (the same
+                // sections.adviser_id convention every other teacher-side
+                // model uses). Doubles as the security boundary for
+                // getMetricsForStudent(): a teacher can never fetch/generate
+                // an insight for a student who isn't theirs, since the row
+                // simply won't match this filter.
+                $query .= " AND sec.adviser_id = ?";
+                $types .= "i";
+                $params[] = $teacherId;
+            }
 
             // When looking up a specific known student (getMetricsForStudent),
             // skip the threshold gate — we already know why they're flagged,
@@ -102,9 +113,9 @@ require_once __DIR__ . '/../../core/Model.php';
             return [$query, $types, $params];
         }
 
-        public function getAtRiskLearners($schoolYearId = null, $sectionId = null){
+        public function getAtRiskLearners($schoolYearId = null, $sectionId = null, $teacherId = null){
             try{
-                [$query, $types, $params] = $this->buildQuery($schoolYearId, $sectionId);
+                [$query, $types, $params] = $this->buildQuery($schoolYearId, $sectionId, '', null, $teacherId);
                 $query .= " ORDER BY s.last_name ASC, s.first_name ASC";
 
                 $stmt = $this->con->prepare($query);
@@ -120,9 +131,9 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function countAtRisk($schoolYearId = null){
+        public function countAtRisk($schoolYearId = null, $teacherId = null){
             try{
-                [$innerQuery, $types, $params] = $this->buildQuery($schoolYearId, null, '');
+                [$innerQuery, $types, $params] = $this->buildQuery($schoolYearId, null, '', null, $teacherId);
                 $query = "SELECT COUNT(*) AS total FROM ({$innerQuery}) AS at_risk";
 
                 $stmt = $this->con->prepare($query);
@@ -138,9 +149,9 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function getMetricsForStudent($studentId, $schoolYearId = null){
+        public function getMetricsForStudent($studentId, $schoolYearId = null, $teacherId = null){
             try{
-                [$query, $types, $params] = $this->buildQuery($schoolYearId, null, '', $studentId);
+                [$query, $types, $params] = $this->buildQuery($schoolYearId, null, '', $studentId, $teacherId);
                 $stmt = $this->con->prepare($query);
                 if($types !== ""){
                     $stmt->bind_param($types, ...$params);

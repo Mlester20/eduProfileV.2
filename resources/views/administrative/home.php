@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 require_once __DIR__ . '/../../../app/controllers/administrative/admindashboardcontroller.php';
 
@@ -9,6 +10,7 @@ AuthRole::allowOnly(['administrative']);
 $dashboard = new AdminDashboardController($con);
 $stats = $dashboard->getStats();
 $recentActivity = $dashboard->getRecentActivity(8);
+$cachedSummary = $dashboard->getCachedSummary($stats['active_school_year']['id'] ?? null);
 
 $moduleIcons = [
     'Students' => 'bx-user',
@@ -150,6 +152,27 @@ $moduleIcons = [
       </div>
   </div>
 
+  <!-- AI Summary -->
+  <div class="row">
+      <div class="col-12 mb-4">
+          <div class="card">
+              <h5 class="card-header d-flex align-items-center gap-2">
+                  <i class="bx bx-bulb text-warning"></i> AI Summary
+              </h5>
+              <div class="card-body">
+                  <p id="dashboardSummaryText" class="mb-3">
+                      <?php echo $cachedSummary ? nl2br(htmlspecialchars($cachedSummary['summary_text'])) : '<span class="text-muted">No summary generated yet.</span>'; ?>
+                  </p>
+                  <button type="button" class="btn btn-sm btn-outline-primary" id="generateSummaryBtn" onclick="generateDashboardSummary()">
+                      <?php echo $cachedSummary ? 'Regenerate Summary' : 'Generate Summary'; ?>
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <?= Csrf::field() ?>
+
   <div class="row">
       <!-- Records breakdown -->
       <div class="col-lg-4 mb-4">
@@ -227,5 +250,42 @@ $moduleIcons = [
   <script src="../../../public/assets/vendor/js/menu.js"></script>
   <script src="../../../public/assets/js/main.js"></script>
   <script src="../../../public/js/administrative/home.js"></script>
+  <script>
+    function generateDashboardSummary(){
+        const button = document.getElementById('generateSummaryBtn');
+        const textEl = document.getElementById('dashboardSummaryText');
+        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+        button.disabled = true;
+        const originalLabel = button.textContent;
+        button.textContent = 'Generating...';
+
+        const params = new URLSearchParams();
+        params.set('csrf_token', csrfToken);
+
+        fetch('../../../app/controllers/administrative/dashboardsummarycontroller.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                textEl.textContent = data.summary;
+                button.textContent = 'Regenerate Summary';
+            }else{
+                alert(data.message || 'Failed to generate summary.');
+                button.textContent = originalLabel;
+            }
+        })
+        .catch(() => {
+            alert('Network error while generating summary.');
+            button.textContent = originalLabel;
+        })
+        .finally(() => {
+            button.disabled = false;
+        });
+    }
+  </script>
 </body>
 </html>
