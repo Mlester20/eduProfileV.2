@@ -134,6 +134,20 @@ $moduleIcons = [
               </div>
           </div>
       </div>
+      <div class="col-md-3 col-sm-6 mb-4">
+          <div class="card h-100">
+              <a href="at-risk.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
+                  <div>
+                      <span class="text-muted d-block mb-1">At-Risk Learners</span>
+                      <h3 class="mb-0"><?php echo (int) $stats['at_risk_count']; ?></h3>
+                      <span class="text-muted small">this school year</span>
+                  </div>
+                  <div class="avatar">
+                      <span class="avatar-initial rounded bg-label-danger"><i class="bx bx-error-circle fs-4"></i></span>
+                  </div>
+              </a>
+          </div>
+      </div>
   </div>
 
   <div class="row">
@@ -165,6 +179,9 @@ $moduleIcons = [
                   </a>
                   <a href="student-rollover.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                       <i class="bx bx-transfer text-primary"></i> Student Rollover
+                  </a>
+                  <a href="at-risk.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                      <i class="bx bx-error-circle text-primary"></i> At-Risk Learners
                   </a>
               </div>
           </div>

@@ -36,6 +36,11 @@ class AuthController extends Model{
         $row = $this->authModel->getUserByEmail($email);
 
         if ($row && $this->authModel->verifyPassword($password, $row['password'])) {
+            if (($row['status'] ?? 'active') !== 'active') {
+                FlashMessage::setFlash('error', 'This account has been deactivated. Please contact the system administrator.');
+                header('Location: ' . base_url('index.php'));
+                exit();
+            }
             $this->startUserSession($row);
             $this->redirectByRole($row['role']);
         } else {

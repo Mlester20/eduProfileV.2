@@ -3,6 +3,73 @@ require_once __DIR__ . '/../../../app/controllers/administrative/compiledrecords
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
+
+/**
+ * One short summary string per category so the main table stays scannable
+ * instead of growing a column per category's full field set.
+ */
+function compiledRecordSummary($category, $record){
+    switch($category){
+        case 'Academic':
+            return ($record['subject_name'] ?? '') . ' — ' . ($record['grade'] ?? '');
+        case 'Behavioral':
+            return $record['category'] ?? '';
+        case 'Developmental':
+            return $record['domain'] ?? '';
+        case 'Health':
+            return $record['bmi_classification'] ?? '';
+        case 'Attendance':
+            return ($record['attendance_date'] ?? '') . ' — ' . ($record['status'] ?? '');
+        case 'Achievements':
+            return $record['title'] ?? '';
+        default:
+            return '';
+    }
+}
+
+// Full field list per category, shown in the "View" modal rather than as
+// individual table columns.
+$categoryFieldLabels = [
+    'Academic' => [
+        'subject_name' => 'Subject',
+        'grading_period' => 'Grading Period',
+        'grade' => 'Grade',
+        'remarks' => 'Remarks',
+    ],
+    'Behavioral' => [
+        'observation_date' => 'Observation Date',
+        'category' => 'Category',
+        'observation' => 'Observation',
+        'intervention' => 'Intervention',
+        'remarks' => 'Remarks',
+    ],
+    'Developmental' => [
+        'domain' => 'Domain',
+        'observation' => 'Observation',
+        'recommendation' => 'Recommendation',
+    ],
+    'Health' => [
+        'height_cm' => 'Height (cm)',
+        'weight_kg' => 'Weight (kg)',
+        'bmi' => 'BMI',
+        'bmi_classification' => 'BMI Classification',
+        'blood_type' => 'Blood Type',
+        'allergies' => 'Allergies',
+    ],
+    'Attendance' => [
+        'attendance_date' => 'Date',
+        'session' => 'Session',
+        'status' => 'Status',
+        'remarks' => 'Remarks',
+    ],
+    'Achievements' => [
+        'title' => 'Title',
+        'level' => 'Level',
+        'category' => 'Category',
+        'date_received' => 'Date Received',
+        'awarding_body' => 'Awarding Body',
+    ],
+][$category] ?? [];
 ?>
 <!DOCTYPE html>
 <html
@@ -80,104 +147,80 @@ AuthRole::allowOnly(['administrative']);
                     <tr>
                         <th>#</th>
                         <th>Student Name</th>
-                        <th>School Year</th>
                         <th>Section</th>
-                        <?php if($category === 'Academic'): ?>
-                            <th>Subject</th>
-                            <th>Grading Period</th>
-                            <th>Grade</th>
-                            <th>Remarks</th>
-                        <?php elseif($category === 'Behavioral'): ?>
-                            <th>Observation Date</th>
-                            <th>Category</th>
-                            <th>Observation</th>
-                            <th>Intervention</th>
-                            <th>Remarks</th>
-                        <?php elseif($category === 'Developmental'): ?>
-                            <th>Domain</th>
-                            <th>Observation</th>
-                            <th>Recommendation</th>
-                        <?php elseif($category === 'Health'): ?>
-                            <th>Height (cm)</th>
-                            <th>Weight (kg)</th>
-                            <th>BMI</th>
-                            <th>BMI Classification</th>
-                            <th>Blood Type</th>
-                            <th>Allergies</th>
-                        <?php elseif($category === 'Attendance'): ?>
-                            <th>Date</th>
-                            <th>Session</th>
-                            <th>Status</th>
-                            <th>Remarks</th>
-                        <?php elseif($category === 'Achievements'): ?>
-                            <th>Title</th>
-                            <th>Level</th>
-                            <th>Category</th>
-                            <th>Date Received</th>
-                            <th>Awarding Body</th>
-                        <?php endif; ?>
-                        <th>Recorded By</th>
+                        <th>School Year</th>
+                        <th><?php echo htmlspecialchars($category); ?> Summary</th>
                         <th>Assigned Teacher</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach(($compiledRecords ?? []) as $index => $record): ?>
+                        <?php
+                            $jsRecord = $record;
+                            $jsRecord['student_name'] = trim($record['student_first_name'] . ' ' . ($record['student_middle_name'] ?? '') . ' ' . $record['student_last_name'] . ' ' . ($record['student_suffix'] ?? ''));
+                            $jsRecord['section_display'] = trim(($record['grade_name'] ?? '') . ' - ' . ($record['section_name'] ?? ''));
+                        ?>
                         <tr>
                             <td><?php echo $index + 1; ?></td>
-                            <td><?php echo htmlspecialchars(trim($record['student_first_name'] . ' ' . ($record['student_middle_name'] ?? '') . ' ' . $record['student_last_name'] . ' ' . ($record['student_suffix'] ?? ''))); ?></td>
+                            <td><?php echo htmlspecialchars($jsRecord['student_name']); ?></td>
+                            <td><?php echo htmlspecialchars($jsRecord['section_display']); ?></td>
                             <td><?php echo htmlspecialchars($record['school_year'] ?? ''); ?></td>
-                            <td><?php echo htmlspecialchars(($record['grade_name'] ?? '') . ' - ' . ($record['section_name'] ?? '')); ?></td>
-                            <?php if($category === 'Academic'): ?>
-                                <td><?php echo htmlspecialchars($record['subject_name'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['grading_period'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['grade'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['remarks'] ?? ''); ?></td>
-                            <?php elseif($category === 'Behavioral'): ?>
-                                <td><?php echo htmlspecialchars($record['observation_date'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['category'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['observation'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['intervention'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['remarks'] ?? ''); ?></td>
-                            <?php elseif($category === 'Developmental'): ?>
-                                <td><?php echo htmlspecialchars($record['domain'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['observation'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['recommendation'] ?? ''); ?></td>
-                            <?php elseif($category === 'Health'): ?>
-                                <td><?php echo htmlspecialchars($record['height_cm'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['weight_kg'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['bmi'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['bmi_classification'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['blood_type'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['allergies'] ?? ''); ?></td>
-                            <?php elseif($category === 'Attendance'): ?>
-                                <td><?php echo htmlspecialchars($record['attendance_date'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['session'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['status'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['remarks'] ?? ''); ?></td>
-                            <?php elseif($category === 'Achievements'): ?>
-                                <td><?php echo htmlspecialchars($record['title'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['level'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['category'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['date_received'] ?? ''); ?></td>
-                                <td><?php echo htmlspecialchars($record['awarding_body'] ?? ''); ?></td>
-                            <?php endif; ?>
-                            <td><?php echo htmlspecialchars($record['recorded_by_name'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars(compiledRecordSummary($category, $record)); ?></td>
                             <td><?php echo htmlspecialchars($record['assigned_teacher_name'] ?? ''); ?></td>
                             <td>
                                 <span class="badge bg-label-<?php echo ($record['student_status'] ?? 'active') === 'archived' ? 'secondary' : 'success'; ?>">
                                     <?php echo htmlspecialchars(ucfirst($record['student_status'] ?? 'active')); ?>
                                 </span>
                             </td>
+                            <td>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#viewRecordModal"
+                                    onclick='viewCompiledRecord(<?php echo json_encode($jsRecord, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>)'
+                                >
+                                    <i class="bx bx-show"></i> View
+                                </button>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if(empty($compiledRecords)): ?>
                         <tr>
-                            <td colspan="20" class="text-center text-muted">No records found for the selected filters.</td>
+                            <td colspan="8" class="text-center text-muted">No records found for the selected filters.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- view modal (shared, repopulated per row via viewCompiledRecord()) -->
+    <div class="modal fade" id="viewRecordModal" tabindex="-1" aria-labelledby="viewRecordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewRecordModalLabel"><?php echo htmlspecialchars($category); ?> Record</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-borderless mb-0">
+                        <tbody>
+                            <tr><th class="text-muted" style="width:35%">Student Name</th><td id="viewStudentName"></td></tr>
+                            <tr><th class="text-muted">Section</th><td id="viewSection"></td></tr>
+                            <tr><th class="text-muted">School Year</th><td id="viewSchoolYear"></td></tr>
+                            <tr><th class="text-muted">Recorded By</th><td id="viewRecordedBy"></td></tr>
+                            <tr><th class="text-muted">Assigned Teacher</th><td id="viewAssignedTeacher"></td></tr>
+                        </tbody>
+                        <tbody id="viewRecordDetails"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -191,5 +234,30 @@ AuthRole::allowOnly(['administrative']);
   <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
   <script src="../../../public/assets/vendor/js/menu.js"></script>
   <script src="../../../public/assets/js/main.js"></script>
+  <script>
+    const categoryFieldLabels = <?php echo json_encode($categoryFieldLabels); ?>;
+
+    function viewCompiledRecord(record){
+        document.getElementById('viewStudentName').textContent = record.student_name || '';
+        document.getElementById('viewSection').textContent = record.section_display || '';
+        document.getElementById('viewSchoolYear').textContent = record.school_year || '';
+        document.getElementById('viewRecordedBy').textContent = record.recorded_by_name || '';
+        document.getElementById('viewAssignedTeacher').textContent = record.assigned_teacher_name || '';
+
+        const detailsBody = document.getElementById('viewRecordDetails');
+        detailsBody.innerHTML = '';
+        for(const key in categoryFieldLabels){
+            const row = document.createElement('tr');
+            const th = document.createElement('th');
+            th.className = 'text-muted';
+            th.textContent = categoryFieldLabels[key];
+            const td = document.createElement('td');
+            td.textContent = record[key] ?? '';
+            row.appendChild(th);
+            row.appendChild(td);
+            detailsBody.appendChild(row);
+        }
+    }
+  </script>
 </body>
 </html>

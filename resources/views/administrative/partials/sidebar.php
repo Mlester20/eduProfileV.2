@@ -53,6 +53,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
+        <!-- At-Risk Learners -->
+        <li class="menu-item <?php echo ($currentPage === 'at-risk.php') ? 'active' : ''; ?>">
+          <a href="at-risk.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-error-circle"></i>
+            <div data-i18n="At-Risk Learners">At-Risk Learners</div>
+          </a>
+        </li>
+
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">School Year</span>
         </li>

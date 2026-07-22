@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . '/../../models/administrative/learnerprofilemodel.php';
 require_once __DIR__ . '/../../models/administrative/compiledrecordsmodel.php';
+require_once __DIR__ . '/../../models/administrative/atriskmodel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../models/admin/UsersModel.php';
@@ -22,6 +23,7 @@ AuthRole::allowOnly(['administrative']);
     class AdminDashboardController{
         protected $learnerProfileModel;
         protected $compiledRecordsModel;
+        protected $atRiskModel;
         protected $schoolYearModel;
         protected $sectionsModel;
         protected $usersModel;
@@ -30,6 +32,7 @@ AuthRole::allowOnly(['administrative']);
         public function __construct($con){
             $this->learnerProfileModel = new LearnerProfileModel($con);
             $this->compiledRecordsModel = new CompiledRecordsModel($con);
+            $this->atRiskModel = new AtRiskModel($con);
             $this->schoolYearModel = new SchoolYearModel($con);
             $this->sectionsModel = new SectionsModel($con);
             $this->usersModel = new UsersModel($con);
@@ -55,6 +58,7 @@ AuthRole::allowOnly(['administrative']);
                 'total_teachers' => $teacherCount,
                 'active_learners' => $this->learnerProfileModel->countAll('active'),
                 'archived_learners' => $this->learnerProfileModel->countAll('archived'),
+                'at_risk_count' => $this->atRiskModel->countAtRisk($activeSyId),
                 'records' => [
                     'Academic' => $this->compiledRecordsModel->countAcademicRecords($activeSyId),
                     'Behavioral' => $this->compiledRecordsModel->countBehavioralRecords($activeSyId),

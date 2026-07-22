@@ -137,7 +137,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <li class="menu-item <?php echo ($currentPage === 'achievement-profile.php') ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bxs-medal"></i>
-            <div data-i18n="Academic">Student Achiements</div>
+            <div data-i18n="Academic">Student Achievements</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item">

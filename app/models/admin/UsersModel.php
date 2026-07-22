@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function index(){
             try{
-                $query = "SELECT id, full_name, email, role FROM {$this->users} ORDER BY id ASC";
+                $query = "SELECT id, full_name, email, role, status FROM {$this->users} ORDER BY id ASC";
                 $stmt = $this->con->prepare($query);
                 $stmt->execute();
                 $users = $stmt->get_result();
@@ -20,7 +20,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function getAvailableTeachers(){
             try{
-                $query = "SELECT id, full_name, role FROM {$this->users} WHERE role = 'teacher' ORDER BY full_name ASC";
+                $query = "SELECT id, full_name, role FROM {$this->users} WHERE role = 'teacher' AND status = 'active' ORDER BY full_name ASC";
                 $stmt = $this->con->prepare($query);
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -74,6 +74,32 @@ require_once __DIR__ . '/../../helpers/password.php';
             }catch(Exception $e){
                 error_log($e->getMessage());
                 exit();
+            }
+        }
+
+        public function resetPassword($id, $hashedPassword){
+            try{
+                $query = "UPDATE {$this->users} SET password = ? WHERE id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("si", $hashedPassword, $id);
+                $stmt->execute();
+                return true;
+            }catch(Exception $e){
+                error_log($e->getMessage());
+                return false;
+            }
+        }
+
+        public function setStatus($id, $status){
+            try{
+                $query = "UPDATE {$this->users} SET status = ? WHERE id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("si", $status, $id);
+                $stmt->execute();
+                return true;
+            }catch(Exception $e){
+                error_log($e->getMessage());
+                return false;
             }
         }
     }

@@ -95,6 +95,36 @@ AuthRole::allowOnly(['admin']);
         </div>
     </div>
 
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalLabel">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="resetPasswordForm" method="POST" action="../../../app/controllers/admin/UsersController.php">
+                        <?= Csrf::field() ?>
+                        <input type="hidden" id="resetPasswordUserId" name="id">
+                        <p class="mb-3">Setting a new password for <strong id="resetPasswordUserName"></strong>.</p>
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" minlength="8" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" minlength="8" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="resetUserPassword">Reset Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -142,19 +172,26 @@ AuthRole::allowOnly(['admin']);
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach($users as $user): ?>
+                        <?php $isActive = ($user['status'] ?? 'active') === 'active'; ?>
                         <tr>
                             <td><?= htmlspecialchars($user['id']) ?></td>
                             <td><?= htmlspecialchars($user['full_name']) ?></td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
                             <td><?= htmlspecialchars($user['role']) ?></td>
                             <td>
+                                <span class="badge bg-label-<?= $isActive ? 'success' : 'secondary' ?>">
+                                    <?= $isActive ? 'Active' : 'Inactive' ?>
+                                </span>
+                            </td>
+                            <td>
                                 <button class="btn btn-sm btn-warning"
-                                    data-bs-toggle="modal" 
+                                    data-bs-toggle="modal"
                                     data-bs-target="#editUserModal"
                                     data-id="<?= htmlspecialchars($user['id']) ?>"
                                     onclick="editUser(
@@ -166,17 +203,29 @@ AuthRole::allowOnly(['admin']);
                                     >
                                     Edit
                                 </button>
-                                
+
+                                <button class="btn btn-sm btn-secondary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#resetPasswordModal"
+                                    onclick="resetPassword(
+                                        '<?= htmlspecialchars($user['id']) ?>',
+                                        '<?= htmlspecialchars($user['full_name']) ?>'
+                                    )"
+                                    >
+                                    Reset Password
+                                </button>
+
                                 <form action="../../../app/controllers/admin/UsersController.php" method="POST" style="display: inline;">
                                     <?= Csrf::field() ?>
                                     <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>">
-                                    <button 
-                                        type="submit" 
-                                        class="btn btn-sm btn-danger" 
-                                        name="deleteUser"
-                                        onclick="return confirm('Are you sure you want to delete this user?')"
+                                    <input type="hidden" name="status" value="<?= $isActive ? 'inactive' : 'active' ?>">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm <?= $isActive ? 'btn-danger' : 'btn-success' ?>"
+                                        name="toggleUserStatus"
+                                        onclick="return confirm('Are you sure you want to <?= $isActive ? 'deactivate' : 'activate' ?> this user?')"
                                         >
-                                        Delete
+                                        <?= $isActive ? 'Deactivate' : 'Activate' ?>
                                     </button>
                                 </form>
                             </td>
