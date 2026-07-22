@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2026 at 04:25 PM
+-- Generation Time: Jul 22, 2026 at 05:56 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,7 +45,8 @@ CREATE TABLE `academic_profiles` (
 --
 
 INSERT INTO `academic_profiles` (`id`, `student_id`, `school_year_id`, `subject_name`, `grading_period`, `grade`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(3, 18, 8, 'English 1', '1st Quarter', 85.00, 'passed', 117, '2026-07-18 07:28:03', '2026-07-18 07:28:03');
+(3, 18, 8, 'English 1', '1st Quarter', 85.00, 'passed', 117, '2026-07-18 07:28:03', '2026-07-18 07:28:03'),
+(4, 23, 8, 'Computer Programming', '1st Quarter', 85.00, 'Passed', 116, '2026-07-22 14:06:29', '2026-07-22 14:06:29');
 
 -- --------------------------------------------------------
 
@@ -68,6 +69,13 @@ CREATE TABLE `achievements_profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `achievements_profiles`
+--
+
+INSERT INTO `achievements_profiles` (`id`, `student_id`, `school_year_id`, `title`, `category`, `level`, `description`, `date_received`, `awarding_body`, `recorded_by`, `created_at`, `updated_at`) VALUES
+(1, 23, 8, 'Best Programmer', 'Other', 'School', 'wowers', '2026-07-22', 'Test', 116, '2026-07-22 14:07:15', '2026-07-22 14:07:15');
+
 -- --------------------------------------------------------
 
 --
@@ -85,6 +93,14 @@ CREATE TABLE `attendance` (
   `recorded_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `attendance`
+--
+
+INSERT INTO `attendance` (`id`, `student_id`, `school_year_id`, `attendance_date`, `session`, `status`, `remarks`, `recorded_by`, `created_at`) VALUES
+(4, 23, 8, '2026-07-22', 'Morning', 'Present', NULL, 116, '2026-07-22 14:05:40'),
+(5, 23, 8, '2026-07-22', 'Afternoon', 'Present', NULL, 116, '2026-07-22 14:05:46');
 
 -- --------------------------------------------------------
 
@@ -188,7 +204,22 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (337, 117, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'teacher 1 Added Student Behavioral to 18', '::1', 'success', '2026-07-18 07:27:41'),
 (338, 117, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'teacher 1 Added an academic profile for student ID: 18', '::1', 'success', '2026-07-18 07:28:03'),
 (339, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-18 07:28:27'),
-(340, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-18 12:39:00');
+(340, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-18 12:39:00'),
+(341, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Gia  Guerra', '::1', 'success', '2026-07-19 16:08:41'),
+(342, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added asdfsf dasda', '::1', 'success', '2026-07-22 13:44:39'),
+(343, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 22', '::1', 'success', '2026-07-22 13:44:43'),
+(344, 117, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'teacher 1 Deleted a student with ID: 19', '::1', 'success', '2026-07-22 13:58:27'),
+(345, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 21', '::1', 'success', '2026-07-22 13:58:40'),
+(346, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 20', '::1', 'success', '2026-07-22 13:58:42'),
+(347, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-22 14:04:03'),
+(348, 116, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Added Parent/Guardian Melba Raguindin', '::1', 'success', '2026-07-22 14:04:36'),
+(349, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-22 14:05:00'),
+(350, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 23', '::1', 'success', '2026-07-22 14:05:31'),
+(351, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-22 (1 records)', '::1', 'success', '2026-07-22 14:05:40'),
+(352, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-22 (1 records)', '::1', 'success', '2026-07-22 14:05:46'),
+(353, 116, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'Mark Lester Raguindin Added an academic profile for student ID: 23', '::1', 'success', '2026-07-22 14:06:29'),
+(354, 116, 'teacher', 'Adding an achievement profile', 'Achievement Profile', NULL, NULL, 'Mark Lester Raguindin Added an achievement profile for student ID: 23', '::1', 'success', '2026-07-22 14:07:15'),
+(355, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 23', '::1', 'success', '2026-07-22 14:08:15');
 
 -- --------------------------------------------------------
 
@@ -215,7 +246,8 @@ CREATE TABLE `behavioral_profiles` (
 --
 
 INSERT INTO `behavioral_profiles` (`id`, `student_id`, `school_year_id`, `observation_date`, `category`, `observation`, `intervention`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(9, 18, 8, '2002-12-20', 'Test', 'Test', 'Test', 'Test', 117, '2026-07-18 07:27:41', '2026-07-18 07:27:41');
+(9, 18, 8, '2002-12-20', 'Test', 'Test', 'Test', 'Test', 117, '2026-07-18 07:27:41', '2026-07-18 07:27:41'),
+(10, 23, 8, '2026-07-22', 'Positive Behavior', 'Test', 'Test', 'Test', 116, '2026-07-22 14:05:31', '2026-07-22 14:05:31');
 
 -- --------------------------------------------------------
 
@@ -240,7 +272,8 @@ CREATE TABLE `developmental_profiles` (
 --
 
 INSERT INTO `developmental_profiles` (`id`, `student_id`, `school_year_id`, `domain`, `observation`, `recommendation`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(5, 18, 8, 'Physical', 'Test', 'Test', 117, '2026-07-18 07:27:10', '2026-07-18 07:27:10');
+(5, 18, 8, 'Physical', 'Test', 'Test', 117, '2026-07-18 07:27:10', '2026-07-18 07:27:10'),
+(6, 23, 8, 'Social', 'Test', 'Test', 116, '2026-07-22 14:05:00', '2026-07-22 14:05:00');
 
 -- --------------------------------------------------------
 
@@ -287,6 +320,13 @@ CREATE TABLE `health_profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `health_profiles`
+--
+
+INSERT INTO `health_profiles` (`id`, `student_id`, `school_year_id`, `height_cm`, `weight_kg`, `bmi`, `bmi_classification`, `blood_type`, `allergies`, `medical_conditions`, `vision_screening_result`, `hearing_screening_result`, `immunization_status`, `recorded_by`, `created_at`, `updated_at`) VALUES
+(10, 23, 8, 165.00, 55.00, 20.20, 'Normal', NULL, 'Seafoods', 'Normal', 'Normal', 'Normal', 'Already Vaccine ', 116, '2026-07-22 14:08:15', '2026-07-22 14:08:15');
+
 -- --------------------------------------------------------
 
 --
@@ -309,6 +349,13 @@ CREATE TABLE `parents_guardians` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `parents_guardians`
+--
+
+INSERT INTO `parents_guardians` (`id`, `student_id`, `recorded_by`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_relationship`, `guardian_contact`, `created_at`, `updated_at`) VALUES
+(5, 23, 116, 'Armando Raguindin Sr.', 'Tricycle Driver', '', 'Melba Raguindin', 'House Wife', '', 'Melba Raguindin', 'Mother', '', '2026-07-22 14:04:36', '2026-07-22 14:04:36');
 
 -- --------------------------------------------------------
 
@@ -411,8 +458,7 @@ CREATE TABLE `students` (
 
 INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `gender`, `address`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `created_at`, `updated_at`) VALUES
 (18, '102034445', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2026-07-18', 'Male', 'Samonte Quezon', 8, 5, 8, 117, 'archived', '2026-07-18 07:26:40', '2026-07-18 07:28:27'),
-(19, '102034445', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2026-07-18', 'Male', 'Samonte Quezon', 14, 5, 8, 3, 'active', '2026-07-18 07:28:27', '2026-07-18 07:28:27'),
-(20, '20242110365', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2002-12-20', 'Male', 'Rizal, Roxas, Isabela', 8, 5, 2, 116, 'active', '2026-07-18 12:39:00', '2026-07-18 12:39:00');
+(23, '20242111365', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2002-12-20', 'Male', 'Rizal, Roxas, Isabela', 8, 5, 2, 116, 'active', '2026-07-22 14:04:03', '2026-07-22 14:04:03');
 
 -- --------------------------------------------------------
 
@@ -426,6 +472,7 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` varchar(20) DEFAULT NULL,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `profile_picture` varchar(255) DEFAULT NULL,
   `created_at` date NOT NULL DEFAULT current_timestamp(),
   `updated_at` date NOT NULL
@@ -435,12 +482,12 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `profile_picture`, `created_at`, `updated_at`) VALUES
-(3, 'Administrative', 'administrative@gmail.com', '$2y$10$CQASCJeXsOYOvWm4kK03i.S1SxUWsdPMv56Qlz04eq0GazfxE8FSi', 'administrative', 'storage/profiles/pfp_3_1782485485.jpg', '2026-05-09', '2026-06-26'),
-(4, 'admin', 'admin@gmail.com', '$2y$10$ihbCVd8WOJO17B4BFQgAUORhb1UEYpIFmpd1Q/ShW6n5uNMkLZ7kq', 'admin', 'storage/profiles/pfp_4_1782273895.jpg', '2026-05-09', '2026-06-24'),
-(13, 'Registrar', 'registrar@school.edu.ph', '$2y$10$IEz8YAjPkN2ddoQTR6YRUupEwnweJ6YNzsl8opZsKoXrMMFkaJYZG', 'registrar', 'storage/profiles/pfp_13_1779633057.jpg', '2026-05-15', '2026-05-30'),
-(116, 'Mark Lester Raguindin', 'teacher.edu.ph@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', 'storage/profiles/pfp_116_1782996344.jpg', '2026-06-24', '2026-07-04'),
-(117, 'teacher 1', 'teacher2@gmail.com', '$2y$10$VTwGP0epmVJOKSpuu6YtfO2Fs1.vjfHINVlb49tDQtyY1fnEKSKDS', 'teacher', 'storage/profiles/pfp_117_1783614517.png', '2026-07-10', '2026-07-10');
+INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `profile_picture`, `created_at`, `updated_at`) VALUES
+(3, 'Administrative', 'administrative@gmail.com', '$2y$10$CQASCJeXsOYOvWm4kK03i.S1SxUWsdPMv56Qlz04eq0GazfxE8FSi', 'administrative', 'active', 'storage/profiles/pfp_3_1782485485.jpg', '2026-05-09', '2026-06-26'),
+(4, 'admin', 'admin@gmail.com', '$2y$10$ihbCVd8WOJO17B4BFQgAUORhb1UEYpIFmpd1Q/ShW6n5uNMkLZ7kq', 'admin', 'active', 'storage/profiles/pfp_4_1782273895.jpg', '2026-05-09', '2026-06-24'),
+(13, 'Registrar', 'registrar@school.edu.ph', '$2y$10$IEz8YAjPkN2ddoQTR6YRUupEwnweJ6YNzsl8opZsKoXrMMFkaJYZG', 'registrar', 'active', 'storage/profiles/pfp_13_1779633057.jpg', '2026-05-15', '2026-05-30'),
+(116, 'Mark Lester Raguindin', 'teacher.edu.ph@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', 'active', 'storage/profiles/pfp_116_1782996344.jpg', '2026-06-24', '2026-07-04'),
+(117, 'teacher 1', 'teacher2@gmail.com', '$2y$10$VTwGP0epmVJOKSpuu6YtfO2Fs1.vjfHINVlb49tDQtyY1fnEKSKDS', 'teacher', 'active', 'storage/profiles/pfp_117_1783614517.png', '2026-07-10', '2026-07-10');
 
 -- --------------------------------------------------------
 
@@ -588,37 +635,37 @@ ALTER TABLE `_migrations`
 -- AUTO_INCREMENT for table `academic_profiles`
 --
 ALTER TABLE `academic_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `achievements_profiles`
 --
 ALTER TABLE `achievements_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=341;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=356;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
 --
 ALTER TABLE `behavioral_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `developmental_profiles`
 --
 ALTER TABLE `developmental_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `grade_levels`
@@ -630,13 +677,13 @@ ALTER TABLE `grade_levels`
 -- AUTO_INCREMENT for table `health_profiles`
 --
 ALTER TABLE `health_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
 --
 ALTER TABLE `parents_guardians`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `school_year`
@@ -660,13 +707,13 @@ ALTER TABLE `section_teacher_assignments`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- Constraints for dumped tables
