@@ -27,7 +27,7 @@ require_once __DIR__ . '/../../core/Model.php';
          * record tables per student rather than listing individual records.
          */
 
-        private function buildQuery($schoolYearId, $sectionId, $selectExtra = ''){
+        private function buildQuery($schoolYearId, $sectionId, $selectExtra = '', $studentId = null){
             $types = "";
             $params = [];
 
@@ -43,6 +43,7 @@ require_once __DIR__ . '/../../core/Model.php';
 
             $query = "SELECT {$selectExtra}
                     s.id AS student_id,
+                    s.school_year_id AS school_year_id,
                     s.first_name AS student_first_name,
                     s.middle_name AS student_middle_name,
                     s.last_name AS student_last_name,
@@ -83,10 +84,20 @@ require_once __DIR__ . '/../../core/Model.php';
                 $types .= "i";
                 $params[] = $sectionId;
             }
+            if($studentId !== null){
+                $query .= " AND s.id = ?";
+                $types .= "i";
+                $params[] = $studentId;
+            }
 
-            $query .= " AND (COALESCE(fail.cnt, 0) >= 1
-                    OR COALESCE(absn.cnt, 0) >= " . self::CHRONIC_ABSENCE_THRESHOLD . "
-                    OR COALESCE(disc.cnt, 0) >= " . self::DISCIPLINARY_THRESHOLD . ")";
+            // When looking up a specific known student (getMetricsForStudent),
+            // skip the threshold gate — we already know why they're flagged,
+            // we just want their numbers for the insight prompt.
+            if($studentId === null){
+                $query .= " AND (COALESCE(fail.cnt, 0) >= 1
+                        OR COALESCE(absn.cnt, 0) >= " . self::CHRONIC_ABSENCE_THRESHOLD . "
+                        OR COALESCE(disc.cnt, 0) >= " . self::DISCIPLINARY_THRESHOLD . ")";
+            }
 
             return [$query, $types, $params];
         }
@@ -124,6 +135,50 @@ require_once __DIR__ . '/../../core/Model.php';
             }catch(Exception $e){
                 error_log("Error counting at-risk learners: " . $e->getMessage());
                 return 0;
+            }
+        }
+
+        public function getMetricsForStudent($studentId, $schoolYearId = null){
+            try{
+                [$query, $types, $params] = $this->buildQuery($schoolYearId, null, '', $studentId);
+                $stmt = $this->con->prepare($query);
+                if($types !== ""){
+                    $stmt->bind_param($types, ...$params);
+                }
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_assoc();
+            }catch(Exception $e){
+                error_log("Error fetching at-risk metrics for student: " . $e->getMessage());
+                return null;
+            }
+        }
+
+        public function getInsight($studentId, $schoolYearId){
+            try{
+                $query = "SELECT insight_text, generated_at FROM at_risk_insights WHERE student_id = ? AND school_year_id = ? LIMIT 1";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $studentId, $schoolYearId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_assoc();
+            }catch(Exception $e){
+                error_log("Error fetching at-risk insight: " . $e->getMessage());
+                return null;
+            }
+        }
+
+        public function saveInsight($studentId, $schoolYearId, $text){
+            try{
+                $query = "INSERT INTO at_risk_insights (student_id, school_year_id, insight_text) VALUES (?, ?, ?)
+                    ON DUPLICATE KEY UPDATE insight_text = VALUES(insight_text), generated_at = CURRENT_TIMESTAMP";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("iis", $studentId, $schoolYearId, $text);
+                $stmt->execute();
+                return true;
+            }catch(Exception $e){
+                error_log("Error saving at-risk insight: " . $e->getMessage());
+                return false;
             }
         }
     }

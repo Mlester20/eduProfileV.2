@@ -1,3 +1,4 @@
 *.md
 *.MD
 *.txt
+database/config/secrets.php
