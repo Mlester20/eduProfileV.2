@@ -11,7 +11,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
       <div class="app-brand demo">
         <a href="home.php" class="app-brand-link">
           <span class="app-brand-logo demo">
-            <img src="../../../public/assets/img/favicon/logo.png" alt="logo" style="width: 50px; height: 50px;">
+            <img src="<?= base_url('public/assets/img/favicon/logo.png') ?>" alt="logo" style="width: 50px; height: 50px;">
           </span>
           <span class="app-brand-text demo menu-text fw-bolder ms-2">EduProfile</span>
         </a>

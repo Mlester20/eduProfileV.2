@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . '/../../app/models/AuthModel.php';
 require_once __DIR__ . '/../../database/config/config.php';
+require_once __DIR__ . '/../core/BaseUrl.php';
 require_once __DIR__ . '/../../app/helpers/flashMessage.php';
 require_once __DIR__ . '/../../app/helpers/csrf.php';
 require_once __DIR__ . '/../core/Model.php';
@@ -39,7 +40,7 @@ class AuthController extends Model{
             $this->redirectByRole($row['role']);
         } else {
             FlashMessage::setFlash('error', 'Invalid email or password');
-            header('Location: ../../../index.php');
+            header('Location: ' . base_url('index.php'));
             exit();
         }
     }
@@ -56,12 +57,12 @@ class AuthController extends Model{
     private function redirectByRole(string $role): void
     {
         $routes = [
-            'admin'          => '../../resources/views/admin/dashboard.php',
-            'administrative' => '../../resources/views/administrative/home.php',
-            'teacher'        => '../../resources/views/teacher/home.php',
+            'admin'          => base_url('resources/views/admin/dashboard.php'),
+            'administrative' => base_url('resources/views/administrative/home.php'),
+            'teacher'        => base_url('resources/views/teacher/home.php'),
         ];
 
-        $location = $routes[$role] ?? '../../../index.php';
+        $location = $routes[$role] ?? base_url('index.php');
 
         header('Location: ' . $location);
         exit();

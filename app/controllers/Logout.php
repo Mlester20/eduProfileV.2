@@ -1,5 +1,6 @@
 <?php
+require_once __DIR__ . '/../core/BaseUrl.php';
 session_destroy();
-header("Location: ../../../index.php");
+header('Location: ' . base_url('index.php'));
 exit();
 ?>

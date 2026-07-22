@@ -1,5 +1,7 @@
 <?php
 
+    require_once __DIR__ . '/BaseUrl.php';
+
     abstract class Controller{
         protected $model;
 

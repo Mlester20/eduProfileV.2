@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/../core/BaseUrl.php';
 require_once __DIR__ . '/../../app/helpers/flashMessage.php';
 require_once __DIR__ . '/../../app/helpers/csrf.php';
 require_once __DIR__ . '/../models/UpdateProfileModel.php';
@@ -9,7 +10,7 @@ require_once __DIR__ . '/../../database/config/config.php';
 // Check if user is authenticated
 if (!isset($_SESSION['id'])) {
     FlashMessage::setFlash('error', 'Please log in to access this page.');
-    header("Location: ../../../index.php");
+    header('Location: ' . base_url('index.php'));
     exit();
 }
 

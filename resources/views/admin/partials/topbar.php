@@ -78,7 +78,7 @@
                 </li>
                 <li><div class="dropdown-divider"></div></li>
                 <li>
-                  <a class="dropdown-item" href="../../../../app/controllers/Logout.php" onclick="return confirm('Are you you want to logout?')">
+                  <a class="dropdown-item" href="<?= base_url('app/controllers/Logout.php') ?>" onclick="return confirm('Are you you want to logout?')">
                     <i class="bx bx-power-off me-2"></i>
                     <span class="align-middle">Log Out</span>
                   </a>

@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . '/app/helpers/flashMessage.php';
 require_once __DIR__ . '/app/helpers/csrf.php';
+require_once __DIR__ . '/app/core/BaseUrl.php';
 ?>
 
 <!DOCTYPE html>
@@ -22,21 +23,21 @@ require_once __DIR__ . '/app/helpers/csrf.php';
     />
     <title><?php require_once __DIR__ . '/app/helpers/title.php'; ?> | Sign In</title>
     <meta name="description" content="" />
-    <link rel="icon" type="image/x-icon" href="public/assets/img/favicon/logo.png" />
+    <link rel="icon" type="image/x-icon" href="<?= base_url('public/assets/img/favicon/logo.png') ?>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="public/assets/vendor/fonts/boxicons.css" />
-    <link rel="stylesheet" href="public/assets/vendor/css/core.css" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="public/assets/css/demo.css" />
-    <link rel="stylesheet" href="public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-    <link rel="stylesheet" href="public/assets/vendor/css/pages/page-auth.css" />
-    <script src="public/assets/vendor/js/helpers.js"></script>
-    <script src="public/assets/js/config.js"></script>
+    <link rel="stylesheet" href="<?= base_url('public/assets/vendor/fonts/boxicons.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/core.css') ?>" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/theme-default.css') ?>" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="<?= base_url('public/assets/css/demo.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/pages/page-auth.css') ?>" />
+    <script src="<?= base_url('public/assets/vendor/js/helpers.js') ?>"></script>
+    <script src="<?= base_url('public/assets/js/config.js') ?>"></script>
 </head>
 <body>
 
@@ -62,7 +63,7 @@ require_once __DIR__ . '/app/helpers/csrf.php';
               <hr class="auth-divider" />
               <p class="auth-desc">Sign in to your account to access the student profiling system.</p>
 
-              <form id="formAuthentication" class="mb-3" action="/app/controllers/Auth.php" method="POST">
+              <form id="formAuthentication" class="mb-3" action="<?= base_url('app/controllers/Auth.php') ?>" method="POST">
                 <?= Csrf::field() ?>
 
                 <div class="mb-3">
@@ -112,12 +113,12 @@ require_once __DIR__ . '/app/helpers/csrf.php';
       </div>
     </div>
 
-    <script src="public/assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="public/assets/vendor/libs/popper/popper.js"></script>
-    <script src="public/assets/vendor/js/bootstrap.js"></script>
-    <script src="public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-    <script src="public/assets/vendor/js/menu.js"></script>
-    <script src="public/assets/js/main.js"></script>
+    <script src="<?= base_url('public/assets/vendor/libs/jquery/jquery.js') ?>"></script>
+    <script src="<?= base_url('public/assets/vendor/libs/popper/popper.js') ?>"></script>
+    <script src="<?= base_url('public/assets/vendor/js/bootstrap.js') ?>"></script>
+    <script src="<?= base_url('public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') ?>"></script>
+    <script src="<?= base_url('public/assets/vendor/js/menu.js') ?>"></script>
+    <script src="<?= base_url('public/assets/js/main.js') ?>"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
       function togglePassword() {
