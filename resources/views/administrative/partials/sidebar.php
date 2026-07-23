@@ -62,6 +62,26 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">Academic Setup</span>
+        </li>
+
+        <!-- Grade Levels -->
+        <li class="menu-item <?php echo ($currentPage === 'grade-level.php') ? 'active' : ''; ?>">
+          <a href="grade-level.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-note"></i>
+            <div data-i18n="Grade Levels">Grade Levels</div>
+          </a>
+        </li>
+
+        <!-- Sections -->
+        <li class="menu-item <?php echo ($currentPage === 'sections.php') ? 'active' : ''; ?>">
+          <a href="sections.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-building"></i>
+            <div data-i18n="Sections">Sections</div>
+          </a>
+        </li>
+
+        <li class="menu-header small text-uppercase">
           <span class="menu-header-text">School Year</span>
         </li>
 

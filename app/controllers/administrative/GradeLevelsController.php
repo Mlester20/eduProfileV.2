@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../middleware/Auth.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
-AuthRole::allowOnly(['admin']);
+AuthRole::allowOnly(['administrative']);
 
     class GradeLevelsController extends Controller{
         protected $auditLogs;
@@ -35,14 +35,14 @@ AuthRole::allowOnly(['admin']);
                         'Grade Level',
                         null,
                         'Created Grade Level',
-                        $_SESSION['full_name'] . ' Created Grade Level ' . $data['grade_name'] 
+                        $_SESSION['full_name'] . ' Created Grade Level ' . $data['grade_name']
                     );
                     FlashMessage::setFlash("success", "Grade level created successfully!");
-                    header("Location: ../../../resources/views/admin/grade-level.php");
+                    header("Location: ../../../resources/views/administrative/grade-level.php");
                     exit();
                 }else{
                     FlashMessage::setFlash("error", "Something went wrong try again!");
-                    header("Location: ../../../resources/views/admin/grade-level.php");
+                    header("Location: ../../../resources/views/administrative/grade-level.php");
                     exit();
                 }
             }catch(Exception $e){
@@ -56,17 +56,17 @@ AuthRole::allowOnly(['admin']);
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
                         $_SESSION['role'] ?? 'unknown',
-                        'Update Grade Level', 
+                        'Update Grade Level',
                         'Grade Level',
                         null,
-                        $_SESSION['full_name'] . ' Updated the Grade Level ' . $data['grade_name'] 
+                        $_SESSION['full_name'] . ' Updated the Grade Level ' . $data['grade_name']
                     );
                     FlashMessage::setFlash("success", "Grade Level Updated Successfully!");
-                    header("Location: ../../../resources/views/admin/grade-level.php");
+                    header("Location: ../../../resources/views/administrative/grade-level.php");
                     exit();
                 }else{
                     FlashMessage::setFlash("error", "Something went wrong try again.");
-                    header("Location: ../../../resources/views/admin/grade-level.php");
+                    header("Location: ../../../resources/views/administrative/grade-level.php");
                     exit();
                 }
             }catch(Exception $e){
@@ -88,12 +88,12 @@ AuthRole::allowOnly(['admin']);
                         $_SESSION['full_name'] . 'Deleted Grade Level'
                     );
                     FlashMessage::setFlash("success", "Grade level Deleted successfully!");
-                    header("Location: ../../../resources/views/admin/grade-level.php");
+                    header("Location: ../../../resources/views/administrative/grade-level.php");
                     exit();
                 }else{
                     FlashMessage::setFlash("error", "Something went wrong try again!");
-                    header("Location: ../../../resources/views/admin/grade-level.php");
-                    exit();    
+                    header("Location: ../../../resources/views/administrative/grade-level.php");
+                    exit();
                 }
             }catch(Exception $e){
                 error_log("Error deleting grade level " . $e->getMessage());
@@ -106,9 +106,9 @@ AuthRole::allowOnly(['admin']);
     try{
         $controller = new GradeLevelsController($con);
         $grade_levels = $controller->index();
-        
+
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            Csrf::requireValidOnPost('../../../resources/views/admin/grade-level.php');
+            Csrf::requireValidOnPost('../../../resources/views/administrative/grade-level.php');
 
             if(isset($_POST['create_grade_level'])){
                 $controller->create(
@@ -134,5 +134,5 @@ AuthRole::allowOnly(['admin']);
             }
         }
     }catch(Exception $e){
-        throw new Exception("Error " . $e->getMessage(), 500);  
+        throw new Exception("Error " . $e->getMessage(), 500);
     }

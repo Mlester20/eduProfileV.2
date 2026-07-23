@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../middleware/Auth.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
-AuthRole::allowOnly(['admin']);
+AuthRole::allowOnly(['administrative']);
 
     class SectionsController extends Controller{
         protected $auditLogs;
@@ -49,15 +49,15 @@ AuthRole::allowOnly(['admin']);
                         'Section',
                         null,
                         'Created Grade Level',
-                        $_SESSION['full_name'] . ' Created new section ' . $data['section_name'] 
+                        $_SESSION['full_name'] . ' Created new section ' . $data['section_name']
                     );
                     FlashMessage::setFlash("success", "Section created successfully!");
-                    header("Location: ../../../resources/views/admin/sections.php");
+                    header("Location: ../../../resources/views/administrative/sections.php");
                     exit();
                 }else{
                     FlashMessage::setFlash("error", "Something went wrong try again.");
-                    header("Location: ../../../resources/views/admin/sections.php");
-                    exit();                     
+                    header("Location: ../../../resources/views/administrative/sections.php");
+                    exit();
                 }
             }catch(Exception $e) {
                 error_log("Error creating section " . $e->getMessage());
@@ -78,11 +78,11 @@ AuthRole::allowOnly(['admin']);
                         $_SESSION['full_name'] . ' Updating the ' . $data['section_name']
                     );
                     FlashMessage::setFlash("success", "Section updated successfully!");
-                    header("location: ../../../resources/views/admin/sections.php");
+                    header("location: ../../../resources/views/administrative/sections.php");
                     exit();
                 }else{
                     FlashMessage::setFlash("error", "Something went wrong try again.");
-                    header("location: ../../../resources/views/admin/sections.php");
+                    header("location: ../../../resources/views/administrative/sections.php");
                     exit();
                 }
             }catch(Exception $e){
@@ -100,15 +100,15 @@ AuthRole::allowOnly(['admin']);
                         'Deleted Section',
                         'Section',
                         $id,
-                        $_SESSION['full_name'] . 'Deleted Section'  
+                        $_SESSION['full_name'] . 'Deleted Section'
                     );
                     FlashMessage::setFlash("success", "Section Deleted Successfully!");
-                    header("Location: ../../../resources/views/admin/sections.php");
+                    header("Location: ../../../resources/views/administrative/sections.php");
                     exit();
                 }else{
                     FlashMessage::setFlash("error", "Something went wrong try again");
-                    header("Location: ../../../resources/views/admin/sections.php");
-                    exit();                    
+                    header("Location: ../../../resources/views/administrative/sections.php");
+                    exit();
                 }
             }catch(Exception $e){
                 error_log("Error " . $e->getMessage());
@@ -124,7 +124,7 @@ AuthRole::allowOnly(['admin']);
         $grade_levels = $controller->getGradeLevel();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            Csrf::requireValidOnPost('../../../resources/views/admin/sections.php');
+            Csrf::requireValidOnPost('../../../resources/views/administrative/sections.php');
             if(isset($_POST['create_section'])){
                 $controller->create(
                     [
@@ -151,5 +151,5 @@ AuthRole::allowOnly(['admin']);
             }
         }
     }catch(Exception $e){
-        throw new Exception("Error " . $e->getMessage());   
+        throw new Exception("Error " . $e->getMessage());
     }
