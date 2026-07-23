@@ -5,8 +5,12 @@ require_once __DIR__ . '/../../core/Model.php';
      * Read-only view of a teacher's own ARCHIVED (rolled-over) students and
      * their historical records — the counterpart to every other teacher
      * model, which filters status = 'active' and so hides these once a
-     * student is rolled over. Always scoped to sec.adviser_id = the logged
-     * in teacher; never exposes another teacher's students.
+     * student is rolled over. Scoped to whoever was actually teaching that
+     * section in that record's school year (section_teacher_assignments),
+     * falling back to sections.adviser_id only when no year-specific
+     * assignment was recorded — same pattern as CompiledRecordsModel and
+     * AtRiskModel, so a later adviser reassignment can't make a teacher's
+     * own archived students vanish (or misattribute to the new adviser).
      */
 
     class PastRecordsModel extends Model{
@@ -20,6 +24,7 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $grade_levels = 'grade_levels';
         protected $school_year = 'school_year';
+        protected $section_teacher_assignments = 'section_teacher_assignments';
         protected $users = 'users';
 
         private function baseJoins($table, $alias){
@@ -29,6 +34,8 @@ require_once __DIR__ . '/../../core/Model.php';
                 LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                 LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
                 LEFT JOIN {$this->users} ru ON {$alias}.recorded_by = ru.id
+                LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = s.section_id AND sta.school_year_id = {$alias}.school_year_id
+                LEFT JOIN {$this->users} adv ON sec.adviser_id = adv.id
             ";
         }
 
@@ -46,7 +53,7 @@ require_once __DIR__ . '/../../core/Model.php';
         private function fetchArchived($alias, $selectPrefix, $table, $teacherId, $schoolYearId, $orderBy, $limit, $offset){
             try{
                 $query = "SELECT {$selectPrefix}, " . $this->studentColumns() . " " . $this->baseJoins($table, $alias) . "
-                    WHERE sec.adviser_id = ? AND s.status = 'archived'";
+                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived'";
 
                 $types = "i";
                 $params = [$teacherId];
@@ -74,7 +81,7 @@ require_once __DIR__ . '/../../core/Model.php';
         private function countArchived($alias, $table, $teacherId, $schoolYearId){
             try{
                 $query = "SELECT COUNT(*) AS total " . $this->baseJoins($table, $alias) . "
-                    WHERE sec.adviser_id = ? AND s.status = 'archived'";
+                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived'";
 
                 $types = "i";
                 $params = [$teacherId];
@@ -149,7 +156,8 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->students} s
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
-                    WHERE sec.adviser_id = ? AND s.status = 'archived'
+                    LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = s.section_id AND sta.school_year_id = s.school_year_id
+                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived'
                     ORDER BY sy.id DESC
                 ";
                 $stmt = $this->con->prepare($query);
