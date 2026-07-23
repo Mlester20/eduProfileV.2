@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2026 at 05:56 PM
+-- Generation Time: Jul 23, 2026 at 06:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,8 +45,12 @@ CREATE TABLE `academic_profiles` (
 --
 
 INSERT INTO `academic_profiles` (`id`, `student_id`, `school_year_id`, `subject_name`, `grading_period`, `grade`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(3, 18, 8, 'English 1', '1st Quarter', 85.00, 'passed', 117, '2026-07-18 07:28:03', '2026-07-18 07:28:03'),
-(4, 23, 8, 'Computer Programming', '1st Quarter', 85.00, 'Passed', 116, '2026-07-22 14:06:29', '2026-07-22 14:06:29');
+(33, 80, 8, 'English', '1st Quarter', 88.00, 'Passed', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(34, 80, 8, 'Mathematics', '1st Quarter', 90.00, 'Passed', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(35, 81, 8, 'Science', '1st Quarter', 85.00, 'Passed', 117, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(36, 81, 8, 'Filipino', '1st Quarter', 82.00, 'Passed', 117, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(37, 82, 8, 'Mathematics', '1st Quarter', 65.00, 'Failed', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(38, 83, 8, 'English', '1st Quarter', 91.00, 'Passed', 119, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
 
 -- --------------------------------------------------------
 
@@ -74,7 +78,8 @@ CREATE TABLE `achievements_profiles` (
 --
 
 INSERT INTO `achievements_profiles` (`id`, `student_id`, `school_year_id`, `title`, `category`, `level`, `description`, `date_received`, `awarding_body`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(1, 23, 8, 'Best Programmer', 'Other', 'School', 'wowers', '2026-07-22', 'Test', 116, '2026-07-22 14:07:15', '2026-07-22 14:07:15');
+(11, 80, 8, 'Reading Champion', 'Academic', 'School', 'Top reader for the quarter', '2026-07-24', 'San Jose Sur Elementary', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(12, 83, 8, 'Perfect Attendance', 'Other', 'School', 'No absences for the quarter', '2026-07-24', 'San Jose Sur Elementary', 119, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
 
 -- --------------------------------------------------------
 
@@ -99,8 +104,40 @@ CREATE TABLE `attendance` (
 --
 
 INSERT INTO `attendance` (`id`, `student_id`, `school_year_id`, `attendance_date`, `session`, `status`, `remarks`, `recorded_by`, `created_at`) VALUES
-(4, 23, 8, '2026-07-22', 'Morning', 'Present', NULL, 116, '2026-07-22 14:05:40'),
-(5, 23, 8, '2026-07-22', 'Afternoon', 'Present', NULL, 116, '2026-07-22 14:05:46');
+(54, 80, 8, '2026-07-24', 'Morning', 'Present', NULL, 116, '2026-07-23 16:21:14'),
+(55, 80, 8, '2026-07-23', 'Morning', 'Present', NULL, 116, '2026-07-23 16:21:14'),
+(56, 81, 8, '2026-07-24', 'Morning', 'Present', NULL, 117, '2026-07-23 16:21:14'),
+(57, 81, 8, '2026-07-23', 'Morning', 'Present', NULL, 117, '2026-07-23 16:21:14'),
+(58, 82, 8, '2026-07-14', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
+(59, 82, 8, '2026-07-13', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
+(60, 82, 8, '2026-07-12', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
+(61, 82, 8, '2026-07-11', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
+(62, 82, 8, '2026-07-10', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
+(63, 83, 8, '2026-07-24', 'Morning', 'Present', NULL, 119, '2026-07-23 16:21:14'),
+(64, 83, 8, '2026-07-23', 'Morning', 'Present', NULL, 119, '2026-07-23 16:21:14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `at_risk_insights`
+--
+
+CREATE TABLE `at_risk_insights` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `insight_text` text NOT NULL,
+  `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `at_risk_insights`
+--
+
+INSERT INTO `at_risk_insights` (`id`, `student_id`, `school_year_id`, `insight_text`, `generated_at`) VALUES
+(2, 23, 8, 'The co-occurrence of academic struggle and disruptive behavior in a Grade 1 learner strongly suggests that foundational skill gaps or classroom adjustments are causing frustration, which in turn leads to disengagement and missed instructional time. A parent-teacher consultation should be scheduled promptly to explore underlying developmental or home factors contributing to these patterns. Simultaneously, the school should implement targeted academic remediation in the struggling subject alongside a positive behavioral reinforcement plan to stabilize the learner\'s early educational experience.', '2026-07-22 17:07:30'),
+(6, 53, 8, 'The co-occurrence of early behavioral challenges and attendance gaps strongly suggests that underlying socio-emotional or adjustment issues are impeding this Grade 1 learner\'s foundational academic focus. I recommend convening a prompt case conference with the section teacher, guidance counselor, and parents to identify root causes and implement a unified behavior-reinforcement and academic remediation plan. Immediate, coordinated intervention at this early stage will stabilize the child\'s developmental trajectory before these learning gaps compound.', '2026-07-23 15:30:46'),
+(7, 62, 8, 'The convergence of early behavioral disruptions and attendance issues strongly suggests that non-academic barriers are directly hindering this Grade 1 learner\'s foundational performance. I recommend scheduling a collaborative conference with the parent, teacher, and guidance counselor to identify the root causes behind these behavioral and attendance patterns. From this meeting, a coordinated support plan should be established that combines targeted academic remediation in the failing subject with positive behavioral reinforcement strategies.', '2026-07-23 15:47:01');
 
 -- --------------------------------------------------------
 
@@ -219,7 +256,73 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (352, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-22 (1 records)', '::1', 'success', '2026-07-22 14:05:46'),
 (353, 116, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'Mark Lester Raguindin Added an academic profile for student ID: 23', '::1', 'success', '2026-07-22 14:06:29'),
 (354, 116, 'teacher', 'Adding an achievement profile', 'Achievement Profile', NULL, NULL, 'Mark Lester Raguindin Added an achievement profile for student ID: 23', '::1', 'success', '2026-07-22 14:07:15'),
-(355, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 23', '::1', 'success', '2026-07-22 14:08:15');
+(355, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 23', '::1', 'success', '2026-07-22 14:08:15'),
+(356, 3, 'administrative', 'Generated AI insight', 'Students', 23, NULL, 'Administrative generated an AI insight for student ID: 23', '::1', 'success', '2026-07-22 16:24:09'),
+(357, 3, 'administrative', 'Generated AI insight', 'Students', 23, NULL, 'Administrative generated an AI insight for student ID: 23', '::1', 'success', '2026-07-22 16:25:06'),
+(358, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 16:36:36'),
+(359, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 16:37:02'),
+(360, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 16:37:17'),
+(361, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 16:38:31'),
+(362, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Test Administrative generated an AI dashboard summary for school year ID: 8', 'UNKNOWN', 'success', '2026-07-22 16:40:19'),
+(363, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Test Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 16:42:03'),
+(364, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 16:42:39'),
+(365, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 16:46:37'),
+(366, 116, 'teacher', 'Generated AI insight', 'Students', 23, NULL, 'Mark Lester Raguindin generated an AI insight for student ID: 23', '::1', 'success', '2026-07-22 17:02:41'),
+(367, 116, 'teacher', 'Generated AI insight', 'Students', 23, NULL, 'Mark Lester Raguindin generated an AI insight for student ID: 23', '::1', 'success', '2026-07-22 17:07:30'),
+(368, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-22 17:08:16'),
+(369, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 12:57:25'),
+(370, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-23 13:01:45'),
+(371, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 13:02:12'),
+(372, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 14', '::1', 'success', '2026-07-23 13:24:51'),
+(373, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-23 13:31:02'),
+(374, 116, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Added Parent/Guardian Melba Raguindin', '::1', 'success', '2026-07-23 13:31:20'),
+(375, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-23 13:31:55'),
+(376, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 35', '::1', 'success', '2026-07-23 13:32:23'),
+(377, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-23 (2 records)', '::1', 'success', '2026-07-23 13:32:33'),
+(378, 116, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'Mark Lester Raguindin Added an academic profile for student ID: 35', '::1', 'success', '2026-07-23 13:32:58'),
+(379, 116, 'teacher', 'Adding an achievement profile', 'Achievement Profile', NULL, NULL, 'Mark Lester Raguindin Added an achievement profile for student ID: 35', '::1', 'success', '2026-07-23 13:33:21'),
+(380, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 13:35:10'),
+(381, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-23 13:38:15'),
+(382, 116, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'Mark Lester Raguindin Added Parent/Guardian Melba Raguindin', '::1', 'success', '2026-07-23 13:38:36'),
+(383, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-23 13:38:49'),
+(384, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 37', '::1', 'success', '2026-07-23 13:39:04'),
+(385, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 13:39:48'),
+(386, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-23 14:00:41'),
+(387, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 39', '::1', 'success', '2026-07-23 14:01:00'),
+(388, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-23 14:01:15'),
+(389, 116, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'Mark Lester Raguindin Added an academic profile for student ID: 39', '::1', 'success', '2026-07-23 14:01:34'),
+(390, 116, 'teacher', 'Adding an achievement profile', 'Achievement Profile', NULL, NULL, 'Mark Lester Raguindin Added an achievement profile for student ID: 39', '::1', 'success', '2026-07-23 14:01:54'),
+(391, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 14:02:36'),
+(392, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-23 14:24:51'),
+(393, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-23 14:25:05'),
+(394, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 41', '::1', 'success', '2026-07-23 14:25:31'),
+(395, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 41', '::1', 'success', '2026-07-23 14:26:06'),
+(396, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 14:26:55'),
+(397, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-07-23 14:39:09'),
+(398, 116, 'teacher', 'Creating new Developmental Profile', 'Developmental', NULL, NULL, 'Mark Lester Raguindin Created student developmental for ', '::1', 'success', '2026-07-23 14:39:23'),
+(399, 116, 'teacher', 'Updating Student Behavioral', 'Student Behavioral', NULL, NULL, 'Mark Lester Raguindin Added Student Behavioral to 43', '::1', 'success', '2026-07-23 14:39:40'),
+(400, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-07-23 (2 records)', '::1', 'success', '2026-07-23 14:39:48'),
+(401, 116, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'Mark Lester Raguindin Added an academic profile for student ID: 43', '::1', 'success', '2026-07-23 14:40:08'),
+(402, 116, 'teacher', 'Adding an achievement profile', 'Achievement Profile', NULL, NULL, 'Mark Lester Raguindin Added an achievement profile for student ID: 43', '::1', 'success', '2026-07-23 14:40:29'),
+(403, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 43', '::1', 'success', '2026-07-23 14:41:04'),
+(404, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 14:42:26'),
+(405, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added ADA ASDA', '::1', 'success', '2026-07-23 15:14:52'),
+(406, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 15:15:48'),
+(407, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-23 15:30:23'),
+(408, 3, 'administrative', 'Generated AI insight', 'Students', 53, NULL, 'Administrative generated an AI insight for student ID: 53', '::1', 'success', '2026-07-23 15:30:46'),
+(409, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 15:31:54'),
+(410, 4, 'admin', 'Reset user password', 'Users', 0, NULL, 'admin reset the password for user ID: ', '::1', 'success', '2026-07-23 15:34:41'),
+(411, 4, 'admin', 'Reset user password', 'Users', 0, NULL, 'admin reset the password for user ID: ', '::1', 'success', '2026-07-23 15:36:18'),
+(412, 116, 'teacher', 'Generated AI insight', 'Students', 62, NULL, 'Mark Lester Raguindin generated an AI insight for student ID: 62', '::1', 'success', '2026-07-23 15:47:01'),
+(413, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 15:54:02'),
+(414, 4, 'admin', 'Deactivated user', 'Users', 119, NULL, 'admin deactivated user ID: 119', '::1', 'success', '2026-07-23 15:57:50'),
+(415, 4, 'admin', 'Created user', 'Users', NULL, NULL, 'admin created a new teacher account for April Berbon', '::1', 'success', '2026-07-23 15:58:18'),
+(416, 4, 'admin', 'Grade Level', 'Grade Level', NULL, 'Created Grade Level', 'admin Created Grade Level Grade 3', '::1', 'success', '2026-07-23 15:58:37'),
+(417, 4, 'admin', 'Adding new section', 'Section', NULL, 'Created Grade Level', 'admin Created new section Andres Bonifacio', '::1', 'success', '2026-07-23 15:58:59'),
+(418, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-23 16:03:28'),
+(419, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 16:04:50'),
+(420, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 16:16:44'),
+(421, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 16:22:07');
 
 -- --------------------------------------------------------
 
@@ -246,8 +349,31 @@ CREATE TABLE `behavioral_profiles` (
 --
 
 INSERT INTO `behavioral_profiles` (`id`, `student_id`, `school_year_id`, `observation_date`, `category`, `observation`, `intervention`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(9, 18, 8, '2002-12-20', 'Test', 'Test', 'Test', 'Test', 117, '2026-07-18 07:27:41', '2026-07-18 07:27:41'),
-(10, 23, 8, '2026-07-22', 'Positive Behavior', 'Test', 'Test', 'Test', 116, '2026-07-22 14:05:31', '2026-07-22 14:05:31');
+(34, 80, 8, '2026-07-24', 'Positive Behavior', 'Helped a classmate with schoolwork.', 'None needed', 'Keep it up', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(35, 82, 8, '2026-07-22', 'Disciplinary', 'Disrupted class activity.', 'Verbal warning given.', 'Monitor closely', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(36, 82, 8, '2026-07-21', 'Disciplinary', 'Disrupted class activity.', 'Verbal warning given.', 'Monitor closely', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
+(37, 82, 8, '2026-07-20', 'Disciplinary', 'Disrupted class activity.', 'Verbal warning given.', 'Monitor closely', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dashboard_ai_summaries`
+--
+
+CREATE TABLE `dashboard_ai_summaries` (
+  `id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `summary_text` text NOT NULL,
+  `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dashboard_ai_summaries`
+--
+
+INSERT INTO `dashboard_ai_summaries` (`id`, `school_year_id`, `summary_text`, `generated_at`) VALUES
+(2, 8, 'For the 2026–2027 school year, foundational staffing and section advisory roles are fully established, but immediate administrative attention is required in **Grade 1 - Mahogani**. The primary concern in this section is a compounding risk pattern where severe academic struggle, chronic absenteeism, and recurring disciplinary incidents intersect at once. In the coming weeks, leadership should focus on deploying a coordinated, wrap-around intervention plan for Grade 1 - Mahogani to simultaneously address behavioral, attendance, and learning challenges before they further destabilize student progress.', '2026-07-23 16:03:28'),
+(11, 14, 'For the 2027–2028 school year, operational stability is exceptionally strong, with full advisory oversight established and currently no specific grade levels or sections exhibiting flagged at-risk learners across academic, attendance, or disciplinary metrics. This pristine baseline highlights optimal initial engagement and equitable support across both active learning cohorts. To maintain this high standard, the recommended focus area for the coming weeks is to establish routine, proactive early-warning checks to ensure any subtle shifts in learner performance or attendance are caught well before formal intervention is required.', '2026-07-23 13:24:51');
 
 -- --------------------------------------------------------
 
@@ -272,8 +398,7 @@ CREATE TABLE `developmental_profiles` (
 --
 
 INSERT INTO `developmental_profiles` (`id`, `student_id`, `school_year_id`, `domain`, `observation`, `recommendation`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(5, 18, 8, 'Physical', 'Test', 'Test', 117, '2026-07-18 07:27:10', '2026-07-18 07:27:10'),
-(6, 23, 8, 'Social', 'Test', 'Test', 116, '2026-07-22 14:05:00', '2026-07-22 14:05:00');
+(15, 81, 8, '', 'Works well in group activities.', 'Continue encouraging peer collaboration.', 117, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
 
 -- --------------------------------------------------------
 
@@ -293,7 +418,9 @@ CREATE TABLE `grade_levels` (
 --
 
 INSERT INTO `grade_levels` (`id`, `grade_name`, `created_at`, `updated_at`) VALUES
-(5, 'Grade 1', '2026-06-28 14:50:48', '2026-06-28 14:50:48');
+(5, 'Grade 1', '2026-06-28 14:50:48', '2026-06-28 14:50:48'),
+(6, 'Grade 2', '2026-07-23 15:27:49', '2026-07-23 15:27:49'),
+(8, 'Grade 3', '2026-07-23 15:58:37', '2026-07-23 15:58:37');
 
 -- --------------------------------------------------------
 
@@ -325,7 +452,7 @@ CREATE TABLE `health_profiles` (
 --
 
 INSERT INTO `health_profiles` (`id`, `student_id`, `school_year_id`, `height_cm`, `weight_kg`, `bmi`, `bmi_classification`, `blood_type`, `allergies`, `medical_conditions`, `vision_screening_result`, `hearing_screening_result`, `immunization_status`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(10, 23, 8, 165.00, 55.00, 20.20, 'Normal', NULL, 'Seafoods', 'Normal', 'Normal', 'Normal', 'Already Vaccine ', 116, '2026-07-22 14:08:15', '2026-07-22 14:08:15');
+(16, 80, 8, 115.00, 22.00, 16.60, 'Normal', 'O+', 'None', 'None', 'Normal', 'Normal', 'Complete', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
 
 -- --------------------------------------------------------
 
@@ -350,13 +477,6 @@ CREATE TABLE `parents_guardians` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `parents_guardians`
---
-
-INSERT INTO `parents_guardians` (`id`, `student_id`, `recorded_by`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_relationship`, `guardian_contact`, `created_at`, `updated_at`) VALUES
-(5, 23, 116, 'Armando Raguindin Sr.', 'Tricycle Driver', '', 'Melba Raguindin', 'House Wife', '', 'Melba Raguindin', 'Mother', '', '2026-07-22 14:04:36', '2026-07-22 14:04:36');
-
 -- --------------------------------------------------------
 
 --
@@ -378,8 +498,8 @@ CREATE TABLE `school_year` (
 --
 
 INSERT INTO `school_year` (`id`, `school_year`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-(8, '2026-2027', '2026-06-08', '2027-04-05', 'active', '2026-05-15 05:40:37', '2026-07-18 07:14:04'),
-(14, '2027-2028', '2027-06-01', '2028-04-01', 'inactive', '2026-07-09 15:17:37', '2026-07-18 07:14:04');
+(8, '2026-2027', '2026-06-08', '2027-04-05', 'inactive', '2026-05-15 05:40:37', '2026-07-23 16:22:07'),
+(14, '2027-2028', '2027-06-01', '2028-04-01', 'active', '2026-07-09 15:17:37', '2026-07-23 16:22:07');
 
 -- --------------------------------------------------------
 
@@ -402,7 +522,9 @@ CREATE TABLE `sections` (
 
 INSERT INTO `sections` (`id`, `grade_level_id`, `section_name`, `adviser_id`, `created_at`, `updated_at`) VALUES
 (2, 5, 'Mahogani', 116, '2026-06-29 14:15:19', '2026-06-29 15:25:30'),
-(8, 5, 'Venus', 117, '2026-07-09 16:05:41', '2026-07-09 16:05:41');
+(8, 5, 'Venus', 117, '2026-07-09 16:05:41', '2026-07-09 16:05:41'),
+(10, 6, 'Neptune', 119, '2026-07-23 15:27:49', '2026-07-23 15:27:49'),
+(11, 8, 'Andres Bonifacio', 120, '2026-07-23 15:58:59', '2026-07-23 15:58:59');
 
 -- --------------------------------------------------------
 
@@ -424,8 +546,8 @@ CREATE TABLE `section_teacher_assignments` (
 --
 
 INSERT INTO `section_teacher_assignments` (`id`, `section_id`, `teacher_id`, `school_year_id`, `created_at`, `updated_at`) VALUES
-(1, 2, 117, 8, '2026-07-09 14:05:06', '2026-07-09 16:05:24'),
-(5, 2, 116, 14, '2026-07-09 15:21:09', '2026-07-09 15:21:09');
+(5, 2, 116, 14, '2026-07-09 15:21:09', '2026-07-09 15:21:09'),
+(11, 11, 120, 8, '2026-07-23 15:58:59', '2026-07-23 15:58:59');
 
 -- --------------------------------------------------------
 
@@ -457,8 +579,16 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `gender`, `address`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `created_at`, `updated_at`) VALUES
-(18, '102034445', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2026-07-18', 'Male', 'Samonte Quezon', 8, 5, 8, 117, 'archived', '2026-07-18 07:26:40', '2026-07-18 07:28:27'),
-(23, '20242111365', 'Mark Lester ', 'Suguitan', 'Raguindin', '', '2002-12-20', 'Male', 'Rizal, Roxas, Isabela', 8, 5, 2, 116, 'active', '2026-07-22 14:04:03', '2026-07-22 14:04:03');
+(77, 'TEST-AUTOACT-1784823', 'AutoActivate', '', 'Test', '', '2015-01-01', 'Male', 'Test Address', 8, 5, 2, 116, 'archived', '2026-07-23 16:15:31', '2026-07-23 16:16:44'),
+(78, 'TEST-AUTOACT-1784823', 'AutoActivate', '', 'Test', '', '2015-01-01', 'Male', 'Test Address', 14, 8, 11, 3, 'active', '2026-07-23 16:16:44', '2026-07-23 16:16:44'),
+(80, '100000000001', 'Juan', '', 'Dela Cruz', '', '2019-03-14', 'Male', 'San Jose Sur, Mallig, Isabela', 8, 5, 2, 116, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
+(81, '100000000002', 'Maria', '', 'Santos', '', '2019-07-22', 'Female', 'San Jose Sur, Mallig, Isabela', 8, 5, 8, 117, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
+(82, '100000000003', 'Pedro', '', 'Reyes', '', '2019-01-30', 'Male', 'San Jose Sur, Mallig, Isabela', 8, 5, 2, 116, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
+(83, '100000000004', 'Ana', '', 'Lopez', '', '2018-11-05', 'Female', 'San Jose Sur, Mallig, Isabela', 8, 6, 10, 119, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
+(84, '100000000001', 'Juan', '', 'Dela Cruz', '', '2019-03-14', 'Male', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07'),
+(85, '100000000004', 'Ana', '', 'Lopez', '', '2018-11-05', 'Female', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07'),
+(86, '100000000003', 'Pedro', '', 'Reyes', '', '2019-01-30', 'Male', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07'),
+(87, '100000000002', 'Maria', '', 'Santos', '', '2019-07-22', 'Female', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07');
 
 -- --------------------------------------------------------
 
@@ -487,7 +617,9 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `
 (4, 'admin', 'admin@gmail.com', '$2y$10$ihbCVd8WOJO17B4BFQgAUORhb1UEYpIFmpd1Q/ShW6n5uNMkLZ7kq', 'admin', 'active', 'storage/profiles/pfp_4_1782273895.jpg', '2026-05-09', '2026-06-24'),
 (13, 'Registrar', 'registrar@school.edu.ph', '$2y$10$IEz8YAjPkN2ddoQTR6YRUupEwnweJ6YNzsl8opZsKoXrMMFkaJYZG', 'registrar', 'active', 'storage/profiles/pfp_13_1779633057.jpg', '2026-05-15', '2026-05-30'),
 (116, 'Mark Lester Raguindin', 'teacher.edu.ph@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', 'active', 'storage/profiles/pfp_116_1782996344.jpg', '2026-06-24', '2026-07-04'),
-(117, 'teacher 1', 'teacher2@gmail.com', '$2y$10$VTwGP0epmVJOKSpuu6YtfO2Fs1.vjfHINVlb49tDQtyY1fnEKSKDS', 'teacher', 'active', 'storage/profiles/pfp_117_1783614517.png', '2026-07-10', '2026-07-10');
+(117, 'teacher 1', 'teacher2@gmail.com', '$2y$10$VTwGP0epmVJOKSpuu6YtfO2Fs1.vjfHINVlb49tDQtyY1fnEKSKDS', 'teacher', 'active', 'storage/profiles/pfp_117_1783614517.png', '2026-07-10', '2026-07-10'),
+(119, 'Teacher Two', 'teacher2@school.edu.ph', '$2y$10$.m5KtR/BU72SUnvWAi91k.mdgdvM8UPfRShh0EzxpEbdJYmvjpfAm', 'teacher', 'inactive', NULL, '2026-07-23', '0000-00-00'),
+(120, 'April Berbon', 'april@gmail.com', '$2y$10$v0v1QI1cenFT2xRhXqWvOOswx77JVEMv1xStVaEFcALZEGL/FUfp2', 'teacher', 'active', NULL, '2026-07-23', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -532,6 +664,13 @@ ALTER TABLE `attendance`
   ADD KEY `recorded_by` (`recorded_by`);
 
 --
+-- Indexes for table `at_risk_insights`
+--
+ALTER TABLE `at_risk_insights`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `student_year_unique` (`student_id`,`school_year_id`);
+
+--
 -- Indexes for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
@@ -545,6 +684,13 @@ ALTER TABLE `behavioral_profiles`
   ADD KEY `student_id` (`student_id`),
   ADD KEY `school_year_id` (`school_year_id`),
   ADD KEY `recorded_by` (`recorded_by`);
+
+--
+-- Indexes for table `dashboard_ai_summaries`
+--
+ALTER TABLE `dashboard_ai_summaries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `school_year_unique` (`school_year_id`);
 
 --
 -- Indexes for table `developmental_profiles`
@@ -635,55 +781,67 @@ ALTER TABLE `_migrations`
 -- AUTO_INCREMENT for table `academic_profiles`
 --
 ALTER TABLE `academic_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `achievements_profiles`
 --
 ALTER TABLE `achievements_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+
+--
+-- AUTO_INCREMENT for table `at_risk_insights`
+--
+ALTER TABLE `at_risk_insights`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=356;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=422;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
 --
 ALTER TABLE `behavioral_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `dashboard_ai_summaries`
+--
+ALTER TABLE `dashboard_ai_summaries`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `developmental_profiles`
 --
 ALTER TABLE `developmental_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `grade_levels`
 --
 ALTER TABLE `grade_levels`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `health_profiles`
 --
 ALTER TABLE `health_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
 --
 ALTER TABLE `parents_guardians`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `school_year`
@@ -695,25 +853,25 @@ ALTER TABLE `school_year`
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `section_teacher_assignments`
 --
 ALTER TABLE `section_teacher_assignments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- Constraints for dumped tables
