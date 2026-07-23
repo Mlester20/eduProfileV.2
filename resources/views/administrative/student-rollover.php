@@ -60,8 +60,9 @@ AuthRole::allowOnly(['administrative']);
             <?php elseif(empty($rolloverCandidates)): ?>
                 <p class="text-muted mb-0">No active students found for the selected school year.</p>
             <?php else: ?>
-                <form action="../../../app/controllers/administrative/studentrollovercontroller.php" method="post">
+                <form action="../../../app/controllers/administrative/studentrollovercontroller.php" method="post" id="rolloverForm">
                     <?= Csrf::field() ?>
+                    <input type="hidden" name="rollover_students" value="1">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="new_school_year_id" class="form-label">Roll Over To</label>
@@ -69,9 +70,12 @@ AuthRole::allowOnly(['administrative']);
                                 <option value="" selected disabled>-- Choose Target School Year --</option>
                                 <?php foreach(($school_years ?? []) as $school_year): ?>
                                     <?php if((int) $school_year['id'] === (int) $school_year_filter) continue; ?>
-                                    <option value="<?php echo htmlspecialchars($school_year['id']); ?>"><?php echo htmlspecialchars($school_year['school_year']); ?></option>
+                                    <option value="<?php echo htmlspecialchars($school_year['id']); ?>" data-status="<?php echo htmlspecialchars($school_year['status']); ?>">
+                                        <?php echo htmlspecialchars($school_year['school_year']); ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
+                            <div class="form-text">Rolling over to a school year that isn't already <strong>Active</strong> will automatically make it the new active school year for the whole system.</div>
                         </div>
                     </div>
 
@@ -82,8 +86,8 @@ AuthRole::allowOnly(['administrative']);
                                     <th><input type="checkbox" id="selectAllStudents"></th>
                                     <th>LRN</th>
                                     <th>Student Name</th>
-                                    <th>Grade Level</th>
-                                    <th>Section</th>
+                                    <th>Current Grade & Section</th>
+                                    <th>Promote To</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -92,15 +96,24 @@ AuthRole::allowOnly(['administrative']);
                                         <td><input type="checkbox" class="rollover-student-checkbox" name="student_ids[]" value="<?php echo htmlspecialchars($student['id']); ?>"></td>
                                         <td><?php echo htmlspecialchars($student['lrn']); ?></td>
                                         <td><?php echo htmlspecialchars(trim($student['first_name'] . ' ' . ($student['middle_name'] ?? '') . ' ' . $student['last_name'] . ' ' . ($student['suffix'] ?? ''))); ?></td>
-                                        <td><?php echo htmlspecialchars($student['grade_name'] ?? ''); ?></td>
-                                        <td><?php echo htmlspecialchars($student['section_name'] ?? ''); ?></td>
+                                        <td><?php echo htmlspecialchars(($student['grade_name'] ?? '') . ' - ' . ($student['section_name'] ?? '')); ?></td>
+                                        <td>
+                                            <select class="form-select form-select-sm" name="target_section_id[<?php echo htmlspecialchars($student['id']); ?>]">
+                                                <option value="">-- Keep Current Section --</option>
+                                                <?php foreach(($all_sections ?? []) as $section): ?>
+                                                    <option value="<?php echo htmlspecialchars($section['id']); ?>">
+                                                        <?php echo htmlspecialchars(($section['grade_level_name'] ?? '') . ' - ' . $section['section_name']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" name="rollover_students" onclick="return confirm('Roll over the selected students to the chosen school year?');">
+                    <button type="submit" class="btn btn-primary" id="rolloverSubmitBtn">
                         <i class="bx bx-transfer"></i> Roll Over Selected Students
                     </button>
                 </form>
@@ -121,6 +134,47 @@ AuthRole::allowOnly(['administrative']);
   <script>
     document.getElementById('selectAllStudents')?.addEventListener('change', function(){
         document.querySelectorAll('.rollover-student-checkbox').forEach(cb => cb.checked = this.checked);
+    });
+
+    document.getElementById('rolloverForm')?.addEventListener('submit', function(e){
+        e.preventDefault();
+        const form = this;
+        const select = document.getElementById('new_school_year_id');
+        const selectedOption = select.options[select.selectedIndex];
+        const status = selectedOption ? selectedOption.dataset.status : null;
+
+        let options;
+        if(status && status !== 'active'){
+            options = {
+                icon: 'warning',
+                title: 'Set as new active school year?',
+                html: '<strong>' + selectedOption.textContent.trim() + '</strong> is not the currently active school year.<br><br>' +
+                    'Rolling over will automatically set it as the new <strong>active</strong> school year (and deactivate the current one), ' +
+                    'even if the current school year period hasn\'t ended yet. Teachers will immediately see it as their working year.',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel'
+            };
+        }else{
+            options = {
+                icon: 'question',
+                title: 'Roll over selected students?',
+                text: 'This will roll over the selected students to the chosen school year.',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel'
+            };
+        }
+
+        Swal.fire(options).then((result) => {
+            if(result.isConfirmed){
+                form.submit();
+            }
+        });
     });
   </script>
 </body>

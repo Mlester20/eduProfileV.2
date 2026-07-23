@@ -85,6 +85,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <span class="menu-header-text">School Year</span>
         </li>
 
+        <!-- Manage School Year -->
+        <li class="menu-item <?php echo ($currentPage === 'sy.php') ? 'active' : ''; ?>">
+          <a href="sy.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-calendar"></i>
+            <div data-i18n="School Year">Manage School Year</div>
+          </a>
+        </li>
+
         <!-- Student Rollover -->
         <li class="menu-item <?php echo ($currentPage === 'student-rollover.php') ? 'active' : ''; ?>">
           <a href="student-rollover.php" class="menu-link">

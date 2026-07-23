@@ -31,15 +31,23 @@ require_once __DIR__ . '/../../core/Model.php';
 
         /**
          * Copies each selected student forward into the target school year
-         * (new row, same section/grade level) and archives the original row.
+         * (new row) and archives the original row. When $targetSections has
+         * an entry for a student (keyed by student id, valued by the target
+         * section id), the new row is promoted into that section/grade level
+         * instead of staying in the old one — without this, a rolled-over
+         * student would remain labeled under their old grade/section/teacher
+         * forever, defeating the point of archiving. Falls back to copying
+         * the old grade_level_id/section_id when no target is given, so
+         * rollover without an explicit promotion still works as before.
          * @return int|false Number of students rolled over, or false on failure.
          */
 
-        public function rollover(array $studentIds, $newSchoolYearId, $recordedBy){
+        public function rollover(array $studentIds, $newSchoolYearId, $recordedBy, array $targetSections = []){
             $rolledOver = 0;
             $this->con->begin_transaction();
             try{
                 $select = $this->con->prepare("SELECT * FROM {$this->students} WHERE id = ? AND status = 'active'");
+                $sectionLookup = $this->con->prepare("SELECT grade_level_id FROM {$this->sections} WHERE id = ?");
                 $insert = $this->con->prepare(
                     "INSERT INTO {$this->students} (lrn, first_name, middle_name, last_name, suffix, birth_date, gender, address, school_year_id, grade_level_id, section_id, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 );
@@ -55,6 +63,20 @@ require_once __DIR__ . '/../../core/Model.php';
                         continue;
                     }
 
+                    $gradeLevelId = $student['grade_level_id'];
+                    $sectionId = $student['section_id'];
+
+                    if(!empty($targetSections[$studentId])){
+                        $targetSectionId = (int) $targetSections[$studentId];
+                        $sectionLookup->bind_param("i", $targetSectionId);
+                        $sectionLookup->execute();
+                        $targetSection = $sectionLookup->get_result()->fetch_assoc();
+                        if($targetSection){
+                            $gradeLevelId = $targetSection['grade_level_id'];
+                            $sectionId = $targetSectionId;
+                        }
+                    }
+
                     $insert->bind_param(
                         "ssssssssiiii",
                         $student['lrn'],
@@ -66,8 +88,8 @@ require_once __DIR__ . '/../../core/Model.php';
                         $student['gender'],
                         $student['address'],
                         $newSchoolYearId,
-                        $student['grade_level_id'],
-                        $student['section_id'],
+                        $gradeLevelId,
+                        $sectionId,
                         $recordedBy
                     );
                     $insert->execute();
@@ -76,6 +98,21 @@ require_once __DIR__ . '/../../core/Model.php';
                     $archive->execute();
 
                     $rolledOver++;
+                }
+
+                if($rolledOver > 0){
+                    // Teacher-facing dashboards/filters (e.g. DashboardController::getStats())
+                    // default to whichever school year is flagged 'active', so without this
+                    // a rollover's target year silently stays invisible until someone
+                    // manually flips it in Manage School Year — even though the students
+                    // themselves were already promoted correctly.
+                    $deactivate = $this->con->prepare("UPDATE school_year SET status = 'inactive' WHERE status = 'active' AND id != ?");
+                    $deactivate->bind_param("i", $newSchoolYearId);
+                    $deactivate->execute();
+
+                    $activate = $this->con->prepare("UPDATE school_year SET status = 'active' WHERE id = ?");
+                    $activate->bind_param("i", $newSchoolYearId);
+                    $activate->execute();
                 }
 
                 $this->con->commit();

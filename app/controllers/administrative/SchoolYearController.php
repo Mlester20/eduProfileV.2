@@ -8,7 +8,7 @@ require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../middleware/Auth.php';
 
-AuthRole::allowOnly(['admin']);
+AuthRole::allowOnly(['administrative']);
 
     class SchoolYearController extends Controller{
 
@@ -27,16 +27,16 @@ AuthRole::allowOnly(['admin']);
         public function create($data){
             if(empty($data['school_year']) || empty($data['start_date']) || empty($data['end_date'])){
                 FlashMessage::setFlash('error', 'All fields are required.');
-                header('Location: ../../../resources/views/admin/sy.php');
+                header('Location: ../../../resources/views/administrative/sy.php');
                 exit();
             }else{
                 if($this->model->create($data)){
                     FlashMessage::setFlash('success', 'School year created successfully.');
-                    header('Location: ../../../resources/views/admin/sy.php');
+                    header('Location: ../../../resources/views/administrative/sy.php');
                     exit();
                 }else{
                     FlashMessage::setFlash('error', 'Failed to create school year.');
-                    header('Location: ../../../resources/views/admin/sy.php');
+                    header('Location: ../../../resources/views/administrative/sy.php');
                     exit();
                 }
             }
@@ -56,17 +56,17 @@ AuthRole::allowOnly(['admin']);
         public function update($id, $data){
             if(empty($data['school_year']) || empty($data['start_date']) || empty($data['end_date']) || empty($data['status'])){
                 FlashMessage::setFlash('error', 'All fields are required.');
-                header('Location: ../../../resources/views/admin/sy.php');
+                header('Location: ../../../resources/views/administrative/sy.php');
                 exit();
             }else{
                 try{
                     if($this->model->update($id, $data)){
                         FlashMessage::setFlash('success', 'School year updated successfully.');
-                        header('Location: ../../../resources/views/admin/sy.php');
+                        header('Location: ../../../resources/views/administrative/sy.php');
                         exit();
                     }else{
                         FlashMessage::setFlash('error', 'Failed to update school year.');
-                        header('Location: ../../../resources/views/admin/sy.php');
+                        header('Location: ../../../resources/views/administrative/sy.php');
                         exit();
                     }
                 }catch(Exception $e){
@@ -80,16 +80,16 @@ AuthRole::allowOnly(['admin']);
                 // Check if the school year can be deleted
                 if(!$this->canDelete($id)){
                     FlashMessage::setFlash('error', 'This is an active school year and cannot be deleted.');
-                    header('Location: ../../../resources/views/admin/sy.php');
+                    header('Location: ../../../resources/views/administrative/sy.php');
                     exit();
                 }
                 if($this->model->delete(['id' => $id])){
                     FlashMessage::setFlash('success', 'School year deleted successfully.');
-                    header('Location: ../../../resources/views/admin/sy.php');
+                    header('Location: ../../../resources/views/administrative/sy.php');
                     exit();
                 }else{
                     FlashMessage::setFlash('error', 'Failed to delete school year.');
-                    header('Location: ../../../resources/views/admin/sy.php');
+                    header('Location: ../../../resources/views/administrative/sy.php');
                     exit();
                 }
             }catch(Exception $e){
@@ -107,7 +107,7 @@ AuthRole::allowOnly(['admin']);
     }
 
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
-        Csrf::requireValidOnPost('../../../resources/views/admin/sy.php');
+        Csrf::requireValidOnPost('../../../resources/views/administrative/sy.php');
         if(isset($_POST['create_sy'])){
             $controller->create([
                 'school_year' => $_POST['school_year'],

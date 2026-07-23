@@ -33,7 +33,7 @@
                         $imgSrc = '../../../storage/profiles/' . $profilePic;
                       }
                     } else {
-                      $imgSrc = '../../../public/assets/img/avatars/8.jpg';
+                      $imgSrc = '../../../public/assets/img/favicon/logo.png';
                     }
                   ?>
                   <img src="<?php echo $imgSrc; ?>" alt class="w-px-40 h-auto rounded-circle" />
@@ -45,7 +45,7 @@
                     <div class="d-flex">
                       <div class="flex-shrink-0 me-3">
                         <div class="avatar avatar-online">
-                            <?php 
+                            <?php
                               $profilePic = $_SESSION['profile_picture'] ?? null;
                               if ($profilePic) {
                                 // Check if path already contains /
@@ -56,7 +56,7 @@
                                   $imgSrc = '../../../storage/profiles/' . $profilePic;
                                 }
                               } else {
-                                $imgSrc = '../../../public/assets/img/avatars/8.jpg';
+                                $imgSrc = '../../../public/assets/img/favicon/logo.png';
                               }
                             ?>
                             <img src="<?php echo $imgSrc; ?>" alt class="w-px-40 h-auto rounded-circle" />

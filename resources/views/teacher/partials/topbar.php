@@ -7,7 +7,7 @@ if ($profilePic) {
         $imgSrc = '../../../storage/profiles/' . $profilePic;
     }
 } else {
-    $imgSrc = '../../../public/assets/img/avatars/8.jpg';
+    $imgSrc = '../../../public/assets/img/favicon/logo.png';
 }
 ?>
 

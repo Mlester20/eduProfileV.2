@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . '/../../models/administrative/studentrollovermodel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
+require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
@@ -13,6 +14,7 @@ AuthRole::allowOnly(['administrative']);
 
     class StudentRolloverController extends Controller{
         protected $schoolYearModel;
+        protected $sectionsModel;
         protected $auditLogs;
 
         public function __construct($con){
@@ -20,6 +22,7 @@ AuthRole::allowOnly(['administrative']);
                 new StudentRolloverModel($con)
             );
             $this->schoolYearModel = new SchoolYearModel($con);
+            $this->sectionsModel = new SectionsModel($con);
             $this->auditLogs = new AuditLogs($con);
         }
 
@@ -34,10 +37,15 @@ AuthRole::allowOnly(['administrative']);
             return $this->schoolYearModel->index();
         }
 
+        public function getAllSections(){
+            return $this->sectionsModel->index();
+        }
+
         public function create($data){
             try{
                 $studentIds = $data['student_ids'] ?? [];
                 $newSchoolYearId = $data['new_school_year_id'] ?? null;
+                $targetSections = $data['target_sections'] ?? [];
 
                 if(empty($studentIds) || !$newSchoolYearId){
                     FlashMessage::setFlash('error', 'Select at least one student and a target school year.');
@@ -45,7 +53,7 @@ AuthRole::allowOnly(['administrative']);
                     exit();
                 }
 
-                $count = $this->model->rollover($studentIds, $newSchoolYearId, $data['recorded_by']);
+                $count = $this->model->rollover($studentIds, $newSchoolYearId, $data['recorded_by'], $targetSections);
 
                 if($count !== false){
                     $this->auditLogs->log(
@@ -87,6 +95,7 @@ AuthRole::allowOnly(['administrative']);
         $school_year_filter = isset($_GET['school_year_id']) && $_GET['school_year_id'] !== '' ? (int) $_GET['school_year_id'] : null;
         $rolloverCandidates = $controller->index($school_year_filter);
         $school_years = $controller->getSchoolYears();
+        $all_sections = $controller->getAllSections();
 
         if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rollover_students'])){
             Csrf::requireValidOnPost('../../../resources/views/administrative/student-rollover.php');
@@ -94,6 +103,7 @@ AuthRole::allowOnly(['administrative']);
                 [
                     'student_ids' => $_POST['student_ids'] ?? [],
                     'new_school_year_id' => $_POST['new_school_year_id'] ?? null,
+                    'target_sections' => $_POST['target_section_id'] ?? [],
                     'recorded_by' => $_SESSION['id'] ?? null
                 ]
             );
