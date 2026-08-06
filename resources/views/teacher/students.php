@@ -5,6 +5,12 @@ require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/helpers/StudentsAge.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
+
+if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
+    require_once __DIR__ . '/../../../app/services/StudentExportService.php';
+    StudentExportService::exportXlsx($controller->getAllForExport(), $parent_guardian_by_student);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +47,17 @@ AuthRole::allowOnly(['teacher']);
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
     <div class="text-end">
-      <button 
+      <a href="?export=xlsx" class="btn btn-outline-success me-2">
+        Export to Excel
+      </a>
+      <button
+        class="btn btn-outline-primary me-2"
+        data-bs-toggle="modal"
+        data-bs-target="#importStudentsModal"
+      >
+        Import from Excel
+      </button>
+      <button
         class="btn btn-primary"
         data-bs-toggle="modal"
         data-bs-target="#createStudentModal"
@@ -50,8 +66,81 @@ AuthRole::allowOnly(['teacher']);
       </button>
     </div>
 
-    <div class="modal fade" id="createStudentModal" tabindex="-1" aria-labelledby="createStudentLabel" aria-hidden="true">
+    <!-- import modal -->
+    <div class="modal fade" id="importStudentsModal" tabindex="-1" aria-labelledby="importStudentsLabel" aria-hidden="true">
         <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importStudentsLabel">Import Students from Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="../../../app/controllers/teacher/StudentImportController.php" method="post" enctype="multipart/form-data">
+                    <?= Csrf::field() ?>
+                    <div class="modal-body">
+                        <p class="text-muted small">
+                            Upload an .xlsx file with one row per student. Not sure of the format?
+                            <a href="../../../app/controllers/teacher/StudentImportController.php?template=1">Download the template</a>.
+                        </p>
+                        <div class="mb-3">
+                            <label for="import_file" class="form-label">Excel File (.xlsx)</label>
+                            <input class="form-control" type="file" name="import_file" id="import_file" accept=".xlsx" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="import_school_year_id" class="form-label">School Year</label>
+                            <select class="form-select" name="school_year_id" id="import_school_year_id" required>
+                                <option value="" selected disabled>-- Choose School Year --</option>
+                                <?php foreach (($school_years ?? []) as $school_year): ?>
+                                    <option value="<?php echo htmlspecialchars($school_year['id']); ?>">
+                                        <?php echo htmlspecialchars($school_year['school_year']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Grade Level & Section</label>
+                            <p class="form-text text-muted mt-0">All imported students will be assigned to this section.</p>
+                            <?php if (count($my_sections ?? []) === 1): ?>
+                                <?php $my_section = $my_sections[0]; ?>
+                                <input
+                                    class="form-control"
+                                    type="text"
+                                    value="<?php echo htmlspecialchars($my_section['grade_level_name'] . ' - ' . $my_section['section_name']); ?>"
+                                    disabled
+                                >
+                                <input type="hidden" name="section_id" value="<?php echo htmlspecialchars($my_section['id']); ?>">
+                                <input type="hidden" name="grade_level_id" value="<?php echo htmlspecialchars($my_section['grade_level_id']); ?>">
+                            <?php elseif (count($my_sections ?? []) > 1): ?>
+                                <select class="form-select" name="section_id" id="import_section_id">
+                                    <option value="" selected disabled>-- Choose Section --</option>
+                                    <?php foreach ($my_sections as $section): ?>
+                                        <option
+                                            value="<?php echo htmlspecialchars($section['id']); ?>"
+                                            data-grade-level-id="<?php echo htmlspecialchars($section['grade_level_id']); ?>"
+                                        >
+                                            <?php echo htmlspecialchars($section['grade_level_name'] . ' - ' . $section['section_name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <input type="hidden" name="grade_level_id" id="import_grade_level_id">
+                            <?php else: ?>
+                                <input class="form-control" type="text" value="No section assigned to you yet" disabled>
+                                <div class="form-text text-danger">Contact an admin to get assigned as a section adviser before importing students.</div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" name="import_students">
+                            Upload & Import
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="createStudentModal" tabindex="-1" aria-labelledby="createStudentLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-header" id="createStudentLabel">Add Student</h5>
@@ -102,11 +191,60 @@ AuthRole::allowOnly(['teacher']);
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input class="form-control" type="text" name="address" id="address" placeholder="e.g., 123 Main St, Barangay Example">
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-3 mb-3">
+                                <label for="age_as_of_june" class="form-label">Age (as of 1st Friday of June)</label>
+                                <input class="form-control" type="number" min="0" max="99" name="age_as_of_june" id="age_as_of_june" placeholder="e.g., 7">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="mother_tongue" class="form-label">Mother Tongue</label>
+                                <input class="form-control" type="text" name="mother_tongue" id="mother_tongue" placeholder="e.g., Tagalog (Grade 1-3 only)">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="ip_ethnic_group" class="form-label">IP / Ethnic Group</label>
+                                <input class="form-control" type="text" name="ip_ethnic_group" id="ip_ethnic_group" placeholder="e.g., Ilocano">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="religion" class="form-label">Religion</label>
+                                <input class="form-control" type="text" name="religion" id="religion" placeholder="e.g., Roman Catholic">
                             </div>
                         </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-3 mb-3">
+                                <label for="house_number" class="form-label">House #</label>
+                                <input class="form-control" type="text" name="house_number" id="house_number" placeholder="e.g., 123">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="street" class="form-label">Street</label>
+                                <input class="form-control" type="text" name="street" id="street" placeholder="e.g., Rizal St.">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="sitio" class="form-label">Sitio</label>
+                                <input class="form-control" type="text" name="sitio" id="sitio" placeholder="e.g., Sitio Malaya">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="purok" class="form-label">Purok</label>
+                                <input class="form-control" type="text" name="purok" id="purok" placeholder="e.g., Purok 3">
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4 mb-3">
+                                <label for="barangay" class="form-label">Barangay</label>
+                                <input class="form-control" type="text" name="barangay" id="barangay" placeholder="e.g., San Jose Sur">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="city_municipality" class="form-label">City / Municipality</label>
+                                <input class="form-control" type="text" name="city_municipality" id="city_municipality" placeholder="e.g., Rosario">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="province" class="form-label">Province</label>
+                                <input class="form-control" type="text" name="province" id="province" placeholder="e.g., Batangas">
+                            </div>
+                        </div>
+
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
                                 <label for="school_year_id" class="form-label">School Year</label>
@@ -166,7 +304,7 @@ AuthRole::allowOnly(['teacher']);
     </div>
 
     <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-header" id="editStudentLabel">Edit Student</h5>
@@ -218,11 +356,60 @@ AuthRole::allowOnly(['teacher']);
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input class="form-control" type="text" name="address" id="edit_address" placeholder="House No., Street, Barangay">
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-3 mb-3">
+                                <label for="age_as_of_june" class="form-label">Age (as of 1st Friday of June)</label>
+                                <input class="form-control" type="number" min="0" max="99" name="age_as_of_june" id="edit_age_as_of_june" placeholder="e.g., 7">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="mother_tongue" class="form-label">Mother Tongue</label>
+                                <input class="form-control" type="text" name="mother_tongue" id="edit_mother_tongue" placeholder="e.g., Tagalog (Grade 1-3 only)">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="ip_ethnic_group" class="form-label">IP / Ethnic Group</label>
+                                <input class="form-control" type="text" name="ip_ethnic_group" id="edit_ip_ethnic_group" placeholder="e.g., Ilocano">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="religion" class="form-label">Religion</label>
+                                <input class="form-control" type="text" name="religion" id="edit_religion" placeholder="e.g., Roman Catholic">
                             </div>
                         </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-3 mb-3">
+                                <label for="house_number" class="form-label">House #</label>
+                                <input class="form-control" type="text" name="house_number" id="edit_house_number" placeholder="e.g., 123">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="street" class="form-label">Street</label>
+                                <input class="form-control" type="text" name="street" id="edit_street" placeholder="e.g., Rizal St.">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="sitio" class="form-label">Sitio</label>
+                                <input class="form-control" type="text" name="sitio" id="edit_sitio" placeholder="e.g., Sitio Malaya">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="purok" class="form-label">Purok</label>
+                                <input class="form-control" type="text" name="purok" id="edit_purok" placeholder="e.g., Purok 3">
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4 mb-3">
+                                <label for="barangay" class="form-label">Barangay</label>
+                                <input class="form-control" type="text" name="barangay" id="edit_barangay" placeholder="e.g., San Jose Sur">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="city_municipality" class="form-label">City / Municipality</label>
+                                <input class="form-control" type="text" name="city_municipality" id="edit_city_municipality" placeholder="e.g., Rosario">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="province" class="form-label">Province</label>
+                                <input class="form-control" type="text" name="province" id="edit_province" placeholder="e.g., Batangas">
+                            </div>
+                        </div>
+
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
                                 <label for="school_year_id" class="form-label">School Year</label>
@@ -300,6 +487,9 @@ AuthRole::allowOnly(['teacher']);
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_developmental" type="button">Developmental Records</button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_parent_guardian" type="button">Parent/Guardian</button>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="view_tab_profile">
@@ -328,9 +518,17 @@ AuthRole::allowOnly(['teacher']);
                                     <label class="form-label fw-bold">Gender</label>
                                     <p class="mb-0" id="view_student_gender"></p>
                                 </div>
-                                <div class="col-12 mb-3">
-                                    <label class="form-label fw-bold">Address</label>
-                                    <p class="mb-0" id="view_student_address"></p>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Mother Tongue</label>
+                                    <p class="mb-0" id="view_student_mother_tongue"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">IP / Ethnic Group</label>
+                                    <p class="mb-0" id="view_student_ip_ethnic_group"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Religion</label>
+                                    <p class="mb-0" id="view_student_religion"></p>
                                 </div>
                             </div>
                         </div>
@@ -364,6 +562,57 @@ AuthRole::allowOnly(['teacher']);
                                     <tbody id="view_developmental_records"></tbody>
                                 </table>
                             </div>
+                        </div>
+                        <div class="tab-pane fade" id="view_tab_parent_guardian">
+                            <h6 class="mb-3">Father's Information</h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Father's Name</label>
+                                    <p class="mb-0" id="view_pg_father_name"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Occupation</label>
+                                    <p class="mb-0" id="view_pg_father_occupation"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Contact Number</label>
+                                    <p class="mb-0" id="view_pg_father_contact"></p>
+                                </div>
+                            </div>
+
+                            <h6 class="mb-3">Mother's Information</h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Mother's Name</label>
+                                    <p class="mb-0" id="view_pg_mother_name"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Occupation</label>
+                                    <p class="mb-0" id="view_pg_mother_occupation"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Contact Number</label>
+                                    <p class="mb-0" id="view_pg_mother_contact"></p>
+                                </div>
+                            </div>
+
+                            <h6 class="mb-3">Guardian's Information <small class="text-muted">(if applicable)</small></h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Guardian's Name</label>
+                                    <p class="mb-0" id="view_pg_guardian_name"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Relationship to Student</label>
+                                    <p class="mb-0" id="view_pg_guardian_relationship"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Contact Number</label>
+                                    <p class="mb-0" id="view_pg_guardian_contact"></p>
+                                </div>
+                            </div>
+
+                            <p class="text-muted" id="view_pg_empty" style="display: none;">No parent/guardian record found for this student.</p>
                         </div>
                     </div>
                 </div>
@@ -411,7 +660,9 @@ AuthRole::allowOnly(['teacher']);
                         '<?php echo htmlspecialchars($student['school_year']); ?>',
                         '<?php echo StudentsAge::calculateAge($student['birth_date']); ?>',
                         '<?php echo $student['gender']; ?>',
-                        '<?php echo htmlspecialchars($student['address']); ?>'
+                        '<?php echo htmlspecialchars($student['mother_tongue'] ?? ''); ?>',
+                        '<?php echo htmlspecialchars($student['ip_ethnic_group'] ?? ''); ?>',
+                        '<?php echo htmlspecialchars($student['religion'] ?? ''); ?>'
                     )"
                   >
                     <td><?php echo $offset + $index + 1; ?></td>
@@ -435,7 +686,17 @@ AuthRole::allowOnly(['teacher']);
                           '<?php echo $student['suffix']; ?>',
                           '<?php echo $student['birth_date']; ?>',
                           '<?php echo $student['gender']; ?>',
-                          '<?php echo $student['address']; ?>',
+                          '<?php echo $student['age_as_of_june']; ?>',
+                          '<?php echo $student['mother_tongue']; ?>',
+                          '<?php echo $student['ip_ethnic_group']; ?>',
+                          '<?php echo $student['religion']; ?>',
+                          '<?php echo $student['house_number']; ?>',
+                          '<?php echo $student['street']; ?>',
+                          '<?php echo $student['sitio']; ?>',
+                          '<?php echo $student['purok']; ?>',
+                          '<?php echo $student['barangay']; ?>',
+                          '<?php echo $student['city_municipality']; ?>',
+                          '<?php echo $student['province']; ?>',
                           '<?php echo $student['school_year_id']; ?>',
                           '<?php echo $student['grade_level_id']; ?>',
                           '<?php echo $student['section_id']; ?>',
@@ -504,8 +765,9 @@ AuthRole::allowOnly(['teacher']);
     <script>
         const studentBehaviorRecords = <?php echo json_encode($behavior_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
         const studentDevelopmentalRecords = <?php echo json_encode($developmental_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+        const studentParentGuardian = <?php echo json_encode($parent_guardian_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
     </script>
 <script src="../../../public/js/teacher/home.js"></script>
-<script src="../../../public/js/teacher/students.js"></script>
+<script src="../../../public/js/teacher/students.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/teacher/students.js'); ?>"></script>
 </body>
 </html>

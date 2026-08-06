@@ -24,14 +24,16 @@ function renderRecordsTable(tbodyId, records, columns, emptyMessage){
     });
 }
 
-function viewStudent(id, lrn, full_name, section, school_year, age, gender, address){
+function viewStudent(id, lrn, full_name, section, school_year, age, gender, mother_tongue, ip_ethnic_group, religion){
     document.getElementById('view_student_lrn').textContent = lrn;
     document.getElementById('view_student_full_name').textContent = full_name;
     document.getElementById('view_student_section').textContent = section;
     document.getElementById('view_student_school_year').textContent = school_year;
     document.getElementById('view_student_age').textContent = age;
     document.getElementById('view_student_gender').textContent = gender;
-    document.getElementById('view_student_address').textContent = address;
+    document.getElementById('view_student_mother_tongue').textContent = mother_tongue;
+    document.getElementById('view_student_ip_ethnic_group').textContent = ip_ethnic_group;
+    document.getElementById('view_student_religion').textContent = religion;
 
     renderRecordsTable(
         'view_behavior_records',
@@ -46,9 +48,16 @@ function viewStudent(id, lrn, full_name, section, school_year, age, gender, addr
         ['school_year', 'domain', 'observation', 'recommendation'],
         'No developmental records found.'
     );
+
+    const pgFields = ['father_name', 'father_occupation', 'father_contact', 'mother_name', 'mother_occupation', 'mother_contact', 'guardian_name', 'guardian_relationship', 'guardian_contact'];
+    const pg = studentParentGuardian[id] || null;
+    pgFields.forEach(function(field){
+        document.getElementById('view_pg_' + field).textContent = pg ? (pg[field] ?? '') : '';
+    });
+    document.getElementById('view_pg_empty').style.display = pg ? 'none' : 'block';
 }
 
-function editStudent(id, lrn, first_name, middle_name, last_name, suffix, birth_date, gender, address, school_year_id, grade_level_id, section_id, recorded_by){
+function editStudent(id, lrn, first_name, middle_name, last_name, suffix, birth_date, gender, age_as_of_june, mother_tongue, ip_ethnic_group, religion, house_number, street, sitio, purok, barangay, city_municipality, province, school_year_id, grade_level_id, section_id, recorded_by){
     document.getElementById('edit_student_id').value = id;
     document.getElementById('edit_lrn').value = lrn;
     document.getElementById('edit_first_name').value = first_name;
@@ -57,7 +66,17 @@ function editStudent(id, lrn, first_name, middle_name, last_name, suffix, birth_
     document.getElementById('edit_suffix').value = suffix;
     document.getElementById('edit_birth_date').value = birth_date;
     document.getElementById('edit_gender').value = gender;
-    document.getElementById('edit_address').value = address;
+    document.getElementById('edit_age_as_of_june').value = age_as_of_june;
+    document.getElementById('edit_mother_tongue').value = mother_tongue;
+    document.getElementById('edit_ip_ethnic_group').value = ip_ethnic_group;
+    document.getElementById('edit_religion').value = religion;
+    document.getElementById('edit_house_number').value = house_number;
+    document.getElementById('edit_street').value = street;
+    document.getElementById('edit_sitio').value = sitio;
+    document.getElementById('edit_purok').value = purok;
+    document.getElementById('edit_barangay').value = barangay;
+    document.getElementById('edit_city_municipality').value = city_municipality;
+    document.getElementById('edit_province').value = province;
     document.getElementById('edit_school_year_id').value = school_year_id;
     document.getElementById('edit_grade_level_id').value = grade_level_id;
     document.getElementById('edit_section_id').value = section_id;

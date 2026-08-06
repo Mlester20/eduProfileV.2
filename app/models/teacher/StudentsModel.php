@@ -52,18 +52,33 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function create($data){
             try{
-                $insert = "INSERT INTO {$this->students}(lrn, first_name, middle_name, last_name, suffix, birth_date, gender, address, school_year_id, grade_level_id, section_id, recorded_by) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $insert = "INSERT INTO {$this->students}(
+                    lrn, first_name, middle_name, last_name, suffix, birth_date,
+                    age_as_of_june, gender, mother_tongue, ip_ethnic_group, religion,
+                    house_number, street, sitio, purok, barangay, city_municipality, province,
+                    school_year_id, grade_level_id, section_id, recorded_by
+                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $this->con->prepare($insert);
                 $stmt->bind_param(
-                    "ssssssssiiii",
+                    "ssssssisssssssssssiiii",
                     $data['lrn'],
                     $data['first_name'],
                     $data['middle_name'],
                     $data['last_name'],
                     $data['suffix'],
                     $data['birth_date'],
+                    $data['age_as_of_june'],
                     $data['gender'],
-                    $data['address'],
+                    $data['mother_tongue'],
+                    $data['ip_ethnic_group'],
+                    $data['religion'],
+                    $data['house_number'],
+                    $data['street'],
+                    $data['sitio'],
+                    $data['purok'],
+                    $data['barangay'],
+                    $data['city_municipality'],
+                    $data['province'],
                     $data['school_year_id'],
                     $data['grade_level_id'],
                     $data['section_id'],
@@ -224,18 +239,33 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function update($id, $data){
             try{
-                $update = "UPDATE {$this->students} SET lrn = ?, first_name = ?, middle_name = ?, last_name = ?, suffix = ?, birth_date = ?, gender = ?, address = ?, school_year_id = ?, grade_level_id = ?, section_id = ?, recorded_by = ? WHERE id = ? ";
+                $update = "UPDATE {$this->students} SET
+                    lrn = ?, first_name = ?, middle_name = ?, last_name = ?, suffix = ?, birth_date = ?,
+                    age_as_of_june = ?, gender = ?, mother_tongue = ?, ip_ethnic_group = ?, religion = ?,
+                    house_number = ?, street = ?, sitio = ?, purok = ?, barangay = ?, city_municipality = ?, province = ?,
+                    school_year_id = ?, grade_level_id = ?, section_id = ?, recorded_by = ?
+                    WHERE id = ? ";
                 $stmt = $this->con->prepare($update);
                 $stmt->bind_param(
-                    "ssssssssiiiii",
+                    "ssssssisssssssssssiiiii",
                     $data['lrn'],
                     $data['first_name'],
                     $data['middle_name'],
                     $data['last_name'],
                     $data['suffix'],
                     $data['birth_date'],
+                    $data['age_as_of_june'],
                     $data['gender'],
-                    $data['address'],
+                    $data['mother_tongue'],
+                    $data['ip_ethnic_group'],
+                    $data['religion'],
+                    $data['house_number'],
+                    $data['street'],
+                    $data['sitio'],
+                    $data['purok'],
+                    $data['barangay'],
+                    $data['city_municipality'],
+                    $data['province'],
                     $data['school_year_id'],
                     $data['grade_level_id'],
                     $data['section_id'],

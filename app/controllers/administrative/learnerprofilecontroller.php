@@ -51,6 +51,8 @@ AuthRole::allowOnly(['administrative']);
                 'developmental' => $this->model->getDevelopmentalRecords($studentId),
                 'health' => $this->model->getHealthProfile($studentId),
                 'achievements' => $this->model->getAchievementRecords($studentId),
+                'reading_level' => $this->model->getReadingLevelRecords($studentId),
+                'parent_guardian' => $this->model->getParentGuardian($studentId),
             ];
         }
     }

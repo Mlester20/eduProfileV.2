@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers/StudentsAge.php';
+require_once __DIR__ . '/AddressService.php';
 
     /**
      * Presentation-only helpers for the administrative Learner Profile page
@@ -39,7 +40,11 @@ require_once __DIR__ . '/../helpers/StudentsAge.php';
             fputcsv($out, ['Grade & Section', ($info['grade_name'] ?? '') . ' - ' . ($info['section_name'] ?? '')]);
             fputcsv($out, ['School Year', $info['school_year'] ?? '']);
             fputcsv($out, ['Status', ucfirst($info['status'])]);
-            fputcsv($out, ['Address', $info['address'] ?? '']);
+            fputcsv($out, ['Address', AddressService::formatFullAddress($info)]);
+            fputcsv($out, ['Age (as of June)', $info['age_as_of_june'] ?? '']);
+            fputcsv($out, ['Mother Tongue', $info['mother_tongue'] ?? '']);
+            fputcsv($out, ['IP / Ethnic Group', $info['ip_ethnic_group'] ?? '']);
+            fputcsv($out, ['Religion', $info['religion'] ?? '']);
             fputcsv($out, []);
 
             self::writeSection($out, 'ACADEMIC RECORDS', ['Subject', 'Grading Period', 'Grade', 'Remarks', 'School Year', 'Recorded By'], $profile['academic'], function($r){
@@ -70,7 +75,20 @@ require_once __DIR__ . '/../helpers/StudentsAge.php';
 
             self::writeSection($out, 'ACHIEVEMENT RECORDS', ['Title', 'Category', 'Level', 'Date Received', 'Awarding Body', 'Recorded By'], $profile['achievements'], function($r){
                 return [$r['title'], $r['category'], $r['level'], $r['date_received'], $r['awarding_body'] ?? '', $r['recorded_by_name'] ?? ''];
-            }, 'No achievement records.', false);
+            }, 'No achievement records.');
+
+            self::writeSection($out, 'READING LEVEL RECORDS', ['Assessment Date', 'Reading Level', 'Reading Language', 'Remarks', 'School Year', 'Recorded By'], $profile['reading_level'], function($r){
+                return [$r['assessment_date'], $r['reading_level'], $r['reading_language'], $r['remarks'] ?? '', $r['school_year'] ?? '', $r['recorded_by_name'] ?? ''];
+            }, 'No reading level records.');
+
+            fputcsv($out, ['PARENT/GUARDIAN INFORMATION']);
+            if(!$profile['parent_guardian']){
+                fputcsv($out, ['No parent/guardian record found.']);
+            }else{
+                $pg = $profile['parent_guardian'];
+                fputcsv($out, ["Father's Name", "Father's Occupation", "Father's Contact", "Mother's Name", "Mother's Occupation", "Mother's Contact", "Guardian's Name", 'Guardian Relationship', "Guardian's Contact", 'Recorded By']);
+                fputcsv($out, [$pg['father_name'] ?? '', $pg['father_occupation'] ?? '', $pg['father_contact'] ?? '', $pg['mother_name'] ?? '', $pg['mother_occupation'] ?? '', $pg['mother_contact'] ?? '', $pg['guardian_name'] ?? '', $pg['guardian_relationship'] ?? '', $pg['guardian_contact'] ?? '', $pg['recorded_by_name'] ?? '']);
+            }
 
             fclose($out);
         }

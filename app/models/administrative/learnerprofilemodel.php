@@ -26,6 +26,8 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $health_profiles = 'health_profiles';
         protected $attendance = 'attendance';
         protected $achievements_profiles = 'achievements_profiles';
+        protected $reading_levels = 'reading_levels';
+        protected $parents_guardians = 'parents_guardians';
 
         public function getAllStudentsForSearch(){
             try{
@@ -209,6 +211,29 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function getAchievementRecords($studentId){
             return $this->fetchForStudent('ap', $this->achievements_profiles, $studentId, 'ap.date_received DESC');
+        }
+
+        public function getReadingLevelRecords($studentId){
+            return $this->fetchForStudent('rl', $this->reading_levels, $studentId, 'rl.assessment_date DESC');
+        }
+
+        public function getParentGuardian($studentId){
+            try{
+                $query = "SELECT pg.*, ru.full_name AS recorded_by_name
+                    FROM {$this->parents_guardians} pg
+                    LEFT JOIN {$this->users} ru ON pg.recorded_by = ru.id
+                    WHERE pg.student_id = ?
+                    LIMIT 1
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $studentId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_assoc();
+            }catch(Exception $e){
+                error_log("Error fetching parent/guardian for learner profile: " . $e->getMessage());
+                return null;
+            }
         }
 
         public function getHealthProfile($studentId){

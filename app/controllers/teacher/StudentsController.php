@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../models/teacher/StudentBehavioralProfileModel.php';
 require_once __DIR__ . '/../../models/teacher/StudentDevelopmentalProfileModel.php';
+require_once __DIR__ . '/../../models/teacher/ParentGuardianModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
@@ -20,6 +21,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
         protected $service;
         protected $behavioralProfile;
         protected $developmentalProfile;
+        protected $parentGuardian;
 
         public function __construct($con){
             $model = new StudentsModel($con);
@@ -30,6 +32,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->section              = new SectionsModel($con);
             $this->behavioralProfile    = new StudentBehavioralProfileModel($con);
             $this->developmentalProfile = new StudentDevelopmentalProfileModel($con);
+            $this->parentGuardian       = new ParentGuardianModel($con);
         }
 
         public function index(){
@@ -67,6 +70,26 @@ require_once __DIR__ . '/../../../database/config/config.php';
                 return [];
             }
             return $this->developmentalProfile->index((int) $_SESSION['id']);
+        }
+
+        public function getParentGuardians(){
+            if(!isset($_SESSION['id'])){
+                return [];
+            }
+            return $this->parentGuardian->getByTeacher((int) $_SESSION['id']);
+        }
+
+        /**
+         * Full (unpaginated) list of this teacher's active advisees, for
+         * the Export to Excel button — the paginated index() list isn't
+         * suitable since the export should cover the whole roster.
+         */
+
+        public function getAllForExport(){
+            if(!isset($_SESSION['id'])){
+                return [];
+            }
+            return $this->model->index((int) $_SESSION['id']);
         }
 
         // public function getSectionById($sectionId){
@@ -175,6 +198,11 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $developmental_by_student[$record['student_id']][] = $record;
         }
 
+        $parent_guardian_by_student = [];
+        foreach($controller->getParentGuardians() as $record){
+            $parent_guardian_by_student[$record['student_id']] = $record;
+        }
+
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             Csrf::requireValidOnPost('../../../resources/views/teacher/students.php');
             if(isset($_POST['create_student'])){
@@ -186,8 +214,18 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'last_name' => $_POST['last_name'],
                         'suffix' => $_POST['suffix'],
                         'birth_date' => $_POST['birth_date'],
+                        'age_as_of_june' => ($_POST['age_as_of_june'] !== '' ? $_POST['age_as_of_june'] : null),
                         'gender' => $_POST['gender'],
-                        'address' => $_POST['address'],
+                        'mother_tongue' => ($_POST['mother_tongue'] !== '' ? $_POST['mother_tongue'] : null),
+                        'ip_ethnic_group' => ($_POST['ip_ethnic_group'] !== '' ? $_POST['ip_ethnic_group'] : null),
+                        'religion' => ($_POST['religion'] !== '' ? $_POST['religion'] : null),
+                        'house_number' => ($_POST['house_number'] !== '' ? $_POST['house_number'] : null),
+                        'street' => ($_POST['street'] !== '' ? $_POST['street'] : null),
+                        'sitio' => ($_POST['sitio'] !== '' ? $_POST['sitio'] : null),
+                        'purok' => ($_POST['purok'] !== '' ? $_POST['purok'] : null),
+                        'barangay' => ($_POST['barangay'] !== '' ? $_POST['barangay'] : null),
+                        'city_municipality' => ($_POST['city_municipality'] !== '' ? $_POST['city_municipality'] : null),
+                        'province' => ($_POST['province'] !== '' ? $_POST['province'] : null),
                         'school_year_id' => $_POST['school_year_id'],
                         'grade_level_id' => $_POST['grade_level_id'],
                         'section_id' => $_POST['section_id'],
@@ -206,8 +244,18 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'last_name' => $_POST['last_name'],
                         'suffix' => $_POST['suffix'],
                         'birth_date' => $_POST['birth_date'],
+                        'age_as_of_june' => ($_POST['age_as_of_june'] !== '' ? $_POST['age_as_of_june'] : null),
                         'gender' => $_POST['gender'],
-                        'address' => $_POST['address'],
+                        'mother_tongue' => ($_POST['mother_tongue'] !== '' ? $_POST['mother_tongue'] : null),
+                        'ip_ethnic_group' => ($_POST['ip_ethnic_group'] !== '' ? $_POST['ip_ethnic_group'] : null),
+                        'religion' => ($_POST['religion'] !== '' ? $_POST['religion'] : null),
+                        'house_number' => ($_POST['house_number'] !== '' ? $_POST['house_number'] : null),
+                        'street' => ($_POST['street'] !== '' ? $_POST['street'] : null),
+                        'sitio' => ($_POST['sitio'] !== '' ? $_POST['sitio'] : null),
+                        'purok' => ($_POST['purok'] !== '' ? $_POST['purok'] : null),
+                        'barangay' => ($_POST['barangay'] !== '' ? $_POST['barangay'] : null),
+                        'city_municipality' => ($_POST['city_municipality'] !== '' ? $_POST['city_municipality'] : null),
+                        'province' => ($_POST['province'] !== '' ? $_POST['province'] : null),
                         'school_year_id' => $_POST['school_year_id'],
                         'grade_level_id' => $_POST['grade_level_id'],
                         'section_id' => $_POST['section_id'],

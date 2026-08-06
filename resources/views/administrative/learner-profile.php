@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../../app/controllers/administrative/learnerprofilec
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
 require_once __DIR__ . '/../../../app/helpers/StudentsAge.php';
 require_once __DIR__ . '/../../../app/services/LearnerProfileExportService.php';
+require_once __DIR__ . '/../../../app/services/AddressService.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
 
@@ -139,13 +140,62 @@ if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold mb-0">Address</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['address'] ?? ''); ?></p>
+                        <p class="mb-0"><?php echo htmlspecialchars(AddressService::formatFullAddress($info)); ?></p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold mb-0">Recorded By</label>
                         <p class="mb-0"><?php echo htmlspecialchars($info['recorded_by_name'] ?? ''); ?></p>
                     </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="form-label fw-bold mb-0">Age (as of June)</label>
+                        <p class="mb-0"><?php echo htmlspecialchars($info['age_as_of_june'] ?? ''); ?></p>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="form-label fw-bold mb-0">Mother Tongue</label>
+                        <p class="mb-0"><?php echo htmlspecialchars($info['mother_tongue'] ?? ''); ?></p>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="form-label fw-bold mb-0">IP / Ethnic Group</label>
+                        <p class="mb-0"><?php echo htmlspecialchars($info['ip_ethnic_group'] ?? ''); ?></p>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="form-label fw-bold mb-0">Religion</label>
+                        <p class="mb-0"><?php echo htmlspecialchars($info['religion'] ?? ''); ?></p>
+                    </div>
                 </div>
+
+                <hr>
+                <h6 class="fw-bold mb-3">Parent/Guardian Information</h6>
+                <?php $pg = $profile['parent_guardian']; ?>
+                <?php if(!$pg): ?>
+                    <p class="text-muted">No parent/guardian record found for this learner.</p>
+                <?php else: ?>
+                    <div class="row">
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Father's Name</label><p class="mb-0"><?php echo htmlspecialchars($pg['father_name'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Father's Occupation</label><p class="mb-0"><?php echo htmlspecialchars($pg['father_occupation'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Father's Contact</label><p class="mb-0"><?php echo htmlspecialchars($pg['father_contact'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Mother's Name</label><p class="mb-0"><?php echo htmlspecialchars($pg['mother_name'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Mother's Occupation</label><p class="mb-0"><?php echo htmlspecialchars($pg['mother_occupation'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Mother's Contact</label><p class="mb-0"><?php echo htmlspecialchars($pg['mother_contact'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Guardian's Name</label><p class="mb-0"><?php echo htmlspecialchars($pg['guardian_name'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Guardian Relationship</label><p class="mb-0"><?php echo htmlspecialchars($pg['guardian_relationship'] ?? ''); ?></p></div>
+                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Guardian's Contact</label><p class="mb-0"><?php echo htmlspecialchars($pg['guardian_contact'] ?? ''); ?></p></div>
+                    </div>
+                <?php endif; ?>
+
+                <hr>
+                <h6 class="fw-bold mb-3">Height / Weight</h6>
+                <?php $h = $profile['health']; ?>
+                <?php if(!$h): ?>
+                    <p class="text-muted">No health profile recorded.</p>
+                <?php else: ?>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Height</label><p class="mb-0"><?php echo htmlspecialchars($h['height_cm'] ?? ''); ?> cm</p></div>
+                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Weight</label><p class="mb-0"><?php echo htmlspecialchars($h['weight_kg'] ?? ''); ?> kg</p></div>
+                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">BMI</label><p class="mb-0"><?php echo htmlspecialchars($h['bmi'] ?? ''); ?></p></div>
+                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Classification</label><p class="mb-0"><?php echo htmlspecialchars($h['bmi_classification'] ?? ''); ?></p></div>
+                    </div>
+                <?php endif; ?>
 
                 <?php if(!empty($profile['other_years'])): ?>
                     <hr class="no-print">
@@ -171,6 +221,7 @@ if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_developmental" type="button">Developmental (<?php echo count($profile['developmental']); ?>)</button></li>
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_health" type="button">Health</button></li>
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_achievements" type="button">Achievements (<?php echo count($profile['achievements']); ?>)</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_reading_level" type="button">Reading Level (<?php echo count($profile['reading_level']); ?>)</button></li>
                 </ul>
             </div>
             <div class="card-body">
@@ -302,6 +353,29 @@ if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
                                             <td><?php echo htmlspecialchars($r['level']); ?></td>
                                             <td><?php echo htmlspecialchars($r['date_received']); ?></td>
                                             <td><?php echo htmlspecialchars($r['awarding_body'] ?? ''); ?></td>
+                                            <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
+                                        </tr>
+                                    <?php endforeach; endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab_reading_level">
+                        <h6 class="print-section-title fw-bold mb-2">Reading Level Records</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead><tr><th>Assessment Date</th><th>Reading Level</th><th>Reading Language</th><th>Remarks</th><th>School Year</th><th>Recorded By</th></tr></thead>
+                                <tbody>
+                                    <?php if(empty($profile['reading_level'])): ?>
+                                        <tr><td colspan="6" class="text-center text-muted">No reading level records.</td></tr>
+                                    <?php else: foreach($profile['reading_level'] as $r): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($r['assessment_date']); ?></td>
+                                            <td><?php echo htmlspecialchars($r['reading_level']); ?></td>
+                                            <td><?php echo htmlspecialchars($r['reading_language']); ?></td>
+                                            <td><?php echo htmlspecialchars($r['remarks'] ?? ''); ?></td>
+                                            <td><?php echo htmlspecialchars($r['school_year'] ?? ''); ?></td>
                                             <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
                                         </tr>
                                     <?php endforeach; endif; ?>

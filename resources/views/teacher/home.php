@@ -61,6 +61,7 @@ $moduleIcons = [
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-1">Welcome back, <?php echo htmlspecialchars($_SESSION['full_name'] ?? 'Teacher'); ?></h4>
+            <!-- <h4 class="mb-1">School Id: 103503</h4> -->
             <span class="text-muted">
                 <?php if($stats['active_school_year']): ?>
                     School Year <?php echo htmlspecialchars($stats['active_school_year']['school_year']); ?>

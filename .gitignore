@@ -2,3 +2,4 @@
 *.MD
 *.txt
 database/config/secrets.php
+/vendor/

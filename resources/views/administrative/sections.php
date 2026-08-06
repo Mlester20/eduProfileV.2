@@ -48,8 +48,8 @@ AuthRole::allowOnly(['administrative']);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-header" id="createSectionLabel">Add Grade Level</h5>
-                    <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
+                    <h5 class="modal-header" id="createSectionLabel">Add Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/administrative/SectionsController.php" method="post">
                     <?= Csrf::field() ?>
@@ -57,7 +57,7 @@ AuthRole::allowOnly(['administrative']);
                         <div class="mb-3">
                             <label for="grade_level_id" class="form-label">Select Grade Level</label>
                             <select name="grade_level_id" id="grade_level_id" class="form-select" required>
-                                <option value="" selected disabled>-- Choose Section --</option>
+                                <option value="" selected disabled>-- Choose Grade Level --</option>
                                 <?php foreach ($grade_levels as $grade_level): ?>
                                     <option value="<?= htmlspecialchars($grade_level['id']); ?>">
                                         <?= htmlspecialchars($grade_level['grade_name']); ?>
@@ -66,11 +66,12 @@ AuthRole::allowOnly(['administrative']);
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="grade_level" class="form-label">Grade Level</label>
+                            <label for="section_name" class="form-label">Section Name</label>
                             <input
                                 class="form-control"
                                 type="text"
                                 name="section_name"
+                                id="section_name"
                                 placeholder="e.g., Mahogani"
                             >
                         </div>
@@ -87,7 +88,7 @@ AuthRole::allowOnly(['administrative']);
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button
                             type="submit"
                             class="btn btn-primary" name="create_section"
@@ -105,17 +106,17 @@ AuthRole::allowOnly(['administrative']);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-header" id="editSectionLabel">Add Grade Level</h5>
-                    <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
+                    <h5 class="modal-header" id="editSectionLabel">Edit Section</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/administrative/SectionsController.php" method="post">
                     <?= Csrf::field() ?>
                     <input type="hidden" name="id" id="edit_section_id">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="grade_level_id" class="form-label">Select Grade Level</label>
+                            <label for="edit_grade_level_id" class="form-label">Select Grade Level</label>
                             <select name="grade_level_id" id="edit_grade_level_id" class="form-select" required>
-                                <option value="" selected disabled>-- Choose Section --</option>
+                                <option value="" selected disabled>-- Choose Grade Level --</option>
                                 <?php foreach ($grade_levels as $grade_level): ?>
                                     <option value="<?= htmlspecialchars($grade_level['id']); ?>">
                                         <?= htmlspecialchars($grade_level['grade_name']); ?>
@@ -124,7 +125,7 @@ AuthRole::allowOnly(['administrative']);
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="grade_level" class="form-label">Grade Level</label>
+                            <label for="edit_section_name" class="form-label">Section Name</label>
                             <input
                                 class="form-control"
                                 type="text"
@@ -133,7 +134,7 @@ AuthRole::allowOnly(['administrative']);
                             >
                         </div>
                         <div class="mb-3">
-                            <label for="adviser_id" class="form-label">Select Advisor / Teacher</label>
+                            <label for="edit_adviser_id" class="form-label">Select Advisor / Teacher</label>
                             <select name="adviser_id" id="edit_adviser_id" class="form-select" required>
                                 <option value="" selected disabled>-- Choose Teacher --</option>
                                 <?php foreach ($teachers as $teacher): ?>
@@ -145,7 +146,7 @@ AuthRole::allowOnly(['administrative']);
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button
                             type="submit"
                             class="btn btn-primary" name="update_section"

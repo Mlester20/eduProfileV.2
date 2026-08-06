@@ -147,6 +147,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
           </ul>
         </li>
+        <!-- Reading Level -->
+        <li class="menu-item <?php echo ($currentPage === 'reading-level.php') ? 'active' : ''; ?>">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-book-reader"></i>
+            <div data-i18n="Reading Level">Reading Level</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item">
+              <a href="reading-level.php" class="menu-link">
+                <div data-i18n="Error">Reading Level</div>
+              </a>
+            </li>
+          </ul>
+        </li>
 
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Healths</span>

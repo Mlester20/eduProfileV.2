@@ -4,7 +4,32 @@ require_once __DIR__ . '/../../core/Model.php';
     class ParentGuardianModel extends Model{
         protected $parent_guardian = 'parents_guardians';
         protected $students = 'students';
+        protected $sections = 'sections';
         protected $users = 'users';
+
+        /**
+         * Parent/Guardian records for a teacher's own advisees only.
+         */
+
+        public function getByTeacher($teacher_id){
+            try{
+                $query = "SELECT
+                    pg.*
+                    FROM {$this->parent_guardian} pg
+                    LEFT JOIN {$this->students} s ON pg.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $teacher_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log("Error fetching parent/guardian records: " . $e->getMessage());
+                return [];
+            }
+        }
 
         public function index(){
             try{
