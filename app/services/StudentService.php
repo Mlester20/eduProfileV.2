@@ -62,12 +62,12 @@ class StudentService extends Model {
         return $name;
     }
 
-    public function getPaginatedStudents(int $teacherId, int $page = 1, int $perPage = 10): array {
+    public function getPaginatedStudents(int $teacherId, int $page = 1, int $perPage = 10, ?string $search = null): array {
         $page   = max(1, $page);
         $offset = ($page - 1) * $perPage;
 
-        $rows  = $this->model->getPage($perPage, $offset, $teacherId);
-        $total = $this->model->countAll($teacherId);
+        $rows  = $this->model->getPage($perPage, $offset, $teacherId, $search);
+        $total = $this->model->countAll($teacherId, $search);
 
         $data = array_map(function (array $student): array {
             $student['full_name'] = $this->formatFullName($student);

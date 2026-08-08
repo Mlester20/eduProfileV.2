@@ -5,12 +5,6 @@ require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/helpers/StudentsAge.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
-
-if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
-    require_once __DIR__ . '/../../../app/services/StudentExportService.php';
-    StudentExportService::exportXlsx($controller->getAllForExport(), $parent_guardian_by_student);
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -47,16 +41,9 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
     <div class="text-end">
-      <a href="?export=xlsx" class="btn btn-outline-success me-2">
-        Export to Excel
+      <a href="students-import-export.php" class="btn btn-outline-secondary me-2">
+        Import / Export
       </a>
-      <button
-        class="btn btn-outline-primary me-2"
-        data-bs-toggle="modal"
-        data-bs-target="#importStudentsModal"
-      >
-        Import from Excel
-      </button>
       <button
         class="btn btn-primary"
         data-bs-toggle="modal"
@@ -64,79 +51,6 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
       >
         Add Student
       </button>
-    </div>
-
-    <!-- import modal -->
-    <div class="modal fade" id="importStudentsModal" tabindex="-1" aria-labelledby="importStudentsLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="importStudentsLabel">Import Students from Excel</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="../../../app/controllers/teacher/StudentImportController.php" method="post" enctype="multipart/form-data">
-                    <?= Csrf::field() ?>
-                    <div class="modal-body">
-                        <p class="text-muted small">
-                            Upload an .xlsx file with one row per student. Not sure of the format?
-                            <a href="../../../app/controllers/teacher/StudentImportController.php?template=1">Download the template</a>.
-                        </p>
-                        <div class="mb-3">
-                            <label for="import_file" class="form-label">Excel File (.xlsx)</label>
-                            <input class="form-control" type="file" name="import_file" id="import_file" accept=".xlsx" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="import_school_year_id" class="form-label">School Year</label>
-                            <select class="form-select" name="school_year_id" id="import_school_year_id" required>
-                                <option value="" selected disabled>-- Choose School Year --</option>
-                                <?php foreach (($school_years ?? []) as $school_year): ?>
-                                    <option value="<?php echo htmlspecialchars($school_year['id']); ?>">
-                                        <?php echo htmlspecialchars($school_year['school_year']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Grade Level & Section</label>
-                            <p class="form-text text-muted mt-0">All imported students will be assigned to this section.</p>
-                            <?php if (count($my_sections ?? []) === 1): ?>
-                                <?php $my_section = $my_sections[0]; ?>
-                                <input
-                                    class="form-control"
-                                    type="text"
-                                    value="<?php echo htmlspecialchars($my_section['grade_level_name'] . ' - ' . $my_section['section_name']); ?>"
-                                    disabled
-                                >
-                                <input type="hidden" name="section_id" value="<?php echo htmlspecialchars($my_section['id']); ?>">
-                                <input type="hidden" name="grade_level_id" value="<?php echo htmlspecialchars($my_section['grade_level_id']); ?>">
-                            <?php elseif (count($my_sections ?? []) > 1): ?>
-                                <select class="form-select" name="section_id" id="import_section_id">
-                                    <option value="" selected disabled>-- Choose Section --</option>
-                                    <?php foreach ($my_sections as $section): ?>
-                                        <option
-                                            value="<?php echo htmlspecialchars($section['id']); ?>"
-                                            data-grade-level-id="<?php echo htmlspecialchars($section['grade_level_id']); ?>"
-                                        >
-                                            <?php echo htmlspecialchars($section['grade_level_name'] . ' - ' . $section['section_name']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <input type="hidden" name="grade_level_id" id="import_grade_level_id">
-                            <?php else: ?>
-                                <input class="form-control" type="text" value="No section assigned to you yet" disabled>
-                                <div class="form-text text-danger">Contact an admin to get assigned as a section adviser before importing students.</div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" name="import_students">
-                            Upload & Import
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 
     <div class="modal fade" id="createStudentModal" tabindex="-1" aria-labelledby="createStudentLabel" aria-hidden="true">
@@ -487,49 +401,103 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_developmental" type="button">Developmental Records</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_parent_guardian" type="button">Parent/Guardian</button>
-                        </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="view_tab_profile">
+                            <h5 class="mb-4" id="view_student_full_name"></h5>
+
+                            <h6 class="text-uppercase text-muted small fw-bold mb-2">Basic Information</h6>
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">LRN</label>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">LRN</label>
                                     <p class="mb-0" id="view_student_lrn"></p>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Student Name</label>
-                                    <p class="mb-0" id="view_student_full_name"></p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Grade Level & Section</label>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Grade Level & Section</label>
                                     <p class="mb-0" id="view_student_section"></p>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">School Year</label>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">School Year</label>
                                     <p class="mb-0" id="view_student_school_year"></p>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Age</label>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Age</label>
                                     <p class="mb-0" id="view_student_age"></p>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Gender</label>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Gender</label>
                                     <p class="mb-0" id="view_student_gender"></p>
                                 </div>
+                            </div>
+
+                            <hr>
+                            <h6 class="text-uppercase text-muted small fw-bold mb-2">Additional Information</h6>
+                            <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Mother Tongue</label>
+                                    <label class="form-label fw-bold mb-0">Mother Tongue</label>
                                     <p class="mb-0" id="view_student_mother_tongue"></p>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">IP / Ethnic Group</label>
+                                    <label class="form-label fw-bold mb-0">IP / Ethnic Group</label>
                                     <p class="mb-0" id="view_student_ip_ethnic_group"></p>
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Religion</label>
+                                    <label class="form-label fw-bold mb-0">Religion</label>
                                     <p class="mb-0" id="view_student_religion"></p>
                                 </div>
+                            </div>
+
+                            <hr>
+                            <h6 class="text-uppercase text-muted small fw-bold mb-2">Parent / Guardian Information</h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Father's Name</label>
+                                    <p class="mb-0" id="view_pg_father_name"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Father's Occupation</label>
+                                    <p class="mb-0" id="view_pg_father_occupation"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Father's Contact</label>
+                                    <p class="mb-0" id="view_pg_father_contact"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Mother's Name</label>
+                                    <p class="mb-0" id="view_pg_mother_name"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Mother's Occupation</label>
+                                    <p class="mb-0" id="view_pg_mother_occupation"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Mother's Contact</label>
+                                    <p class="mb-0" id="view_pg_mother_contact"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Guardian's Name</label>
+                                    <p class="mb-0" id="view_pg_guardian_name"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Guardian Relationship</label>
+                                    <p class="mb-0" id="view_pg_guardian_relationship"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Guardian's Contact</label>
+                                    <p class="mb-0" id="view_pg_guardian_contact"></p>
+                                </div>
+                            </div>
+                            <p class="text-muted" id="view_pg_empty" style="display: none;">No parent/guardian record found for this student.</p>
+
+                            <hr>
+                            <h6 class="text-uppercase text-muted small fw-bold mb-2">Other Records</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="#" id="view_link_attendance" class="btn btn-sm btn-outline-secondary"><i class="bx bx-calendar"></i> Attendance</a>
+                                <a href="#" id="view_link_academic" class="btn btn-sm btn-outline-secondary"><i class="bx bxs-book"></i> Academic Records</a>
+                                <a href="#" id="view_link_achievements" class="btn btn-sm btn-outline-secondary"><i class="bx bxs-medal"></i> Achievements</a>
+                                <a href="#" id="view_link_health" class="btn btn-sm btn-outline-secondary"><i class="bx bxs-band-aid"></i> Health Profile</a>
+                                <a href="#" id="view_link_reading_level" class="btn btn-sm btn-outline-secondary"><i class="bx bx-book-reader"></i> Reading Level</a>
+                                <a href="#" id="view_link_parent_guardian" class="btn btn-sm btn-outline-secondary"><i class="bx bx-group"></i> Manage Parent/Guardian</a>
                             </div>
                         </div>
                         <div class="tab-pane fade" id="view_tab_behavior">
@@ -563,57 +531,6 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                                 </table>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="view_tab_parent_guardian">
-                            <h6 class="mb-3">Father's Information</h6>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Father's Name</label>
-                                    <p class="mb-0" id="view_pg_father_name"></p>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Occupation</label>
-                                    <p class="mb-0" id="view_pg_father_occupation"></p>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Contact Number</label>
-                                    <p class="mb-0" id="view_pg_father_contact"></p>
-                                </div>
-                            </div>
-
-                            <h6 class="mb-3">Mother's Information</h6>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Mother's Name</label>
-                                    <p class="mb-0" id="view_pg_mother_name"></p>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Occupation</label>
-                                    <p class="mb-0" id="view_pg_mother_occupation"></p>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Contact Number</label>
-                                    <p class="mb-0" id="view_pg_mother_contact"></p>
-                                </div>
-                            </div>
-
-                            <h6 class="mb-3">Guardian's Information <small class="text-muted">(if applicable)</small></h6>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Guardian's Name</label>
-                                    <p class="mb-0" id="view_pg_guardian_name"></p>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Relationship to Student</label>
-                                    <p class="mb-0" id="view_pg_guardian_relationship"></p>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Contact Number</label>
-                                    <p class="mb-0" id="view_pg_guardian_contact"></p>
-                                </div>
-                            </div>
-
-                            <p class="text-muted" id="view_pg_empty" style="display: none;">No parent/guardian record found for this student.</p>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -624,7 +541,19 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
     </div>
 
     <div class="card mt-4">
-      <h5 class="card-header">Manage Students</h5>
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h5 class="mb-0">Manage Students</h5>
+        <div class="position-relative" style="max-width: 320px; width: 100%;">
+            <input
+                type="text"
+                class="form-control"
+                id="student_table_search"
+                placeholder="Search by name or LRN..."
+                autocomplete="off"
+                value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>"
+            >
+        </div>
+      </div>
         <div class="table-responsive nowrap">
           <table class="table">
             <thead>
@@ -731,20 +660,21 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
           </table>
         </div>
 
+        <?php $studentsQuery = isset($_GET['search']) && trim($_GET['search']) !== '' ? 'search=' . urlencode(trim($_GET['search'])) . '&' : ''; ?>
         <?php if ($totalPages > 1): ?>
         <div class="card-footer">
           <nav>
             <ul class="pagination justify-content-center mb-0">
               <li class="page-item <?php echo $currentPage <= 1 ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">&laquo;</a>
+                <a class="page-link" href="?<?php echo $studentsQuery; ?>page=<?php echo $currentPage - 1; ?>">&laquo;</a>
               </li>
               <?php for ($p = 1; $p <= $totalPages; $p++): ?>
                 <li class="page-item <?php echo $p === $currentPage ? 'active' : ''; ?>">
-                  <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                  <a class="page-link" href="?<?php echo $studentsQuery; ?>page=<?php echo $p; ?>"><?php echo $p; ?></a>
                 </li>
               <?php endfor; ?>
               <li class="page-item <?php echo $currentPage >= $totalPages ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">&raquo;</a>
+                <a class="page-link" href="?<?php echo $studentsQuery; ?>page=<?php echo $currentPage + 1; ?>">&raquo;</a>
               </li>
             </ul>
           </nav>

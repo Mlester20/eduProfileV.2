@@ -39,6 +39,14 @@ AuthRole::allowOnly(['teacher']);
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
+    <?php if (!empty($filtered_student)): ?>
+      <?php $filteredName = trim($filtered_student['first_name'] . ' ' . ($filtered_student['middle_name'] ?? '') . ' ' . $filtered_student['last_name']); ?>
+      <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>Showing parent/guardian record for <strong><?= htmlspecialchars($filteredName); ?></strong> only.</span>
+        <a href="parent-guardian.php" class="btn btn-sm btn-outline-secondary">Clear filter</a>
+      </div>
+    <?php endif; ?>
+
     <div class="text-end">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addParentModal">
             Add Parent/Guardian
@@ -321,20 +329,21 @@ AuthRole::allowOnly(['teacher']);
             </table>
         </div>
 
+        <?php $pgQuery = $filter_student_id !== null ? 'student_id=' . $filter_student_id . '&' : ''; ?>
         <?php if ($pgPages > 1): ?>
         <div class="card-footer">
           <nav>
             <ul class="pagination justify-content-center mb-0">
               <li class="page-item <?php echo $pgPage <= 1 ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $pgPage - 1; ?>">&laquo;</a>
+                <a class="page-link" href="?<?php echo $pgQuery; ?>page=<?php echo $pgPage - 1; ?>">&laquo;</a>
               </li>
               <?php for ($p = 1; $p <= $pgPages; $p++): ?>
                 <li class="page-item <?php echo $p === $pgPage ? 'active' : ''; ?>">
-                  <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                  <a class="page-link" href="?<?php echo $pgQuery; ?>page=<?php echo $p; ?>"><?php echo $p; ?></a>
                 </li>
               <?php endfor; ?>
               <li class="page-item <?php echo $pgPage >= $pgPages ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $pgPage + 1; ?>">&raquo;</a>
+                <a class="page-link" href="?<?php echo $pgQuery; ?>page=<?php echo $pgPage + 1; ?>">&raquo;</a>
               </li>
             </ul>
           </nav>

@@ -38,7 +38,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
         public function index(){
             $teacherId = (int) ($_SESSION['id'] ?? 0);
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-            return $this->service->getPaginatedStudents($teacherId, $page, 10);
+            $search = isset($_GET['search']) && trim($_GET['search']) !== '' ? trim($_GET['search']) : null;
+            return $this->service->getPaginatedStudents($teacherId, $page, 10, $search);
         }
 
         /**
@@ -98,8 +99,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
         public function create($data){
             try{
-                if($this->model->isLrnExists($data['lrn'])){
-                    FlashMessage::setFlash('error', 'LRN already exists.');
+                if($this->model->isLrnExists($data['lrn'], $data['school_year_id'])){
+                    FlashMessage::setFlash('error', 'LRN already exists for that school year.');
                     header('Location: ../../../resources/views/teacher/students.php');
                     exit();
                 }
@@ -128,8 +129,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
         public function update($id, $data){
             try{
-                if($this->model->isLrnExists($data['lrn'], $id)){
-                    FlashMessage::setFlash('error', 'LRN already exists.');
+                if($this->model->isLrnExists($data['lrn'], $data['school_year_id'], $id)){
+                    FlashMessage::setFlash('error', 'LRN already exists for that school year.');
                     header('Location: ../../../resources/views/teacher/students.php');
                     exit();
                 }

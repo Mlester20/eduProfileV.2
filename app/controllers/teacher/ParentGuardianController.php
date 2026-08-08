@@ -22,11 +22,15 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->studentsModel = new StudentsModel($con);
         }
 
-        public function index($page = 1){
+        public function index($page = 1, $student_id = null){
             $perPage = 10;
+            if(!isset($_SESSION['id'])){
+                return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
+            }
+            $teacherId = (int) $_SESSION['id'];
             $offset = Paginator::offset($page, $perPage);
-            $rows = $this->model->getPage($perPage, $offset);
-            $total = $this->model->countAll();
+            $rows = $this->model->getPage($perPage, $offset, $teacherId, $student_id);
+            $total = $this->model->countAll($teacherId, $student_id);
             return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
         }
 
@@ -118,9 +122,19 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
     try{
         $controller = new ParentGuardianController($con);
+        $filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
         $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-        $parentGuardians = $controller->index($page);
+        $parentGuardians = $controller->index($page, $filter_student_id);
         $students = $controller->students();
+        $filtered_student = null;
+        if($filter_student_id !== null){
+            foreach($students as $s){
+                if((int) $s['id'] === $filter_student_id){
+                    $filtered_student = $s;
+                    break;
+                }
+            }
+        }
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             Csrf::requireValidOnPost('../../../resources/views/teacher/parent-guardian.php');

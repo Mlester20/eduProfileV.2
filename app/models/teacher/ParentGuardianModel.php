@@ -54,7 +54,14 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function getPage($limit, $offset){
+        /**
+         * Scoped to the given teacher's own advisees (matching getByTeacher()),
+         * with an optional student_id filter for the Student Information
+         * quick-link. Previously unscoped — any teacher could see every
+         * other teacher's parent/guardian records.
+         */
+
+        public function getPage($limit, $offset, $teacher_id, $studentId = null){
             try{
                 $query = "SELECT
                     pg.*,
@@ -65,12 +72,20 @@ require_once __DIR__ . '/../../core/Model.php';
                     u.full_name AS recorded_by
                     FROM {$this->parent_guardian} pg
                     LEFT JOIN {$this->students} s ON pg.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->users} u ON pg.recorded_by = u.id
-                    ORDER BY pg.id DESC
-                    LIMIT ? OFFSET ?
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
+                if($studentId !== null){
+                    $query .= " AND pg.student_id = ?";
+                }
+                $query .= " ORDER BY pg.id DESC LIMIT ? OFFSET ?";
                 $stmt = $this->con->prepare($query);
-                $stmt->bind_param("ii", $limit, $offset);
+                if($studentId !== null){
+                    $stmt->bind_param("iiii", $teacher_id, $studentId, $limit, $offset);
+                }else{
+                    $stmt->bind_param("iii", $teacher_id, $limit, $offset);
+                }
                 $stmt->execute();
                 $result = $stmt->get_result();
                 return $result->fetch_all(MYSQLI_ASSOC);
@@ -80,10 +95,23 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function countAll(){
+        public function countAll($teacher_id, $studentId = null){
             try{
-                $query = "SELECT COUNT(*) AS total FROM {$this->parent_guardian}";
+                $query = "SELECT COUNT(*) AS total
+                    FROM {$this->parent_guardian} pg
+                    LEFT JOIN {$this->students} s ON pg.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                ";
+                if($studentId !== null){
+                    $query .= " AND pg.student_id = ?";
+                }
                 $stmt = $this->con->prepare($query);
+                if($studentId !== null){
+                    $stmt->bind_param("ii", $teacher_id, $studentId);
+                }else{
+                    $stmt->bind_param("i", $teacher_id);
+                }
                 $stmt->execute();
                 $result = $stmt->get_result();
                 return (int) ($result->fetch_assoc()['total'] ?? 0);

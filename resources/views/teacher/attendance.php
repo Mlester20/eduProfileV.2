@@ -104,7 +104,7 @@ $students = $controller->getStudents();
                 <option value="">All students</option>
                 <?php foreach (($students ?? []) as $student): ?>
                   <?php $studentName = trim($student['first_name'] . ' ' . ($student['middle_name'] ?? '') . ' ' . $student['last_name']); ?>
-                  <option value="<?= htmlspecialchars($studentName) ?>"><?= htmlspecialchars($studentName) ?></option>
+                  <option value="<?= htmlspecialchars($studentName) ?>" data-student-id="<?= htmlspecialchars($student['id']) ?>"><?= htmlspecialchars($studentName) ?></option>
                 <?php endforeach; ?>
               </select>
               <select class="form-select form-select-sm" id="historySessionFilter" style="width: auto;">

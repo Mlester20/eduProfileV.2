@@ -75,12 +75,22 @@ if($isAjax){
     exit();
 }
 
+$filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$health_records = $controller->index(null, $page);
+$health_records = $controller->index($filter_student_id, $page);
 $students = $controller->getStudents();
 $students_without_profile = $controller->getStudentsWithoutHealthProfile();
 $active_sy = $controller->getActiveSy();
 $active_school_year_id = !empty($active_sy) ? $active_sy[0]['id'] : null;
+$filtered_student = null;
+if($filter_student_id !== null){
+    foreach($students as $s){
+        if((int) $s['id'] === $filter_student_id){
+            $filtered_student = $s;
+            break;
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -124,6 +134,14 @@ $active_school_year_id = !empty($active_sy) ? $active_sy[0]['id'] : null;
 
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
+
+    <?php if (!empty($filtered_student)): ?>
+      <?php $filteredName = trim($filtered_student['first_name'] . ' ' . ($filtered_student['middle_name'] ?? '') . ' ' . $filtered_student['last_name']); ?>
+      <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>Showing health profile for <strong><?= htmlspecialchars($filteredName); ?></strong> only.</span>
+        <a href="student-health.php" class="btn btn-sm btn-outline-secondary">Clear filter</a>
+      </div>
+    <?php endif; ?>
 
     <div class="text-end">
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createHealthProfileModal">Record Health Profile</button>
@@ -470,20 +488,21 @@ $active_school_year_id = !empty($active_sy) ? $active_sy[0]['id'] : null;
         </table>
       </div>
 
+      <?php $healthQuery = $filter_student_id !== null ? 'student_id=' . $filter_student_id . '&' : ''; ?>
       <?php if ($healthPages > 1): ?>
       <div class="card-footer">
         <nav>
           <ul class="pagination justify-content-center mb-0">
             <li class="page-item <?php echo $healthPage <= 1 ? 'disabled' : ''; ?>">
-              <a class="page-link" href="?page=<?php echo $healthPage - 1; ?>">&laquo;</a>
+              <a class="page-link" href="?<?php echo $healthQuery; ?>page=<?php echo $healthPage - 1; ?>">&laquo;</a>
             </li>
             <?php for ($p = 1; $p <= $healthPages; $p++): ?>
               <li class="page-item <?php echo $p === $healthPage ? 'active' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                <a class="page-link" href="?<?php echo $healthQuery; ?>page=<?php echo $p; ?>"><?php echo $p; ?></a>
               </li>
             <?php endfor; ?>
             <li class="page-item <?php echo $healthPage >= $healthPages ? 'disabled' : ''; ?>">
-              <a class="page-link" href="?page=<?php echo $healthPage + 1; ?>">&raquo;</a>
+              <a class="page-link" href="?<?php echo $healthQuery; ?>page=<?php echo $healthPage + 1; ?>">&raquo;</a>
             </li>
           </ul>
         </nav>

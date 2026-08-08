@@ -38,7 +38,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <!-- Students Information Management -->
-        <li class="menu-item <?php echo ($currentPage === 'students.php') ? 'active' : ''; ?>">
+        <li class="menu-item <?php echo (in_array($currentPage, ['students.php', 'students-import-export.php'])) ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-dock-top"></i>
             <div data-i18n="Students Management">Students</div>
@@ -47,6 +47,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <li class="menu-item">
               <a href="students.php" class="menu-link">
                 <div data-i18n="Account">Manage Students</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="students-import-export.php" class="menu-link">
+                <div data-i18n="Import Export">Import / Export</div>
               </a>
             </li>
           </ul>

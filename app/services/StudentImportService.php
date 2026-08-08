@@ -193,8 +193,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
                         continue;
                     }
 
-                    if($this->studentsModel->isLrnExists($lrn)){
-                        $errors[] = "Row {$rowNumber}: LRN {$lrn} already exists.";
+                    if($this->studentsModel->isLrnExists($lrn, $schoolYearId)){
+                        $errors[] = "Row {$rowNumber}: LRN {$lrn} already exists for that school year.";
                         continue;
                     }
 

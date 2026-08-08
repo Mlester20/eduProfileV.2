@@ -12,43 +12,19 @@ AuthRole::allowOnly(['teacher']);
     class PastRecordsController{
         protected $model;
 
-        const CATEGORIES = ['Academic', 'Behavioral', 'Developmental', 'Health', 'Attendance', 'Achievements'];
-
         public function __construct($con){
             $this->model = new PastRecordsModel($con);
         }
 
-        public function index($category, $schoolYearId = null, $page = 1){
+        public function getMasterList($page = 1, $schoolYearId = null){
             $perPage = 10;
             if(!isset($_SESSION['id'])){
                 return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
             }
             $teacherId = (int) $_SESSION['id'];
             $offset = Paginator::offset($page, $perPage);
-
-            switch($category){
-                case 'Behavioral':
-                    $rows = $this->model->getBehavioralRecords($teacherId, $schoolYearId, $perPage, $offset);
-                    break;
-                case 'Developmental':
-                    $rows = $this->model->getDevelopmentalRecords($teacherId, $schoolYearId, $perPage, $offset);
-                    break;
-                case 'Health':
-                    $rows = $this->model->getHealthRecords($teacherId, $schoolYearId, $perPage, $offset);
-                    break;
-                case 'Attendance':
-                    $rows = $this->model->getAttendanceRecords($teacherId, $schoolYearId, $perPage, $offset);
-                    break;
-                case 'Achievements':
-                    $rows = $this->model->getAchievementRecords($teacherId, $schoolYearId, $perPage, $offset);
-                    break;
-                case 'Academic':
-                default:
-                    $rows = $this->model->getAcademicRecords($teacherId, $schoolYearId, $perPage, $offset);
-                    break;
-            }
-
-            $total = $this->model->countRecords($category, $teacherId, $schoolYearId);
+            $rows = $this->model->getStudentsPage($teacherId, $perPage, $offset, $schoolYearId);
+            $total = $this->model->countStudents($teacherId, $schoolYearId);
             return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
         }
 
@@ -58,19 +34,51 @@ AuthRole::allowOnly(['teacher']);
             }
             return $this->model->getArchivedSchoolYears((int) $_SESSION['id']);
         }
+
+        /**
+         * Everything for one archived student at once: their info plus all
+         * seven category tables — the teacher-scoped counterpart to
+         * LearnerProfileController::getProfile(). Returns null when no
+         * student is selected or the id doesn't resolve to one of this
+         * teacher's own archived students.
+         */
+
+        public function getProfile($studentId){
+            if($studentId === null || !isset($_SESSION['id'])){
+                return null;
+            }
+            $teacherId = (int) $_SESSION['id'];
+            $info = $this->model->getStudentInfo($teacherId, $studentId);
+            if(!$info){
+                return null;
+            }
+            return [
+                'info' => $info,
+                'academic' => $this->model->getAcademicRecords($teacherId, $studentId),
+                'behavioral' => $this->model->getBehavioralRecords($teacherId, $studentId),
+                'developmental' => $this->model->getDevelopmentalRecords($teacherId, $studentId),
+                'health' => $this->model->getHealthProfile($teacherId, $studentId),
+                'attendance' => $this->model->getAttendanceRecords($teacherId, $studentId),
+                'achievements' => $this->model->getAchievementRecords($teacherId, $studentId),
+                'reading_level' => $this->model->getReadingLevelRecords($teacherId, $studentId),
+                'parent_guardian' => $this->model->getParentGuardian($studentId),
+            ];
+        }
     }
 
     try{
         $controller = new PastRecordsController($con);
 
-        $category = in_array($_GET['category'] ?? '', PastRecordsController::CATEGORIES, true) ? $_GET['category'] : 'Academic';
         $school_year_filter = isset($_GET['school_year_id']) && $_GET['school_year_id'] !== '' ? (int) $_GET['school_year_id'] : null;
+        $selected_student_id = isset($_GET['student_id']) && $_GET['student_id'] !== '' ? (int) $_GET['student_id'] : null;
         $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 
-        $pastRecords = $controller->index($category, $school_year_filter, $page);
         $school_years = $controller->getSchoolYears();
+        $profile = $controller->getProfile($selected_student_id);
+        $masterList = $controller->getMasterList($page, $school_year_filter);
     }catch(Exception $e){
         error_log("Error in PastRecordsController: " . $e->getMessage());
-        $pastRecords = ['data' => [], 'total' => 0, 'per_page' => 10, 'current_page' => 1, 'total_pages' => 1];
         $school_years = [];
+        $profile = null;
+        $masterList = ['data' => [], 'total' => 0, 'per_page' => 10, 'current_page' => 1, 'total_pages' => 1];
     }

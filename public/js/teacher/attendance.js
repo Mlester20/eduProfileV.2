@@ -123,6 +123,15 @@ document.addEventListener('DOMContentLoaded', function(){
         })
     }
 
+    // Coming from the Student Information modal's "View Attendance" quick link —
+    // pre-select this student's history using the matching <option>'s student id.
+    const urlParams = new URLSearchParams(window.location.search)
+    const filterStudentId = urlParams.get('student_id')
+    if(filterStudentId && studentFilter){
+        const matchingOption = studentFilter.querySelector('option[data-student-id="' + filterStudentId + '"]')
+        if(matchingOption) studentFilter.value = matchingOption.value
+    }
+
     renderHistoryPage()
 
     // ───────────────────────── Tab 2: Take Attendance grid ─────────────────────────

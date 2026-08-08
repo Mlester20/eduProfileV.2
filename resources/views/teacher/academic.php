@@ -38,6 +38,14 @@ AuthRole::allowOnly(['teacher']);
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
+    <?php if (!empty($filtered_student)): ?>
+      <?php $filteredName = trim($filtered_student['first_name'] . ' ' . ($filtered_student['middle_name'] ?? '') . ' ' . $filtered_student['last_name']); ?>
+      <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>Showing academic records for <strong><?= htmlspecialchars($filteredName); ?></strong> only.</span>
+        <a href="academic.php" class="btn btn-sm btn-outline-secondary">Clear filter</a>
+      </div>
+    <?php endif; ?>
+
     <div class="text-end">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAcademicProfileModal">
             <i class="bx bx-plus"></i> Add Academic Profile
@@ -249,20 +257,21 @@ AuthRole::allowOnly(['teacher']);
             </table>
         </div>
 
+        <?php $academicQuery = $filter_student_id !== null ? 'student_id=' . $filter_student_id . '&' : ''; ?>
         <?php if ($academicPages > 1): ?>
         <div class="card-footer">
           <nav>
             <ul class="pagination justify-content-center mb-0">
               <li class="page-item <?php echo $academicPage <= 1 ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $academicPage - 1; ?>">&laquo;</a>
+                <a class="page-link" href="?<?php echo $academicQuery; ?>page=<?php echo $academicPage - 1; ?>">&laquo;</a>
               </li>
               <?php for ($p = 1; $p <= $academicPages; $p++): ?>
                 <li class="page-item <?php echo $p === $academicPage ? 'active' : ''; ?>">
-                  <a class="page-link" href="?page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                  <a class="page-link" href="?<?php echo $academicQuery; ?>page=<?php echo $p; ?>"><?php echo $p; ?></a>
                 </li>
               <?php endfor; ?>
               <li class="page-item <?php echo $academicPage >= $academicPages ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $academicPage + 1; ?>">&raquo;</a>
+                <a class="page-link" href="?<?php echo $academicQuery; ?>page=<?php echo $academicPage + 1; ?>">&raquo;</a>
               </li>
             </ul>
           </nav>

@@ -1,3 +1,31 @@
+function debounce(fn, delay){
+    let timer
+    return function(...args){
+        clearTimeout(timer)
+        const context = this
+        timer = setTimeout(function(){
+            fn.apply(context, args)
+        }, delay)
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    const searchInput = document.getElementById('student_table_search')
+    if(!searchInput) return
+
+    searchInput.addEventListener('input', debounce(function(){
+        const term = searchInput.value.trim()
+        const url = new URL(window.location.href)
+        if(term === ''){
+            url.searchParams.delete('search')
+        }else{
+            url.searchParams.set('search', term)
+        }
+        url.searchParams.set('page', '1')
+        window.location.href = url.toString()
+    }, 400))
+})
+
 function renderRecordsTable(tbodyId, records, columns, emptyMessage){
     const tbody = document.getElementById(tbodyId);
     tbody.innerHTML = '';
@@ -55,6 +83,13 @@ function viewStudent(id, lrn, full_name, section, school_year, age, gender, moth
         document.getElementById('view_pg_' + field).textContent = pg ? (pg[field] ?? '') : '';
     });
     document.getElementById('view_pg_empty').style.display = pg ? 'none' : 'block';
+
+    document.getElementById('view_link_attendance').href = 'attendance.php?student_id=' + id;
+    document.getElementById('view_link_academic').href = 'academic.php?student_id=' + id;
+    document.getElementById('view_link_achievements').href = 'achievement-profile.php?student_id=' + id;
+    document.getElementById('view_link_health').href = 'student-health.php?student_id=' + id;
+    document.getElementById('view_link_reading_level').href = 'reading-level.php?student_id=' + id;
+    document.getElementById('view_link_parent_guardian').href = 'parent-guardian.php?student_id=' + id;
 }
 
 function editStudent(id, lrn, first_name, middle_name, last_name, suffix, birth_date, gender, age_as_of_june, mother_tongue, ip_ethnic_group, religion, house_number, street, sitio, purok, barangay, city_municipality, province, school_year_id, grade_level_id, section_id, recorded_by){

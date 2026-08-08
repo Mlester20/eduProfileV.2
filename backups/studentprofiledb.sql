@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 23, 2026 at 06:23 PM
+-- Generation Time: Aug 08, 2026 at 02:56 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,18 +40,6 @@ CREATE TABLE `academic_profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `academic_profiles`
---
-
-INSERT INTO `academic_profiles` (`id`, `student_id`, `school_year_id`, `subject_name`, `grading_period`, `grade`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(33, 80, 8, 'English', '1st Quarter', 88.00, 'Passed', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(34, 80, 8, 'Mathematics', '1st Quarter', 90.00, 'Passed', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(35, 81, 8, 'Science', '1st Quarter', 85.00, 'Passed', 117, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(36, 81, 8, 'Filipino', '1st Quarter', 82.00, 'Passed', 117, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(37, 82, 8, 'Mathematics', '1st Quarter', 65.00, 'Failed', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(38, 83, 8, 'English', '1st Quarter', 91.00, 'Passed', 119, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
-
 -- --------------------------------------------------------
 
 --
@@ -73,14 +61,6 @@ CREATE TABLE `achievements_profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `achievements_profiles`
---
-
-INSERT INTO `achievements_profiles` (`id`, `student_id`, `school_year_id`, `title`, `category`, `level`, `description`, `date_received`, `awarding_body`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(11, 80, 8, 'Reading Champion', 'Academic', 'School', 'Top reader for the quarter', '2026-07-24', 'San Jose Sur Elementary', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(12, 83, 8, 'Perfect Attendance', 'Other', 'School', 'No absences for the quarter', '2026-07-24', 'San Jose Sur Elementary', 119, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
-
 -- --------------------------------------------------------
 
 --
@@ -98,23 +78,6 @@ CREATE TABLE `attendance` (
   `recorded_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `attendance`
---
-
-INSERT INTO `attendance` (`id`, `student_id`, `school_year_id`, `attendance_date`, `session`, `status`, `remarks`, `recorded_by`, `created_at`) VALUES
-(54, 80, 8, '2026-07-24', 'Morning', 'Present', NULL, 116, '2026-07-23 16:21:14'),
-(55, 80, 8, '2026-07-23', 'Morning', 'Present', NULL, 116, '2026-07-23 16:21:14'),
-(56, 81, 8, '2026-07-24', 'Morning', 'Present', NULL, 117, '2026-07-23 16:21:14'),
-(57, 81, 8, '2026-07-23', 'Morning', 'Present', NULL, 117, '2026-07-23 16:21:14'),
-(58, 82, 8, '2026-07-14', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
-(59, 82, 8, '2026-07-13', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
-(60, 82, 8, '2026-07-12', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
-(61, 82, 8, '2026-07-11', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
-(62, 82, 8, '2026-07-10', 'Morning', 'Absent', NULL, 116, '2026-07-23 16:21:14'),
-(63, 83, 8, '2026-07-24', 'Morning', 'Present', NULL, 119, '2026-07-23 16:21:14'),
-(64, 83, 8, '2026-07-23', 'Morning', 'Present', NULL, 119, '2026-07-23 16:21:14');
 
 -- --------------------------------------------------------
 
@@ -322,7 +285,10 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (418, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-07-23 16:03:28'),
 (419, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 16:04:50'),
 (420, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 1 student(s) to a new school year', '::1', 'success', '2026-07-23 16:16:44'),
-(421, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 16:22:07');
+(421, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 16:22:07'),
+(422, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Juan Cruz', '::1', 'success', '2026-08-06 14:31:53'),
+(423, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 14', '::1', 'success', '2026-08-06 14:57:16'),
+(424, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 91', '::1', 'success', '2026-08-08 12:50:57');
 
 -- --------------------------------------------------------
 
@@ -344,16 +310,6 @@ CREATE TABLE `behavioral_profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `behavioral_profiles`
---
-
-INSERT INTO `behavioral_profiles` (`id`, `student_id`, `school_year_id`, `observation_date`, `category`, `observation`, `intervention`, `remarks`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(34, 80, 8, '2026-07-24', 'Positive Behavior', 'Helped a classmate with schoolwork.', 'None needed', 'Keep it up', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(35, 82, 8, '2026-07-22', 'Disciplinary', 'Disrupted class activity.', 'Verbal warning given.', 'Monitor closely', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(36, 82, 8, '2026-07-21', 'Disciplinary', 'Disrupted class activity.', 'Verbal warning given.', 'Monitor closely', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14'),
-(37, 82, 8, '2026-07-20', 'Disciplinary', 'Disrupted class activity.', 'Verbal warning given.', 'Monitor closely', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
-
 -- --------------------------------------------------------
 
 --
@@ -373,7 +329,7 @@ CREATE TABLE `dashboard_ai_summaries` (
 
 INSERT INTO `dashboard_ai_summaries` (`id`, `school_year_id`, `summary_text`, `generated_at`) VALUES
 (2, 8, 'For the 2026–2027 school year, foundational staffing and section advisory roles are fully established, but immediate administrative attention is required in **Grade 1 - Mahogani**. The primary concern in this section is a compounding risk pattern where severe academic struggle, chronic absenteeism, and recurring disciplinary incidents intersect at once. In the coming weeks, leadership should focus on deploying a coordinated, wrap-around intervention plan for Grade 1 - Mahogani to simultaneously address behavioral, attendance, and learning challenges before they further destabilize student progress.', '2026-07-23 16:03:28'),
-(11, 14, 'For the 2027–2028 school year, operational stability is exceptionally strong, with full advisory oversight established and currently no specific grade levels or sections exhibiting flagged at-risk learners across academic, attendance, or disciplinary metrics. This pristine baseline highlights optimal initial engagement and equitable support across both active learning cohorts. To maintain this high standard, the recommended focus area for the coming weeks is to establish routine, proactive early-warning checks to ensure any subtle shifts in learner performance or attendance are caught well before formal intervention is required.', '2026-07-23 13:24:51');
+(11, 14, 'For the 2027–2028 school year, all four sections are fully staffed with assigned advisers, and no specific grade levels or sections currently contain learners flagged for academic, attendance, or behavioral risks. The most critical operational pattern requiring immediate attention is a severe imbalance between capacity and enrollment, as full advisory resources are actively maintained across four sections for only a single enrolled student. Over the coming weeks, the primary focus area should be conducting a comprehensive enrollment audit and recruitment initiative to reconcile section allocations with actual student roster data.', '2026-08-06 14:57:16');
 
 -- --------------------------------------------------------
 
@@ -392,13 +348,6 @@ CREATE TABLE `developmental_profiles` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `developmental_profiles`
---
-
-INSERT INTO `developmental_profiles` (`id`, `student_id`, `school_year_id`, `domain`, `observation`, `recommendation`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(15, 81, 8, '', 'Works well in group activities.', 'Continue encouraging peer collaboration.', 117, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
 
 -- --------------------------------------------------------
 
@@ -447,13 +396,6 @@ CREATE TABLE `health_profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `health_profiles`
---
-
-INSERT INTO `health_profiles` (`id`, `student_id`, `school_year_id`, `height_cm`, `weight_kg`, `bmi`, `bmi_classification`, `blood_type`, `allergies`, `medical_conditions`, `vision_screening_result`, `hearing_screening_result`, `immunization_status`, `recorded_by`, `created_at`, `updated_at`) VALUES
-(16, 80, 8, 115.00, 22.00, 16.60, 'Normal', 'O+', 'None', 'None', 'Normal', 'Normal', 'Complete', 116, '2026-07-23 16:21:14', '2026-07-23 16:21:14');
-
 -- --------------------------------------------------------
 
 --
@@ -480,6 +422,25 @@ CREATE TABLE `parents_guardians` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `reading_levels`
+--
+
+CREATE TABLE `reading_levels` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `reading_level` enum('Non-reader','Frustration','Instructional','Independent') NOT NULL,
+  `reading_language` enum('English','Filipino','MTB') NOT NULL,
+  `assessment_date` date NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `school_year`
 --
 
@@ -498,8 +459,8 @@ CREATE TABLE `school_year` (
 --
 
 INSERT INTO `school_year` (`id`, `school_year`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-(8, '2026-2027', '2026-06-08', '2027-04-05', 'inactive', '2026-05-15 05:40:37', '2026-07-23 16:22:07'),
-(14, '2027-2028', '2027-06-01', '2028-04-01', 'active', '2026-07-09 15:17:37', '2026-07-23 16:22:07');
+(8, '2026-2027', '2026-06-08', '2027-04-05', 'active', '2026-05-15 05:40:37', '2026-08-08 12:51:51'),
+(14, '2027-2028', '2027-06-01', '2028-04-01', 'inactive', '2026-07-09 15:17:37', '2026-08-08 12:53:40');
 
 -- --------------------------------------------------------
 
@@ -563,8 +524,19 @@ CREATE TABLE `students` (
   `last_name` varchar(100) NOT NULL,
   `suffix` varchar(20) DEFAULT NULL,
   `birth_date` date NOT NULL,
+  `age_as_of_june` tinyint(3) UNSIGNED DEFAULT NULL COMMENT 'Age as of the 1st Friday of June',
   `gender` enum('Male','Female') NOT NULL,
+  `mother_tongue` varchar(50) DEFAULT NULL COMMENT 'Grade 1 to Grade 3 only',
+  `ip_ethnic_group` varchar(100) DEFAULT NULL COMMENT 'Indigenous People / ethnic group',
+  `religion` varchar(100) DEFAULT NULL,
   `address` varchar(50) DEFAULT NULL,
+  `house_number` varchar(20) DEFAULT NULL,
+  `street` varchar(100) DEFAULT NULL,
+  `sitio` varchar(100) DEFAULT NULL,
+  `purok` varchar(100) DEFAULT NULL,
+  `barangay` varchar(100) DEFAULT NULL,
+  `city_municipality` varchar(100) DEFAULT NULL,
+  `province` varchar(100) DEFAULT NULL,
   `school_year_id` int(11) NOT NULL,
   `grade_level_id` int(11) NOT NULL,
   `section_id` int(11) NOT NULL,
@@ -573,22 +545,6 @@ CREATE TABLE `students` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `students`
---
-
-INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `gender`, `address`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `created_at`, `updated_at`) VALUES
-(77, 'TEST-AUTOACT-1784823', 'AutoActivate', '', 'Test', '', '2015-01-01', 'Male', 'Test Address', 8, 5, 2, 116, 'archived', '2026-07-23 16:15:31', '2026-07-23 16:16:44'),
-(78, 'TEST-AUTOACT-1784823', 'AutoActivate', '', 'Test', '', '2015-01-01', 'Male', 'Test Address', 14, 8, 11, 3, 'active', '2026-07-23 16:16:44', '2026-07-23 16:16:44'),
-(80, '100000000001', 'Juan', '', 'Dela Cruz', '', '2019-03-14', 'Male', 'San Jose Sur, Mallig, Isabela', 8, 5, 2, 116, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
-(81, '100000000002', 'Maria', '', 'Santos', '', '2019-07-22', 'Female', 'San Jose Sur, Mallig, Isabela', 8, 5, 8, 117, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
-(82, '100000000003', 'Pedro', '', 'Reyes', '', '2019-01-30', 'Male', 'San Jose Sur, Mallig, Isabela', 8, 5, 2, 116, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
-(83, '100000000004', 'Ana', '', 'Lopez', '', '2018-11-05', 'Female', 'San Jose Sur, Mallig, Isabela', 8, 6, 10, 119, 'archived', '2026-07-23 16:21:14', '2026-07-23 16:22:07'),
-(84, '100000000001', 'Juan', '', 'Dela Cruz', '', '2019-03-14', 'Male', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07'),
-(85, '100000000004', 'Ana', '', 'Lopez', '', '2018-11-05', 'Female', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07'),
-(86, '100000000003', 'Pedro', '', 'Reyes', '', '2019-01-30', 'Male', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07'),
-(87, '100000000002', 'Maria', '', 'Santos', '', '2019-07-22', 'Female', 'San Jose Sur, Mallig, Isabela', 14, 8, 11, 3, 'active', '2026-07-23 16:22:07', '2026-07-23 16:22:07');
 
 -- --------------------------------------------------------
 
@@ -727,6 +683,15 @@ ALTER TABLE `parents_guardians`
   ADD KEY `recorded_by` (`recorded_by`);
 
 --
+-- Indexes for table `reading_levels`
+--
+ALTER TABLE `reading_levels`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `school_year_id` (`school_year_id`),
+  ADD KEY `recorded_by` (`recorded_by`);
+
+--
 -- Indexes for table `school_year`
 --
 ALTER TABLE `school_year`
@@ -805,7 +770,7 @@ ALTER TABLE `at_risk_insights`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=422;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=425;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
@@ -817,7 +782,7 @@ ALTER TABLE `behavioral_profiles`
 -- AUTO_INCREMENT for table `dashboard_ai_summaries`
 --
 ALTER TABLE `dashboard_ai_summaries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `developmental_profiles`
@@ -841,7 +806,13 @@ ALTER TABLE `health_profiles`
 -- AUTO_INCREMENT for table `parents_guardians`
 --
 ALTER TABLE `parents_guardians`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `reading_levels`
+--
+ALTER TABLE `reading_levels`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `school_year`
@@ -865,7 +836,7 @@ ALTER TABLE `section_teacher_assignments`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -931,6 +902,14 @@ ALTER TABLE `health_profiles`
 ALTER TABLE `parents_guardians`
   ADD CONSTRAINT `parents_guardians_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `parents_guardians_ibfk_2` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `reading_levels`
+--
+ALTER TABLE `reading_levels`
+  ADD CONSTRAINT `reading_levels_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reading_levels_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
+  ADD CONSTRAINT `reading_levels_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `sections`

@@ -139,10 +139,20 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
     try{
         $controller = new AcademicProfileController($con);
+        $filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
         $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-        $academicProfiles = $controller->index(null, $page);
+        $academicProfiles = $controller->index($filter_student_id, $page);
         $students = $controller->getStudents();
         $school_years = $controller->getSchoolYears();
+        $filtered_student = null;
+        if($filter_student_id !== null){
+            foreach($students as $s){
+                if((int) $s['id'] === $filter_student_id){
+                    $filtered_student = $s;
+                    break;
+                }
+            }
+        }
 
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
             Csrf::requireValidOnPost('../../../resources/views/teacher/academic.php');
