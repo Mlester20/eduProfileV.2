@@ -204,6 +204,64 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        /**
+         * Active students in one specific section — used by the printable
+         * monthly attendance grid, since every other method here scopes by
+         * adviser_id only (all of a teacher's students across sections),
+         * and SF2 is one grid per section.
+         */
+
+        public function getStudentsBySection($teacher_id, $section_id){
+            try{
+                $query = "SELECT
+                    s.id AS student_id,
+                    s.first_name AS student_first_name,
+                    s.middle_name AS student_middle_name,
+                    s.last_name AS student_last_name,
+                    s.suffix AS student_suffix
+                    FROM {$this->student} s
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE sec.adviser_id = ? AND s.section_id = ? AND s.status = 'active'
+                    ORDER BY s.last_name ASC, s.first_name ASC
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $teacher_id, $section_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log("Error fetching students by section for attendance: " . $e->getMessage());
+                return [];
+            }
+        }
+
+        /**
+         * Flat student_id/date/session/status rows for one section within a
+         * date range — the print page pivots this into a per-student,
+         * per-day grid in PHP rather than doing the pivot in SQL (simpler
+         * than a dynamic LEFT JOIN per calendar day).
+         */
+
+        public function getMonthlyRecords($teacher_id, $section_id, $startDate, $endDate){
+            try{
+                $query = "SELECT a.student_id, a.attendance_date, a.session, a.status
+                    FROM {$this->attendance} a
+                    LEFT JOIN {$this->student} s ON a.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE sec.adviser_id = ? AND s.section_id = ? AND s.status = 'active'
+                    AND a.attendance_date BETWEEN ? AND ?
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("iiss", $teacher_id, $section_id, $startDate, $endDate);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log("Error fetching monthly attendance records: " . $e->getMessage());
+                return [];
+            }
+        }
+
         public function getActiveSchoolYearId(){
             try{
                 $query = "SELECT id FROM {$this->school_year} WHERE status = 'active' LIMIT 1";

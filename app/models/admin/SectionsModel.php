@@ -8,9 +8,9 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $school_year = 'school_year';
         protected $section_teacher_assignments = 'section_teacher_assignments';
 
-        public function index(){
+        public function index($gradeLevelId = null){
             try{
-                $query = "SELECT 
+                $query = "SELECT
                     s.*,
                     gl.grade_name AS grade_level_name,
                     u.full_name as assigned_teacher
@@ -18,7 +18,17 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->grade_levels} gl ON s.grade_level_id = gl.id
                     LEFT JOIN {$this->users} u ON s.adviser_id = u.id
                 ";
+                $types = "";
+                $params = [];
+                if($gradeLevelId !== null){
+                    $query .= " WHERE s.grade_level_id = ?";
+                    $types .= "i";
+                    $params[] = $gradeLevelId;
+                }
                 $stmt = $this->con->prepare($query);
+                if($types !== ""){
+                    $stmt->bind_param($types, ...$params);
+                }
                 $stmt->execute();
                 $result = $stmt->get_result();
                 return $result->fetch_all(MYSQLI_ASSOC);
@@ -35,7 +45,7 @@ require_once __DIR__ . '/../../core/Model.php';
          * relevant for that year rather than every section ever created).
          */
 
-        public function findBySchoolYear($schoolYearId){
+        public function findBySchoolYear($schoolYearId, $gradeLevelId = null){
             try{
                 $query = "SELECT DISTINCT
                     sec.id,
@@ -44,10 +54,18 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->sections} sec
                     JOIN students s ON s.section_id = sec.id AND s.school_year_id = ?
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
-                    ORDER BY gl.grade_name ASC, sec.section_name ASC
+                    WHERE 1=1
                 ";
+                $types = "i";
+                $params = [$schoolYearId];
+                if($gradeLevelId !== null){
+                    $query .= " AND sec.grade_level_id = ?";
+                    $types .= "i";
+                    $params[] = $gradeLevelId;
+                }
+                $query .= " ORDER BY gl.grade_name ASC, sec.section_name ASC";
                 $stmt = $this->con->prepare($query);
-                $stmt->bind_param("i", $schoolYearId);
+                $stmt->bind_param($types, ...$params);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 return $result->fetch_all(MYSQLI_ASSOC);

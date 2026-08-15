@@ -5,6 +5,12 @@ require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/helpers/StudentsAge.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
+
+if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
+    require_once __DIR__ . '/../../../app/services/StudentExportService.php';
+    StudentExportService::exportXlsx($controller->getAllForExport(), $parent_guardian_by_student);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -41,9 +47,18 @@ AuthRole::allowOnly(['teacher']);
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
     <div class="text-end">
-      <a href="students-import-export.php" class="btn btn-outline-secondary me-2">
-        Import / Export
+      <a href="students-print.php" target="_blank" class="btn btn-outline-secondary me-2">
+        <i class="bx bx-printer"></i> Print
       </a>
+      <div class="btn-group me-2">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bx bx-import"></i> Import / Export
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="?export=xlsx"><i class="bx bx-download me-2"></i>Export to Excel</a></li>
+          <li><a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#importStudentsModal"><i class="bx bx-upload me-2"></i>Import from Excel</a></li>
+        </ul>
+      </div>
       <button
         class="btn btn-primary"
         data-bs-toggle="modal"
@@ -51,6 +66,101 @@ AuthRole::allowOnly(['teacher']);
       >
         Add Student
       </button>
+    </div>
+
+    <!-- import modal -->
+    <div class="modal fade" id="importStudentsModal" tabindex="-1" aria-labelledby="importStudentsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importStudentsLabel">Import Students from Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex">
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="avatar avatar-initial rounded-circle bg-label-primary d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; flex: 0 0 28px; font-weight: 600;">1</span>
+                            <div style="width: 2px; background: #d9dee3;" class="flex-grow-1 my-1"></div>
+                        </div>
+                        <div class="ms-3 mb-4 flex-grow-1">
+                            <h6 class="mb-1">Download the template</h6>
+                            <p class="text-muted small mb-2">Fill in one row per student. Every column has a sample value in row 2.</p>
+                            <a href="../../../app/controllers/teacher/StudentImportController.php?template=1" class="btn btn-outline-secondary btn-sm">
+                                <i class="bx bx-download"></i> Download Template
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="avatar avatar-initial rounded-circle bg-label-primary d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; flex: 0 0 28px; font-weight: 600;">2</span>
+                        </div>
+                        <div class="ms-3 flex-grow-1">
+                            <h6 class="mb-3">Upload the filled-in template</h6>
+
+                            <form action="../../../app/controllers/teacher/StudentImportController.php" method="post" enctype="multipart/form-data">
+                                <?= Csrf::field() ?>
+                                <div class="border rounded p-3 bg-light">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="import_file" class="form-label">Excel File (.xlsx)</label>
+                                            <input class="form-control" type="file" name="import_file" id="import_file" accept=".xlsx" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">School Year</label>
+                                            <?php if (!empty($school_years)): ?>
+                                                <input class="form-control" type="text" value="<?php echo htmlspecialchars($school_years[0]['school_year']); ?>" disabled>
+                                                <input type="hidden" name="school_year_id" value="<?php echo htmlspecialchars($school_years[0]['id']); ?>">
+                                            <?php else: ?>
+                                                <input class="form-control" type="text" value="No active school year set" disabled>
+                                                <div class="form-text text-danger">Contact an admin to set an active school year before importing students.</div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Grade Level & Section</label>
+                                            <p class="form-text text-muted mt-0 mb-2">All imported students will be assigned to this section.</p>
+                                            <?php if (count($my_sections ?? []) === 1): ?>
+                                                <?php $my_section = $my_sections[0]; ?>
+                                                <input
+                                                    class="form-control"
+                                                    type="text"
+                                                    value="<?php echo htmlspecialchars($my_section['grade_level_name'] . ' - ' . $my_section['section_name']); ?>"
+                                                    disabled
+                                                >
+                                                <input type="hidden" name="section_id" value="<?php echo htmlspecialchars($my_section['id']); ?>">
+                                                <input type="hidden" name="grade_level_id" value="<?php echo htmlspecialchars($my_section['grade_level_id']); ?>">
+                                            <?php elseif (count($my_sections ?? []) > 1): ?>
+                                                <select class="form-select" name="section_id" id="import_section_id">
+                                                    <option value="" selected disabled>-- Choose Section --</option>
+                                                    <?php foreach ($my_sections as $section): ?>
+                                                        <option
+                                                            value="<?php echo htmlspecialchars($section['id']); ?>"
+                                                            data-grade-level-id="<?php echo htmlspecialchars($section['grade_level_id']); ?>"
+                                                        >
+                                                            <?php echo htmlspecialchars($section['grade_level_name'] . ' - ' . $section['section_name']); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <input type="hidden" name="grade_level_id" id="import_grade_level_id">
+                                            <?php else: ?>
+                                                <input class="form-control" type="text" value="No section assigned to you yet" disabled>
+                                                <div class="form-text text-danger">Contact an admin to get assigned as a section adviser before importing students.</div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer px-0 pb-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" name="import_students">
+                                        <i class="bx bx-upload"></i> Upload & Import
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="createStudentModal" tabindex="-1" aria-labelledby="createStudentLabel" aria-hidden="true">
@@ -161,15 +271,32 @@ AuthRole::allowOnly(['teacher']);
 
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
-                                <label for="school_year_id" class="form-label">School Year</label>
-                                <select class="form-select" name="school_year_id" id="school_year_id">
-                                    <option value="" selected disabled>-- Choose School Year --</option>
-                                    <?php foreach (($school_years ?? []) as $school_year): ?>
-                                        <option value="<?php echo htmlspecialchars($school_year['id']); ?>">
-                                            <?php echo htmlspecialchars($school_year['school_year']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
+                                <label for="learning_modality" class="form-label">Learning Modality</label>
+                                <select class="form-select" name="learning_modality" id="learning_modality">
+                                    <option value="">Select learning modality</option>
+                                    <option value="Face-to-Face">Face-to-Face</option>
+                                    <option value="Modular Distance Learning">Modular Distance Learning</option>
+                                    <option value="Online Distance Learning">Online Distance Learning</option>
+                                    <option value="Blended Learning">Blended Learning</option>
+                                    <option value="Homeschooling">Homeschooling</option>
                                 </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="remarks" class="form-label">Remarks</label>
+                                <input class="form-control" type="text" name="remarks" id="remarks" placeholder="e.g., LWD, Transferred In">
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">School Year</label>
+                                <?php if (!empty($school_years)): ?>
+                                    <input class="form-control" type="text" value="<?php echo htmlspecialchars($school_years[0]['school_year']); ?>" disabled>
+                                    <input type="hidden" name="school_year_id" id="school_year_id" value="<?php echo htmlspecialchars($school_years[0]['id']); ?>">
+                                <?php else: ?>
+                                    <input class="form-control" type="text" value="No active school year set" disabled>
+                                    <div class="form-text text-danger">Contact an admin to set an active school year before adding students.</div>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Grade Level & Section</label>
@@ -326,15 +453,32 @@ AuthRole::allowOnly(['teacher']);
 
                         <div class="row g-3">
                             <div class="col-md-6 mb-3">
-                                <label for="school_year_id" class="form-label">School Year</label>
-                                <select class="form-select" name="school_year_id" id="edit_school_year_id">
-                                    <option value="" selected disabled>-- Choose School Year --</option>
-                                    <?php foreach (($school_years ?? []) as $school_year): ?>
-                                        <option value="<?php echo htmlspecialchars($school_year['id']); ?>">
-                                            <?php echo htmlspecialchars($school_year['school_year']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
+                                <label for="learning_modality" class="form-label">Learning Modality</label>
+                                <select class="form-select" name="learning_modality" id="edit_learning_modality">
+                                    <option value="">Select learning modality</option>
+                                    <option value="Face-to-Face">Face-to-Face</option>
+                                    <option value="Modular Distance Learning">Modular Distance Learning</option>
+                                    <option value="Online Distance Learning">Online Distance Learning</option>
+                                    <option value="Blended Learning">Blended Learning</option>
+                                    <option value="Homeschooling">Homeschooling</option>
                                 </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="remarks" class="form-label">Remarks</label>
+                                <input class="form-control" type="text" name="remarks" id="edit_remarks" placeholder="e.g., LWD, Transferred In">
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">School Year</label>
+                                <?php if (!empty($school_years)): ?>
+                                    <input class="form-control" type="text" value="<?php echo htmlspecialchars($school_years[0]['school_year']); ?>" disabled>
+                                    <input type="hidden" name="school_year_id" id="edit_school_year_id" value="<?php echo htmlspecialchars($school_years[0]['id']); ?>">
+                                <?php else: ?>
+                                    <input class="form-control" type="text" value="No active school year set" disabled>
+                                    <div class="form-text text-danger">Contact an admin to set an active school year before editing students.</div>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Grade Level & Section</label>
@@ -444,6 +588,14 @@ AuthRole::allowOnly(['teacher']);
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold mb-0">Religion</label>
                                     <p class="mb-0" id="view_student_religion"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Learning Modality</label>
+                                    <p class="mb-0" id="view_student_learning_modality"></p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold mb-0">Remarks</label>
+                                    <p class="mb-0" id="view_student_remarks"></p>
                                 </div>
                             </div>
 
@@ -591,7 +743,9 @@ AuthRole::allowOnly(['teacher']);
                         '<?php echo $student['gender']; ?>',
                         '<?php echo htmlspecialchars($student['mother_tongue'] ?? ''); ?>',
                         '<?php echo htmlspecialchars($student['ip_ethnic_group'] ?? ''); ?>',
-                        '<?php echo htmlspecialchars($student['religion'] ?? ''); ?>'
+                        '<?php echo htmlspecialchars($student['religion'] ?? ''); ?>',
+                        '<?php echo htmlspecialchars($student['learning_modality'] ?? ''); ?>',
+                        '<?php echo htmlspecialchars($student['remarks'] ?? ''); ?>'
                     )"
                   >
                     <td><?php echo $offset + $index + 1; ?></td>
@@ -626,6 +780,8 @@ AuthRole::allowOnly(['teacher']);
                           '<?php echo $student['barangay']; ?>',
                           '<?php echo $student['city_municipality']; ?>',
                           '<?php echo $student['province']; ?>',
+                          '<?php echo $student['learning_modality']; ?>',
+                          '<?php echo $student['remarks']; ?>',
                           '<?php echo $student['school_year_id']; ?>',
                           '<?php echo $student['grade_level_id']; ?>',
                           '<?php echo $student['section_id']; ?>',

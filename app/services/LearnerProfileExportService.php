@@ -22,7 +22,7 @@ require_once __DIR__ . '/AddressService.php';
          * Streams the learner's full profile as a CSV download. Caller must
          * ensure no output has been sent yet, and should exit() right after.
          */
-        public static function exportCsv($profile){
+        public static function exportCsv($profile, $schoolName = 'San Jose Sur Elementary'){
             $info = $profile['info'];
             $fullName = trim($info['first_name'] . ' ' . ($info['middle_name'] ?? '') . ' ' . $info['last_name'] . ' ' . ($info['suffix'] ?? ''));
             $filename = 'learner-profile-' . preg_replace('/[^A-Za-z0-9]+/', '-', $fullName) . '.csv';
@@ -33,7 +33,7 @@ require_once __DIR__ . '/AddressService.php';
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF");
 
-            fputcsv($out, ['San Jose Sur Elementary - Learner Profile']);
+            fputcsv($out, [$schoolName . ' - Learner Profile']);
             fputcsv($out, ['Name', $fullName]);
             fputcsv($out, ['LRN', $info['lrn'] ?? '']);
             fputcsv($out, ['Age / Gender', StudentsAge::calculateAge($info['birth_date']) . ' / ' . $info['gender']]);

@@ -1,155 +1,197 @@
 @charset "UTF-8";
 
-/* ─── Body / Background ─────────────────────────────────────── */
+/* ─── Body ──────────────────────────────────────────────────── */
 body {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.50)),
-                    url('../../../img/backgrounds/bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: #fff7ed;
   min-height: 100vh;
   margin: 0;
 }
 
-/* ─── Wrapper ────────────────────────────────────────────────── */
-.authentication-wrapper {
+/* ─── Split wrapper ─────────────────────────────────────────── */
+.auth-split-wrapper {
   display: flex;
-  flex-basis: 100%;
   min-height: 100vh;
   width: 100%;
 }
 
-.authentication-wrapper .authentication-inner {
-  width: 100%;
-}
-
-.authentication-wrapper.authentication-basic {
+/* ─── Left panel ────────────────────────────────────────────── */
+.auth-left-panel {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-}
-
-.authentication-wrapper.authentication-basic .authentication-inner {
-  max-width: 420px;
+  gap: 2.5rem;
+  padding: 3rem 2.5rem;
+  background: linear-gradient(150deg, #fb923c 0%, #f97316 45%, #ea580c 100%);
   position: relative;
-  z-index: 1;
+  overflow: hidden;
+  text-align: center;
 }
 
-/* ─── Card ──────────────────────────────────────────────────── */
-.authentication-wrapper.authentication-basic .authentication-inner .card {
-  background: rgba(15, 25, 15, 0.35);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 24px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.30),
-    0 0 1px rgba(108, 163, 108, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+.auth-left-brand {
+  position: absolute;
+  top: 2.5rem;
+  left: 2.5rem;
 }
 
-.authentication-wrapper.authentication-basic .authentication-inner .card .card-body {
-  padding: 2rem 2rem 1.75rem;
+.auth-left-brand img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 4px;
+  object-fit: contain;
+  box-shadow: 0 4px 12px rgba(154, 52, 18, 0.20);
 }
 
-/* ─── Brand / Logo ──────────────────────────────────────────── */
+/* ─── Illustration ──────────────────────────────────────────── */
+.auth-illustration {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.illus-blob {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.illus-card {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(154, 52, 18, 0.30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+}
+
+.illus-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.illus-badge {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.20);
+}
+
+.auth-left-headline {
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.85rem;
+  line-height: 1.3;
+  max-width: 380px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+}
+
+.auth-left-subtext {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+/* ─── Right panel ───────────────────────────────────────────── */
+.auth-right-panel {
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  background: #fafafa;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  padding: 2.5rem 2.25rem;
+}
+
+/* ─── Brand icon ────────────────────────────────────────────── */
 .app-brand {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .brand-icon-wrap {
-  width: 75px;
-  height: 75px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
+  width: 68px;
+  height: 68px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: none;
-}
-
-.brand-icon-wrap:hover {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.18);
 }
 
 .brand-logo {
-  width: 60px;
-  height: 60px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(108, 163, 108, 0.20));
-  transition: filter 0.3s ease, transform 0.3s ease;
-}
-
-.brand-icon-wrap:hover .brand-logo {
-  filter: drop-shadow(0 6px 20px rgba(108, 163, 108, 0.35));
-  transform: scale(1.05);
-}
-
-.brand-icon-wrap i {
-  font-size: 40px;
-  color: #6ca36c;
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-.brand-icon-wrap:hover i {
-  text-shadow: 0 6px 20px rgba(108, 163, 108, 0.30);
-  transform: scale(1.08);
 }
 
 /* ─── Typography ────────────────────────────────────────────── */
 .auth-title {
   text-align: center;
-  font-size: 1.65rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 4px;
-  letter-spacing: 0.3px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.auth-school {
-  text-align: center;
-  font-size: 0.68rem;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.50);
-  margin: 0 0 1.2rem;
+  color: #1e1b16;
+  margin: 0 0 6px;
+  letter-spacing: 0.2px;
 }
 
 .auth-divider {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  margin: 0 0 1.2rem;
+  margin: 0 0 1rem;
 }
 
 .auth-desc {
+  text-align: center;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.70);
+  color: #6b7280;
   line-height: 1.5;
-  margin: 0 0 1.25rem;
+  margin: 0 0 1.75rem;
 }
 
 /* ─── Labels ────────────────────────────────────────────────── */
 .auth-label {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.9px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: #374151;
   margin-bottom: 6px;
 }
 
-/* ─── Input Icons ───────────────────────────────────────────── */
+/* ─── Input icons ───────────────────────────────────────────── */
 .input-icon-wrap {
   position: relative;
 }
@@ -159,13 +201,12 @@ body {
   top: 50%;
   left: 12px;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.45);
+  color: #9ca3af;
   font-size: 18px;
   pointer-events: none;
   display: flex;
   align-items: center;
   z-index: 5;
-  transition: color 0.2s ease;
 }
 
 .input-icon-right {
@@ -173,38 +214,37 @@ body {
   top: 50%;
   right: 12px;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.45);
+  color: #9ca3af;
   font-size: 18px;
   display: flex;
   align-items: center;
   z-index: 5;
-  transition: color 0.2s ease;
   cursor: pointer;
+  transition: color 0.2s ease;
 }
 
 .input-icon-right:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: #f97316;
 }
 
 /* ─── Inputs ────────────────────────────────────────────────── */
 .auth-input.form-control {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+  background: #fff !important;
+  border: 1.5px solid #e5e7eb !important;
   border-radius: 10px !important;
-  color: #ffffff !important;
-  font-size: 0.875rem;
+  color: #1e1b16 !important;
+  font-size: 0.9rem;
   padding: 11px 40px 11px 38px !important;
   transition: all 0.2s ease;
 }
 
 .auth-input.form-control::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: #b3b8c2;
 }
 
 .auth-input.form-control:focus {
-  border-color: rgba(108, 163, 108, 0.80) !important;
-  box-shadow: 0 0 0 3px rgba(108, 163, 108, 0.18) !important;
-  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
   outline: none;
 }
 
@@ -213,37 +253,17 @@ body {
 .auth-input.form-control:-webkit-autofill:hover,
 .auth-input.form-control:-webkit-autofill:focus,
 .auth-input.form-control:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 60px rgba(20, 38, 20, 0.85) inset !important;
-  box-shadow: 0 0 0 60px rgba(20, 38, 20, 0.85) inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  caret-color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.16) !important;
+  -webkit-box-shadow: 0 0 0 60px #fff inset !important;
+  box-shadow: 0 0 0 60px #fff inset !important;
+  -webkit-text-fill-color: #1e1b16 !important;
+  caret-color: #1e1b16;
+  border-color: #e5e7eb !important;
   transition: background-color 9999s ease-in-out 0s;
-}
-
-/* ─── Checkbox ──────────────────────────────────────────────── */
-.auth-check .form-check-input {
-  background-color: rgba(255, 255, 255, 0.10);
-  border-color: rgba(255, 255, 255, 0.30);
-  transition: all 0.2s ease;
-}
-
-.auth-check .form-check-input:checked {
-  background-color: #6ca36c;
-  border-color: #5a9e5a;
-  box-shadow: 0 0 0 3px rgba(108, 163, 108, 0.20);
-}
-
-.auth-check .form-check-label {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
-  user-select: none;
 }
 
 /* ─── Button ────────────────────────────────────────────────── */
 .auth-btn {
-  background: linear-gradient(135deg, #6ca36c 0%, #5a9e5a 100%) !important;
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%) !important;
   border: none !important;
   border-radius: 10px !important;
   color: #ffffff !important;
@@ -252,72 +272,65 @@ body {
   letter-spacing: 0.3px;
   padding: 12px !important;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px rgba(108, 163, 108, 0.25);
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.30);
 }
 
 .auth-btn:hover {
-  background: linear-gradient(135deg, #5a9e5a 0%, #4e8f4e 100%) !important;
-  box-shadow: 0 6px 24px rgba(108, 163, 108, 0.35);
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.40);
   transform: translateY(-2px);
 }
 
 .auth-btn:active {
   transform: translateY(0);
-  background: linear-gradient(135deg, #437843 0%, #3a6d3a 100%) !important;
-  box-shadow: 0 2px 8px rgba(108, 163, 108, 0.20);
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25);
 }
 
 /* ─── Footer ────────────────────────────────────────────────── */
+.auth-card-footer {
+  border-top: 1px solid #f0f0f0;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+}
+
+.auth-school {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin: 0 0 2px;
+}
+
 .auth-footer-text {
   text-align: center;
   font-size: 0.75rem;
-  letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.3px;
+  color: #c1c5cc;
   margin: 0;
 }
 
-/* ─── OTP Input ─────────────────────────────────────────────── */
-.authentication-wrapper .auth-input-wrapper .auth-input {
-  max-width: 50px;
-  padding-left: 0.4rem;
-  padding-right: 0.4rem;
-  font-size: 150%;
+/* ─── Responsive ────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+  .auth-left-panel {
+    display: none;
+  }
+
+  .auth-right-panel {
+    flex: 1 1 100%;
+    background: #fff7ed;
+  }
 }
 
-/* ─── Responsive ────────────────────────────────────────────── */
 @media (max-width: 575.98px) {
-  .authentication-wrapper .auth-input-wrapper .auth-input {
-    font-size: 1.125rem;
-  }
-
-  .brand-icon-wrap {
-    width: 80px;
-    height: 80px;
-  }
-
-  .brand-logo {
-    width: 60px;
-    height: 60px;
-  }
-
-  .brand-icon-wrap i {
-    font-size: 40px;
-  }
-
-  .authentication-wrapper.authentication-basic .authentication-inner {
-    max-width: 100%;
-    padding: 1rem;
-  }
-
-  .authentication-wrapper.authentication-basic .authentication-inner .card {
-    border-radius: 20px;
-  }
-
-  .authentication-wrapper.authentication-basic .authentication-inner .card .card-body {
-    padding: 2rem 1.75rem 1.75rem;
+  .auth-card {
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
   }
 
   .auth-title {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
   }
 }

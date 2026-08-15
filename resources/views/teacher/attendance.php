@@ -83,6 +83,12 @@ $students = $controller->getStudents();
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
+    <div class="d-flex justify-content-end mb-3">
+      <a href="attendance-print.php" target="_blank" class="btn btn-outline-primary">
+        <i class="bx bx-printer"></i> Print Attendance
+      </a>
+    </div>
+
     <ul class="nav nav-tabs mb-3" id="attendanceTabs" role="tablist">
       <li class="nav-item" role="presentation">
         <button class="nav-link active" id="history-tab-btn" data-bs-toggle="tab" data-bs-target="#historyTab" type="button" role="tab">Attendance History</button>

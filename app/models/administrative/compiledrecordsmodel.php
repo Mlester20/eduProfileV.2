@@ -56,7 +56,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 COALESCE(tu.full_name, adv.full_name) AS assigned_teacher_name";
         }
 
-        private function fetchFiltered($alias, $selectPrefix, $table, $schoolYearId, $sectionId, $orderBy){
+        private function fetchFiltered($alias, $selectPrefix, $table, $schoolYearId, $sectionId, $gradeLevelId, $orderBy){
             try{
                 $query = "SELECT {$selectPrefix}, " . $this->studentColumns() . " " . $this->baseJoins($table, $alias) . " WHERE 1=1";
 
@@ -71,6 +71,11 @@ require_once __DIR__ . '/../../core/Model.php';
                     $query .= " AND s.section_id = ?";
                     $types .= "i";
                     $params[] = $sectionId;
+                }
+                if($gradeLevelId !== null){
+                    $query .= " AND sec.grade_level_id = ?";
+                    $types .= "i";
+                    $params[] = $gradeLevelId;
                 }
                 $query .= " ORDER BY {$orderBy}";
 
@@ -87,10 +92,11 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        private function countFiltered($alias, $table, $schoolYearId, $sectionId){
+        private function countFiltered($alias, $table, $schoolYearId, $sectionId, $gradeLevelId = null){
             try{
                 $query = "SELECT COUNT(*) AS total FROM {$table} {$alias}
                     JOIN {$this->students} s ON {$alias}.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     WHERE 1=1";
 
                 $types = "";
@@ -104,6 +110,11 @@ require_once __DIR__ . '/../../core/Model.php';
                     $query .= " AND s.section_id = ?";
                     $types .= "i";
                     $params[] = $sectionId;
+                }
+                if($gradeLevelId !== null){
+                    $query .= " AND sec.grade_level_id = ?";
+                    $types .= "i";
+                    $params[] = $gradeLevelId;
                 }
 
                 $stmt = $this->con->prepare($query);
@@ -119,51 +130,51 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function countAcademicRecords($schoolYearId = null, $sectionId = null){
-            return $this->countFiltered('ap', $this->academic_profiles, $schoolYearId, $sectionId);
+        public function countAcademicRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->countFiltered('ap', $this->academic_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function countBehavioralRecords($schoolYearId = null, $sectionId = null){
-            return $this->countFiltered('bp', $this->behavioral_profiles, $schoolYearId, $sectionId);
+        public function countBehavioralRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->countFiltered('bp', $this->behavioral_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function countDevelopmentalRecords($schoolYearId = null, $sectionId = null){
-            return $this->countFiltered('dp', $this->developmental_profiles, $schoolYearId, $sectionId);
+        public function countDevelopmentalRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->countFiltered('dp', $this->developmental_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function countHealthRecords($schoolYearId = null, $sectionId = null){
-            return $this->countFiltered('hp', $this->health_profiles, $schoolYearId, $sectionId);
+        public function countHealthRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->countFiltered('hp', $this->health_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function countAttendanceRecords($schoolYearId = null, $sectionId = null){
-            return $this->countFiltered('a', $this->attendance, $schoolYearId, $sectionId);
+        public function countAttendanceRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->countFiltered('a', $this->attendance, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function countAchievementRecords($schoolYearId = null, $sectionId = null){
-            return $this->countFiltered('ap', $this->achievements_profiles, $schoolYearId, $sectionId);
+        public function countAchievementRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->countFiltered('ap', $this->achievements_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function getAcademicRecords($schoolYearId = null, $sectionId = null){
-            return $this->fetchFiltered('ap', 'ap.*', $this->academic_profiles, $schoolYearId, $sectionId, 's.last_name ASC, ap.grading_period ASC');
+        public function getAcademicRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->fetchFiltered('ap', 'ap.*', $this->academic_profiles, $schoolYearId, $sectionId, $gradeLevelId, 's.last_name ASC, ap.grading_period ASC');
         }
 
-        public function getBehavioralRecords($schoolYearId = null, $sectionId = null){
-            return $this->fetchFiltered('bp', 'bp.*', $this->behavioral_profiles, $schoolYearId, $sectionId, 'bp.observation_date DESC');
+        public function getBehavioralRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->fetchFiltered('bp', 'bp.*', $this->behavioral_profiles, $schoolYearId, $sectionId, $gradeLevelId, 'bp.observation_date DESC');
         }
 
-        public function getDevelopmentalRecords($schoolYearId = null, $sectionId = null){
-            return $this->fetchFiltered('dp', 'dp.*', $this->developmental_profiles, $schoolYearId, $sectionId, 's.last_name ASC, dp.domain ASC');
+        public function getDevelopmentalRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->fetchFiltered('dp', 'dp.*', $this->developmental_profiles, $schoolYearId, $sectionId, $gradeLevelId, 's.last_name ASC, dp.domain ASC');
         }
 
-        public function getHealthRecords($schoolYearId = null, $sectionId = null){
-            return $this->fetchFiltered('hp', 'hp.*', $this->health_profiles, $schoolYearId, $sectionId, 's.last_name ASC');
+        public function getHealthRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->fetchFiltered('hp', 'hp.*', $this->health_profiles, $schoolYearId, $sectionId, $gradeLevelId, 's.last_name ASC');
         }
 
-        public function getAttendanceRecords($schoolYearId = null, $sectionId = null){
-            return $this->fetchFiltered('a', 'a.*', $this->attendance, $schoolYearId, $sectionId, 'a.attendance_date DESC, s.last_name ASC');
+        public function getAttendanceRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->fetchFiltered('a', 'a.*', $this->attendance, $schoolYearId, $sectionId, $gradeLevelId, 'a.attendance_date DESC, s.last_name ASC');
         }
 
-        public function getAchievementRecords($schoolYearId = null, $sectionId = null){
-            return $this->fetchFiltered('ap', 'ap.*', $this->achievements_profiles, $schoolYearId, $sectionId, 'ap.date_received DESC');
+        public function getAchievementRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->fetchFiltered('ap', 'ap.*', $this->achievements_profiles, $schoolYearId, $sectionId, $gradeLevelId, 'ap.date_received DESC');
         }
     }

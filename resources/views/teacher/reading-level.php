@@ -80,15 +80,14 @@ AuthRole::allowOnly(['teacher']);
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="school_year_id" class="form-label">School Year</label>
-                                <select class="form-select" id="school_year_id" name="school_year_id" required>
-                                    <option value="">Select school year</option>
-                                    <?php if (!empty($active_sy)): ?>
-                                        <?php foreach ($active_sy as $sy): ?>
-                                            <option value="<?= htmlspecialchars($sy['id']); ?>"><?= htmlspecialchars($sy['school_year']); ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
+                                <label class="form-label">School Year</label>
+                                <?php if (!empty($active_sy)): ?>
+                                    <input class="form-control" type="text" value="<?= htmlspecialchars($active_sy[0]['school_year']); ?>" disabled>
+                                    <input type="hidden" name="school_year_id" id="school_year_id" value="<?= htmlspecialchars($active_sy[0]['id']); ?>">
+                                <?php else: ?>
+                                    <input class="form-control" type="text" value="No active school year set" disabled>
+                                    <div class="form-text text-danger">Contact an admin to set an active school year before recording data.</div>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="assessment_date" class="form-label">Assessment Date</label>
@@ -115,7 +114,7 @@ AuthRole::allowOnly(['teacher']);
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="remarks" class="form-label">Remarks</label>
-                                <textarea class="form-control" id="remarks" name="remarks" rows="2"></textarea>
+                                <textarea class="form-control" id="remarks" name="remarks" rows="2" placeholder="e.g., Needs more practice with multisyllabic words."></textarea>
                             </div>
                         </div>
                     </div>
@@ -158,15 +157,14 @@ AuthRole::allowOnly(['teacher']);
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="edit_school_year_id" class="form-label">School Year</label>
-                                <select class="form-select" id="edit_school_year_id" name="school_year_id" required>
-                                    <option value="">Select school year</option>
-                                    <?php if (!empty($active_sy)): ?>
-                                        <?php foreach ($active_sy as $sy): ?>
-                                            <option value="<?= htmlspecialchars($sy['id']); ?>"><?= htmlspecialchars($sy['school_year']); ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
+                                <label class="form-label">School Year</label>
+                                <?php if (!empty($active_sy)): ?>
+                                    <input class="form-control" type="text" value="<?= htmlspecialchars($active_sy[0]['school_year']); ?>" disabled>
+                                    <input type="hidden" name="school_year_id" id="edit_school_year_id" value="<?= htmlspecialchars($active_sy[0]['id']); ?>">
+                                <?php else: ?>
+                                    <input class="form-control" type="text" value="No active school year set" disabled>
+                                    <div class="form-text text-danger">Contact an admin to set an active school year before recording data.</div>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="edit_assessment_date" class="form-label">Assessment Date</label>
@@ -193,7 +191,7 @@ AuthRole::allowOnly(['teacher']);
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="edit_remarks" class="form-label">Remarks</label>
-                                <textarea class="form-control" id="edit_remarks" name="remarks" rows="2"></textarea>
+                                <textarea class="form-control" id="edit_remarks" name="remarks" rows="2" placeholder="e.g., Needs more practice with multisyllabic words."></textarea>
                             </div>
                         </div>
                         <!-- hide the value of recorded_by to prevent changing the value -->

@@ -52,7 +52,7 @@ function renderRecordsTable(tbodyId, records, columns, emptyMessage){
     });
 }
 
-function viewStudent(id, lrn, full_name, section, school_year, age, gender, mother_tongue, ip_ethnic_group, religion){
+function viewStudent(id, lrn, full_name, section, school_year, age, gender, mother_tongue, ip_ethnic_group, religion, learning_modality, remarks){
     document.getElementById('view_student_lrn').textContent = lrn;
     document.getElementById('view_student_full_name').textContent = full_name;
     document.getElementById('view_student_section').textContent = section;
@@ -62,6 +62,8 @@ function viewStudent(id, lrn, full_name, section, school_year, age, gender, moth
     document.getElementById('view_student_mother_tongue').textContent = mother_tongue;
     document.getElementById('view_student_ip_ethnic_group').textContent = ip_ethnic_group;
     document.getElementById('view_student_religion').textContent = religion;
+    document.getElementById('view_student_learning_modality').textContent = learning_modality;
+    document.getElementById('view_student_remarks').textContent = remarks;
 
     renderRecordsTable(
         'view_behavior_records',
@@ -92,7 +94,7 @@ function viewStudent(id, lrn, full_name, section, school_year, age, gender, moth
     document.getElementById('view_link_parent_guardian').href = 'parent-guardian.php?student_id=' + id;
 }
 
-function editStudent(id, lrn, first_name, middle_name, last_name, suffix, birth_date, gender, age_as_of_june, mother_tongue, ip_ethnic_group, religion, house_number, street, sitio, purok, barangay, city_municipality, province, school_year_id, grade_level_id, section_id, recorded_by){
+function editStudent(id, lrn, first_name, middle_name, last_name, suffix, birth_date, gender, age_as_of_june, mother_tongue, ip_ethnic_group, religion, house_number, street, sitio, purok, barangay, city_municipality, province, learning_modality, remarks, school_year_id, grade_level_id, section_id, recorded_by){
     document.getElementById('edit_student_id').value = id;
     document.getElementById('edit_lrn').value = lrn;
     document.getElementById('edit_first_name').value = first_name;
@@ -112,6 +114,8 @@ function editStudent(id, lrn, first_name, middle_name, last_name, suffix, birth_
     document.getElementById('edit_barangay').value = barangay;
     document.getElementById('edit_city_municipality').value = city_municipality;
     document.getElementById('edit_province').value = province;
+    document.getElementById('edit_learning_modality').value = learning_modality;
+    document.getElementById('edit_remarks').value = remarks;
     document.getElementById('edit_school_year_id').value = school_year_id;
     document.getElementById('edit_grade_level_id').value = grade_level_id;
     document.getElementById('edit_section_id').value = section_id;

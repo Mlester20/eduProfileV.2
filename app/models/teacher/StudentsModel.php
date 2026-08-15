@@ -64,11 +64,12 @@ require_once __DIR__ . '/../../core/Model.php';
                     lrn, first_name, middle_name, last_name, suffix, birth_date,
                     age_as_of_june, gender, mother_tongue, ip_ethnic_group, religion,
                     house_number, street, sitio, purok, barangay, city_municipality, province,
+                    learning_modality, remarks,
                     school_year_id, grade_level_id, section_id, recorded_by
-                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $this->con->prepare($insert);
                 $stmt->bind_param(
-                    "ssssssisssssssssssiiii",
+                    "ssssssisssssssssssssiiii",
                     $data['lrn'],
                     $data['first_name'],
                     $data['middle_name'],
@@ -87,6 +88,8 @@ require_once __DIR__ . '/../../core/Model.php';
                     $data['barangay'],
                     $data['city_municipality'],
                     $data['province'],
+                    $data['learning_modality'],
+                    $data['remarks'],
                     $data['school_year_id'],
                     $data['grade_level_id'],
                     $data['section_id'],
@@ -262,11 +265,12 @@ require_once __DIR__ . '/../../core/Model.php';
                     lrn = ?, first_name = ?, middle_name = ?, last_name = ?, suffix = ?, birth_date = ?,
                     age_as_of_june = ?, gender = ?, mother_tongue = ?, ip_ethnic_group = ?, religion = ?,
                     house_number = ?, street = ?, sitio = ?, purok = ?, barangay = ?, city_municipality = ?, province = ?,
+                    learning_modality = ?, remarks = ?,
                     school_year_id = ?, grade_level_id = ?, section_id = ?, recorded_by = ?
                     WHERE id = ? ";
                 $stmt = $this->con->prepare($update);
                 $stmt->bind_param(
-                    "ssssssisssssssssssiiiii",
+                    "ssssssisssssssssssssiiiii",
                     $data['lrn'],
                     $data['first_name'],
                     $data['middle_name'],
@@ -285,6 +289,8 @@ require_once __DIR__ . '/../../core/Model.php';
                     $data['barangay'],
                     $data['city_municipality'],
                     $data['province'],
+                    $data['learning_modality'],
+                    $data['remarks'],
                     $data['school_year_id'],
                     $data['grade_level_id'],
                     $data['section_id'],

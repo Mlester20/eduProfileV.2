@@ -3,6 +3,8 @@
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/teacher/AttendanceModel.php';
+require_once __DIR__ . '/../../models/admin/SectionsModel.php';
+require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../../database/config/config.php';
@@ -11,6 +13,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
         protected $auditLogs;
         protected $students;
         protected $studentService;
+        protected $section;
+        protected $sy;
 
         public function __construct($con){
             parent::__construct(
@@ -19,6 +23,36 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->auditLogs = new AuditLogs($con);
             $this->students = new StudentsModel($con);
             $this->studentService = new StudentService($con);
+            $this->section = new SectionsModel($con);
+            $this->sy = new SchoolYearModel($con);
+        }
+
+        public function getMySections(){
+            if(!isset($_SESSION['id'])){
+                return [];
+            }
+            return $this->section->findByAdviser((int) $_SESSION['id']);
+        }
+
+        public function getActiveSchoolYear(){
+            $rows = $this->sy->getActiveSy();
+            return $rows[0] ?? null;
+        }
+
+        /**
+         * Per-student, per-day attendance for one section within a date
+         * range — the data behind the printable monthly SF2-style grid.
+         */
+
+        public function monthlyGrid($section_id, $startDate, $endDate){
+            if(!isset($_SESSION['id'])){
+                return ['students' => [], 'records' => []];
+            }
+            $teacherId = (int) $_SESSION['id'];
+            return [
+                'students' => $this->model->getStudentsBySection($teacherId, $section_id),
+                'records' => $this->model->getMonthlyRecords($teacherId, $section_id, $startDate, $endDate),
+            ];
         }
 
         public function index($student_id = null, $session = null){

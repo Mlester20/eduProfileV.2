@@ -39,7 +39,9 @@
       "Bash(\"/c/xampp/mysql/bin/mysql.exe\" -u root profilingdb -e \"SELECT id FROM students LIMIT 1; SELECT id FROM school_year LIMIT 1; SELECT id FROM users LIMIT 1;\")",
       "Bash(\"/c/xampp/php/php.exe\" \"C:/Users/User/AppData/Local/Temp/claude/c--xampp-htdocs-eduProfileV-2/c2e3ec44-ac34-460a-aa3c-fb93abba4c54/scratchpad/test_achievement_model.php\")",
       "Bash(\"/c/xampp/php/php.exe\" \"C:/Users/User/AppData/Local/Temp/claude/c--xampp-htdocs-eduProfileV-2/c2e3ec44-ac34-460a-aa3c-fb93abba4c54/scratchpad/test_teacher_achievement.php\")",
-      "Bash(\"/c/xampp/php/php.exe\" \"C:/Users/User/AppData/Local/Temp/claude/c--xampp-htdocs-eduProfileV-2/c2e3ec44-ac34-460a-aa3c-fb93abba4c54/scratchpad/test_dedupe.php\")"
+      "Bash(\"/c/xampp/php/php.exe\" \"C:/Users/User/AppData/Local/Temp/claude/c--xampp-htdocs-eduProfileV-2/c2e3ec44-ac34-460a-aa3c-fb93abba4c54/scratchpad/test_dedupe.php\")",
+      "Bash(php \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--xampp-htdocs-eduProfile\\\\61053cc2-9096-493c-b3af-51c3f8c609b6\\\\scratchpad\\\\sy_delete_admin.php\")",
+      "Bash(grep -v \"session_start\\\\|headers already sent\\\\|^$\\\\|^Notice\\\\|^Warning\")"
     ]
   }
 }

@@ -4,6 +4,10 @@ session_start();
 require_once __DIR__ . '/app/helpers/flashMessage.php';
 require_once __DIR__ . '/app/helpers/csrf.php';
 require_once __DIR__ . '/app/core/BaseUrl.php';
+require_once __DIR__ . '/app/helpers/SchoolSettings.php';
+require_once __DIR__ . '/database/config/config.php';
+
+$school = SchoolSettings::get($con);
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +39,7 @@ require_once __DIR__ . '/app/core/BaseUrl.php';
     <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/theme-default.css') ?>" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="<?= base_url('public/assets/css/demo.css') ?>" />
     <link rel="stylesheet" href="<?= base_url('public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') ?>" />
-    <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/pages/page-auth.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/pages/page-auth.css') ?>?v=<?php echo filemtime(__DIR__ . '/public/assets/vendor/css/pages/page-auth.css'); ?>" />
     <script src="<?= base_url('public/assets/vendor/js/helpers.js') ?>"></script>
     <script src="<?= base_url('public/assets/js/config.js') ?>"></script>
 </head>
@@ -43,74 +47,82 @@ require_once __DIR__ . '/app/core/BaseUrl.php';
 
     <?php FlashMessage::showFlash(); ?>
 
-    <div class="container-xxl">
-      <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
+    <div class="auth-split-wrapper">
 
-          <div class="card">
-            <div class="card-body">
+      <!-- Left brand panel -->
+      <div class="auth-left-panel">
+        <div class="auth-illustration">
+          <div class="illus-blob"></div>
+          <div class="illus-card">
+            <img src="<?= base_url('public/assets/img/favicon/logo.png') ?>" alt="EduProfile" class="illus-logo" />
+          </div>
+          <div class="illus-badge"><i class='bx bx-check'></i></div>
+        </div>
 
-              <!-- Logo -->
-              <!-- <div class="app-brand justify-content-center">
-                <div class="brand-icon-wrap">
-                  <img src="public/assets/img/favicon/logo.png" alt="Logo" class="brand-logo" />
-                </div>
-              </div> -->
-              <!-- /Logo -->
+        <div>
+          <h2 class="auth-left-headline">Student Profile System</h2>
+          <p class="auth-left-subtext"><?php echo htmlspecialchars($school['school_name']); ?> &nbsp;•&nbsp; <?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></p>
+        </div>
+      </div>
 
-              <h1 class="auth-title">EduProfile</h1>
-              
-              <hr class="auth-divider" />
-              <p class="auth-desc">Sign in to your account to access the student profiling system.</p>
+      <!-- Right auth form panel -->
+      <div class="auth-right-panel">
+        <div class="auth-card">
 
-              <form id="formAuthentication" class="mb-3" action="<?= base_url('app/controllers/Auth.php') ?>" method="POST">
-                <?= Csrf::field() ?>
+          <h1 class="auth-title">EduProfile</h1>
 
-                <div class="mb-3">
-                  <label for="email" class="auth-label">Email Address</label>
-                  <div class="input-icon-wrap">
-                    <span class="input-icon"><i class='bx bx-envelope'></i></span>
-                    <input
-                      type="text"
-                      class="form-control auth-input"
-                      id="email"
-                      name="email"
-                      placeholder="you@school.edu.ph"
-                      autofocus
-                    />
-                  </div>
-                </div>
+          <hr class="auth-divider" />
+          <p class="auth-desc">Sign in to your account to access the student profiling system.</p>
 
-                <div class="mb-3">
-                  <label for="password" class="auth-label">Password</label>
-                  <div class="input-icon-wrap">
-                    <span class="input-icon"><i class='bx bx-lock'></i></span>
-                    <input
-                      type="password"
-                      id="password"
-                      class="form-control auth-input"
-                      name="password"
-                      placeholder="··········"
-                    />
-                    <span class="input-icon-right toggle-password" onclick="togglePassword()" style="cursor:pointer;">
-                      <i class='bx bx-hide' id="toggleIcon"></i>
-                    </span>
-                  </div>
-                </div>
+          <form id="formAuthentication" class="mb-3" action="<?= base_url('app/controllers/Auth.php') ?>" method="POST">
+            <?= Csrf::field() ?>
 
-                <div class="mb-3">
-                  <button class="btn auth-btn w-100" type="submit">Sign in</button>
-                </div>
-
-              </form>
-              <p class="auth-school">San Jose Sur Elementary</p>
-              <p class="auth-footer-text">Mallig District &nbsp;•&nbsp; DepEd Region II</p>
-
+            <div class="mb-3">
+              <label for="email" class="auth-label">Email Address</label>
+              <div class="input-icon-wrap">
+                <span class="input-icon"><i class='bx bx-envelope'></i></span>
+                <input
+                  type="text"
+                  class="form-control auth-input"
+                  id="email"
+                  name="email"
+                  placeholder="you@school.edu.ph"
+                  autofocus
+                />
+              </div>
             </div>
+
+            <div class="mb-3">
+              <label for="password" class="auth-label">Password</label>
+              <div class="input-icon-wrap">
+                <span class="input-icon"><i class='bx bx-lock'></i></span>
+                <input
+                  type="password"
+                  id="password"
+                  class="form-control auth-input"
+                  name="password"
+                  placeholder="··········"
+                />
+                <span class="input-icon-right toggle-password" onclick="togglePassword()" style="cursor:pointer;">
+                  <i class='bx bx-hide' id="toggleIcon"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button class="btn auth-btn w-100" type="submit">Sign in</button>
+            </div>
+
+          </form>
+
+          <div class="auth-card-footer">
+            <p class="auth-school"><?php echo htmlspecialchars($school['school_name']); ?></p>
+            <p class="auth-footer-text"><?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></p>
           </div>
 
         </div>
       </div>
+
     </div>
 
     <script src="<?= base_url('public/assets/vendor/libs/jquery/jquery.js') ?>"></script>

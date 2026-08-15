@@ -2,13 +2,16 @@
 require_once __DIR__ . '/../../../app/controllers/administrative/learnerprofilecontroller.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
 require_once __DIR__ . '/../../../app/helpers/StudentsAge.php';
+require_once __DIR__ . '/../../../app/helpers/SchoolSettings.php';
 require_once __DIR__ . '/../../../app/services/LearnerProfileExportService.php';
 require_once __DIR__ . '/../../../app/services/AddressService.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
 
+$school = SchoolSettings::get($con);
+
 if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
-    LearnerProfileExportService::exportCsv($profile);
+    LearnerProfileExportService::exportCsv($profile, $school['school_name']);
     exit();
 }
 ?>
@@ -108,8 +111,8 @@ if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
         <div class="d-none d-print-flex align-items-center gap-3 mb-4">
             <img src="../../../public/assets/img/favicon/logo.png" alt="School Logo" style="width: 60px; height: 60px;">
             <div>
-                <h5 class="mb-0">San Jose Sur Elementary</h5>
-                <small class="text-muted">Mallig District &nbsp;•&nbsp; DepEd Region II</small>
+                <h5 class="mb-0"><?php echo htmlspecialchars($school['school_name']); ?></h5>
+                <small class="text-muted"><?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></small>
             </div>
         </div>
 
@@ -161,6 +164,14 @@ if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
                     <div class="col-md-3 col-sm-6 mb-3">
                         <label class="form-label fw-bold mb-0">Religion</label>
                         <p class="mb-0"><?php echo htmlspecialchars($info['religion'] ?? ''); ?></p>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="form-label fw-bold mb-0">Learning Modality</label>
+                        <p class="mb-0"><?php echo htmlspecialchars($info['learning_modality'] ?? ''); ?></p>
+                    </div>
+                    <div class="col-md-9 mb-3">
+                        <label class="form-label fw-bold mb-0">Remarks</label>
+                        <p class="mb-0"><?php echo htmlspecialchars($info['remarks'] ?? ''); ?></p>
                     </div>
                 </div>
 

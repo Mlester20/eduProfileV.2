@@ -90,6 +90,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <span class="menu-header-text">System</span>
         </li>
 
+        <!-- School Settings -->
+        <li class="menu-item <?php echo ($currentPage === 'school-settings.php') ? 'active' : ''; ?>">
+          <a href="school-settings.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-cog"></i>
+            <div data-i18n="School Settings">School Settings</div>
+          </a>
+        </li>
+
         <!-- Audit Log -->
         <li class="menu-item <?php echo ($currentPage === 'audit-log.php') ? 'active' : ''; ?>">
           <a href="audit-log.php" class="menu-link">

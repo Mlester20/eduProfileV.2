@@ -104,6 +104,16 @@ $categoryFieldLabels = [
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
+    <div class="d-flex justify-content-end mb-2">
+        <a
+            href="compiled-records-print.php?category=<?php echo urlencode($category); ?>&school_year_id=<?php echo urlencode((string) ($school_year_filter ?? '')); ?>&grade_level_id=<?php echo urlencode((string) ($grade_level_filter ?? '')); ?>&section_id=<?php echo urlencode((string) ($section_filter ?? '')); ?>"
+            target="_blank"
+            class="btn btn-outline-primary"
+        >
+            <i class="bx bx-printer"></i> Print
+        </a>
+    </div>
+
     <form action="compiled-records.php" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div>
             <label for="category" class="form-label mb-0">Category</label>
@@ -127,9 +137,20 @@ $categoryFieldLabels = [
             </select>
         </div>
         <div>
+            <label for="grade_level_id" class="form-label mb-0">Grade Level</label>
+            <select class="form-select" id="grade_level_id" name="grade_level_id" onchange="this.form.submit()">
+                <option value="">-- All Grade Levels --</option>
+                <?php foreach(($grade_levels ?? []) as $grade_level): ?>
+                    <option value="<?php echo htmlspecialchars($grade_level['id']); ?>" <?php echo ($grade_level_filter !== null && (int) $grade_level_filter === (int) $grade_level['id']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($grade_level['grade_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
             <label for="section_id" class="form-label mb-0">Section</label>
             <select class="form-select" id="section_id" name="section_id" onchange="this.form.submit()">
-                <option value="">-- All Sections --</option>
+                <option value="">-- All Sections<?php echo ($grade_level_filter !== null) ? ' in this Grade' : ''; ?> --</option>
                 <?php foreach(($sections ?? []) as $section): ?>
                     <option value="<?php echo htmlspecialchars($section['id']); ?>" <?php echo ($section_filter !== null && (int) $section_filter === (int) $section['id']) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars(($section['grade_level_name'] ?? '') . ' - ' . $section['section_name']); ?>

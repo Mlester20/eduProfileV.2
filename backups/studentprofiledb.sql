@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 08, 2026 at 02:56 PM
+-- Generation Time: Aug 15, 2026 at 05:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -288,7 +288,31 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (421, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 4 student(s) to a new school year', '::1', 'success', '2026-07-23 16:22:07'),
 (422, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Juan Cruz', '::1', 'success', '2026-08-06 14:31:53'),
 (423, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 14', '::1', 'success', '2026-08-06 14:57:16'),
-(424, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 91', '::1', 'success', '2026-08-08 12:50:57');
+(424, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 91', '::1', 'success', '2026-08-08 12:50:57'),
+(425, 116, 'teacher', 'Importing students from Excel', 'Students', NULL, NULL, 'Mark Lester Raguindin Imported 5 student(s) via Excel', '::1', 'success', '2026-08-08 13:18:05'),
+(426, 116, 'teacher', 'Recording Student Health', 'Student Health', NULL, NULL, 'Mark Lester Raguindin Added Health Profile for 108', '::1', 'success', '2026-08-08 13:58:19'),
+(427, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 5 student(s) to a new school year', '::1', 'success', '2026-08-08 13:59:32'),
+(428, 116, 'teacher', 'Importing students from Excel', 'Students', NULL, NULL, 'Mark Lester Raguindin Imported 5 student(s) via Excel', '::1', 'success', '2026-08-08 14:02:27'),
+(429, 116, 'teacher', 'Importing students from Excel', 'Students', NULL, NULL, 'Mark Lester Raguindin Imported 5 student(s) via Excel', '::1', 'success', '2026-08-08 14:03:35'),
+(430, 3, 'administrative', 'Rolling over students to new school year', 'Students', NULL, NULL, 'Administrative rolled over 5 student(s) to a new school year', '::1', 'success', '2026-08-08 14:04:09'),
+(431, 4, 'admin', 'Activated user', 'Users', 119, NULL, 'admin activated user ID: 119', '::1', 'success', '2026-08-15 12:29:31'),
+(432, 116, 'teacher', 'Importing students from Excel', 'Students', NULL, NULL, 'Mark Lester Raguindin Imported 1 student(s) via Excel', '::1', 'success', '2026-08-15 12:51:05'),
+(433, 116, 'teacher', 'Recording Attendance', 'Attendance', NULL, NULL, 'Mark Lester Raguindin recorded attendance for 2026-08-15 (2 records)', '::1', 'success', '2026-08-15 14:11:31'),
+(434, 116, 'teacher', 'Adding a new student', 'Students', NULL, NULL, 'Mark Lester Raguindin Added Mark Lester  Raguindin', '::1', 'success', '2026-08-15 15:10:52'),
+(435, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 147', '::1', 'success', '2026-08-15 15:11:03'),
+(436, 116, 'teacher', 'Deleting a student', 'Students', NULL, NULL, 'Mark Lester Raguindin Deleted a student with ID: 146', '::1', 'success', '2026-08-15 15:11:06'),
+(437, 1, 'admin', 'Adding new section', 'Section', NULL, 'Created Grade Level', 'Test Admin Created new section ZZZ_TEST_SECTION_ADMIN', 'UNKNOWN', 'success', '2026-08-15 15:21:41'),
+(438, 1, 'admin', 'Adding new section', 'Section', NULL, 'Created Grade Level', 'Test Admin Created new section ZZZ_TEST_SECTION_ADMIN', 'UNKNOWN', 'success', '2026-08-15 15:23:17'),
+(439, 1, 'admin', 'Updating Section', 'Section', 13, 'Updating Section', 'Test Admin Updating the ZZZ_TEST_SECTION_ADMIN_RENAMED', 'UNKNOWN', 'success', '2026-08-15 15:24:09'),
+(440, 1, 'admin', 'Deleted Section', 'Section', 13, 'Test AdminDeleted Section', '', 'UNKNOWN', 'success', '2026-08-15 15:24:17'),
+(441, 3, 'administrative', 'Adding new section', 'Section', NULL, 'Created Grade Level', 'Administrative Created new section ZZZ_TEST_SECTION_ADMINISTRATIVE', 'UNKNOWN', 'success', '2026-08-15 15:26:07'),
+(442, 3, 'administrative', 'Updating Section', 'Section', 14, 'Updating Section', 'Administrative Updating the ZZZ_TEST_SECTION_ADMINISTRATIVE_RENAMED', 'UNKNOWN', 'success', '2026-08-15 15:26:27'),
+(443, 3, 'administrative', 'Deleted Section', 'Section', 14, 'AdministrativeDeleted Section', '', 'UNKNOWN', 'success', '2026-08-15 15:26:43'),
+(444, 1, 'admin', 'Grade Level', 'Grade Level', NULL, 'Created Grade Level', 'Test Admin Created Grade Level ZZZ_TEST_GRADE_ADMIN', 'UNKNOWN', 'success', '2026-08-15 15:30:53'),
+(445, 1, 'admin', 'Update Grade Level', 'Grade Level', NULL, 'Test Admin Updated the Grade Level ZZZ_TEST_GRADE_ADMIN_RENAMED', '', 'UNKNOWN', 'success', '2026-08-15 15:31:17'),
+(446, 1, 'admin', 'Deleted Grade Level', 'Grade Level', NULL, 'Deleted Grade Level', 'Test AdminDeleted Grade Level', 'UNKNOWN', 'success', '2026-08-15 15:31:29'),
+(447, 3, 'administrative', 'Grade Level', 'Grade Level', NULL, 'Created Grade Level', 'Administrative Created Grade Level ZZZ_TEST_GRADE_ADMINISTRATIVE', 'UNKNOWN', 'success', '2026-08-15 15:31:51'),
+(448, 3, 'administrative', 'Deleted Grade Level', 'Grade Level', NULL, 'Deleted Grade Level', 'AdministrativeDeleted Grade Level', 'UNKNOWN', 'success', '2026-08-15 15:32:08');
 
 -- --------------------------------------------------------
 
@@ -441,6 +465,30 @@ CREATE TABLE `reading_levels` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `school_settings`
+--
+
+CREATE TABLE `school_settings` (
+  `id` int(11) NOT NULL DEFAULT 1,
+  `school_name` varchar(150) NOT NULL DEFAULT 'San Jose Sur Elementary',
+  `school_id` varchar(20) DEFAULT NULL,
+  `region` varchar(100) DEFAULT NULL,
+  `division` varchar(100) DEFAULT NULL,
+  `district` varchar(100) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `school_settings`
+--
+
+INSERT INTO `school_settings` (`id`, `school_name`, `school_id`, `region`, `division`, `district`, `updated_by`, `updated_at`) VALUES
+(1, 'San Jose Sur Elementary', '103503', 'Region II', 'Division of Isabela', 'District of Mallig', NULL, '2026-08-15 15:07:39');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `school_year`
 --
 
@@ -459,8 +507,8 @@ CREATE TABLE `school_year` (
 --
 
 INSERT INTO `school_year` (`id`, `school_year`, `start_date`, `end_date`, `status`, `created_at`, `updated_at`) VALUES
-(8, '2026-2027', '2026-06-08', '2027-04-05', 'active', '2026-05-15 05:40:37', '2026-08-08 12:51:51'),
-(14, '2027-2028', '2027-06-01', '2028-04-01', 'inactive', '2026-07-09 15:17:37', '2026-08-08 12:53:40');
+(8, '2026-2027', '2026-06-08', '2027-04-05', 'active', '2026-05-15 05:40:37', '2026-08-15 12:50:34'),
+(14, '2027-2028', '2027-06-01', '2028-04-01', 'archived', '2026-07-09 15:17:37', '2026-08-15 12:50:39');
 
 -- --------------------------------------------------------
 
@@ -537,6 +585,8 @@ CREATE TABLE `students` (
   `barangay` varchar(100) DEFAULT NULL,
   `city_municipality` varchar(100) DEFAULT NULL,
   `province` varchar(100) DEFAULT NULL,
+  `learning_modality` varchar(50) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
   `school_year_id` int(11) NOT NULL,
   `grade_level_id` int(11) NOT NULL,
   `section_id` int(11) NOT NULL,
@@ -574,7 +624,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `password`, `role`, `status`, `
 (13, 'Registrar', 'registrar@school.edu.ph', '$2y$10$IEz8YAjPkN2ddoQTR6YRUupEwnweJ6YNzsl8opZsKoXrMMFkaJYZG', 'registrar', 'active', 'storage/profiles/pfp_13_1779633057.jpg', '2026-05-15', '2026-05-30'),
 (116, 'Mark Lester Raguindin', 'teacher.edu.ph@gmail.com', '$2y$10$LZIVGYOkHmFGyOfUS7Nvo.Hfe1kigmfCJM36QvakHqVaLAKq575UC', 'teacher', 'active', 'storage/profiles/pfp_116_1782996344.jpg', '2026-06-24', '2026-07-04'),
 (117, 'teacher 1', 'teacher2@gmail.com', '$2y$10$VTwGP0epmVJOKSpuu6YtfO2Fs1.vjfHINVlb49tDQtyY1fnEKSKDS', 'teacher', 'active', 'storage/profiles/pfp_117_1783614517.png', '2026-07-10', '2026-07-10'),
-(119, 'Teacher Two', 'teacher2@school.edu.ph', '$2y$10$.m5KtR/BU72SUnvWAi91k.mdgdvM8UPfRShh0EzxpEbdJYmvjpfAm', 'teacher', 'inactive', NULL, '2026-07-23', '0000-00-00'),
+(119, 'Teacher Two', 'teacher2@school.edu.ph', '$2y$10$.m5KtR/BU72SUnvWAi91k.mdgdvM8UPfRShh0EzxpEbdJYmvjpfAm', 'teacher', 'active', NULL, '2026-07-23', '0000-00-00'),
 (120, 'April Berbon', 'april@gmail.com', '$2y$10$v0v1QI1cenFT2xRhXqWvOOswx77JVEMv1xStVaEFcALZEGL/FUfp2', 'teacher', 'active', NULL, '2026-07-23', '0000-00-00');
 
 -- --------------------------------------------------------
@@ -692,6 +742,12 @@ ALTER TABLE `reading_levels`
   ADD KEY `recorded_by` (`recorded_by`);
 
 --
+-- Indexes for table `school_settings`
+--
+ALTER TABLE `school_settings`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `school_year`
 --
 ALTER TABLE `school_year`
@@ -746,19 +802,19 @@ ALTER TABLE `_migrations`
 -- AUTO_INCREMENT for table `academic_profiles`
 --
 ALTER TABLE `academic_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `achievements_profiles`
 --
 ALTER TABLE `achievements_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `at_risk_insights`
@@ -770,13 +826,13 @@ ALTER TABLE `at_risk_insights`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=425;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=449;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
 --
 ALTER TABLE `behavioral_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `dashboard_ai_summaries`
@@ -788,55 +844,55 @@ ALTER TABLE `dashboard_ai_summaries`
 -- AUTO_INCREMENT for table `developmental_profiles`
 --
 ALTER TABLE `developmental_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `grade_levels`
 --
 ALTER TABLE `grade_levels`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `health_profiles`
 --
 ALTER TABLE `health_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
 --
 ALTER TABLE `parents_guardians`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `reading_levels`
 --
 ALTER TABLE `reading_levels`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `school_year`
 --
 ALTER TABLE `school_year`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `section_teacher_assignments`
 --
 ALTER TABLE `section_teacher_assignments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
 
 --
 -- AUTO_INCREMENT for table `users`

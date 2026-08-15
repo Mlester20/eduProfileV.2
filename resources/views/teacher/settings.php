@@ -156,7 +156,7 @@ $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? 
                                 <!-- Full Name -->
                                 <div class="mb-3">
                                     <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName" name="full_name" 
+                                    <input type="text" class="form-control" id="fullName" name="full_name" placeholder="e.g., Juan Dela Cruz"
                                            value="<?php echo htmlspecialchars(is_array($userProfile) ? ($userProfile['full_name'] ?? '') : ''); ?>" required>
                                 </div>
 

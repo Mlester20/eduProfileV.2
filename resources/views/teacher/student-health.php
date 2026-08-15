@@ -178,15 +178,14 @@ if($filter_student_id !== null){
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="school_year_id" class="form-label">School Year</label>
-                                <select class="form-select" id="school_year_id" name="school_year_id" required>
-                                    <option value="">Select school year</option>
-                                    <?php if(!empty($active_sy)): ?>
-                                        <?php foreach($active_sy as $sy): ?>
-                                            <option value="<?= htmlspecialchars($sy['id']); ?>"><?= htmlspecialchars($sy['school_year']); ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
+                                <label class="form-label">School Year</label>
+                                <?php if(!empty($active_sy)): ?>
+                                    <input class="form-control" type="text" value="<?= htmlspecialchars($active_sy[0]['school_year']); ?>" disabled>
+                                    <input type="hidden" name="school_year_id" id="school_year_id" value="<?= htmlspecialchars($active_sy[0]['id']); ?>">
+                                <?php else: ?>
+                                    <input class="form-control" type="text" value="No active school year set" disabled>
+                                    <div class="form-text text-danger">Contact an admin to set an active school year before recording data.</div>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="height_cm" class="form-label">Height (cm)</label>
@@ -274,23 +273,22 @@ if($filter_student_id !== null){
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="edit_school_year_id" class="form-label">School Year</label>
-                                <select class="form-select" id="edit_school_year_id" name="school_year_id" required>
-                                    <option value="">Select school year</option>
-                                    <?php if(!empty($active_sy)): ?>
-                                        <?php foreach($active_sy as $sy): ?>
-                                            <option value="<?= htmlspecialchars($sy['id']); ?>"><?= htmlspecialchars($sy['school_year']); ?></option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
+                                <label class="form-label">School Year</label>
+                                <?php if(!empty($active_sy)): ?>
+                                    <input class="form-control" type="text" value="<?= htmlspecialchars($active_sy[0]['school_year']); ?>" disabled>
+                                    <input type="hidden" name="school_year_id" id="edit_school_year_id" value="<?= htmlspecialchars($active_sy[0]['id']); ?>">
+                                <?php else: ?>
+                                    <input class="form-control" type="text" value="No active school year set" disabled>
+                                    <div class="form-text text-danger">Contact an admin to set an active school year before recording data.</div>
+                                <?php endif; ?>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="edit_height_cm" class="form-label">Height (cm)</label>
-                                <input type="number" step="0.01" min="0" class="form-control" id="edit_height_cm" name="height_cm" required>
+                                <input type="number" step="0.01" min="0" class="form-control" id="edit_height_cm" name="height_cm" placeholder="e.g., 165" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="edit_weight_kg" class="form-label">Weight (kg)</label>
-                                <input type="number" step="0.01" min="0" class="form-control" id="edit_weight_kg" name="weight_kg" required>
+                                <input type="number" step="0.01" min="0" class="form-control" id="edit_weight_kg" name="weight_kg" placeholder="e.g., 25" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="edit_bmi" class="form-label">BMI</label>
@@ -312,23 +310,23 @@ if($filter_student_id !== null){
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="edit_vision_screening_result" class="form-label">Vision Screening Result</label>
-                                <input type="text" class="form-control" id="edit_vision_screening_result" name="vision_screening_result">
+                                <input type="text" class="form-control" id="edit_vision_screening_result" name="vision_screening_result" placeholder="e.g,. Normal">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="edit_hearing_screening_result" class="form-label">Hearing Screening Result</label>
-                                <input type="text" class="form-control" id="edit_hearing_screening_result" name="hearing_screening_result">
+                                <input type="text" class="form-control" id="edit_hearing_screening_result" name="hearing_screening_result" placeholder="e.g., Normal">
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="edit_allergies" class="form-label">Allergies</label>
-                                <textarea class="form-control" id="edit_allergies" name="allergies" rows="2"></textarea>
+                                <textarea class="form-control" id="edit_allergies" name="allergies" rows="2" placeholder="e.g., Seafoods"></textarea>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="edit_medical_conditions" class="form-label">Medical Conditions</label>
-                                <textarea class="form-control" id="edit_medical_conditions" name="medical_conditions" rows="2"></textarea>
+                                <textarea class="form-control" id="edit_medical_conditions" name="medical_conditions" rows="2" placeholder="e.g., Normal"></textarea>
                             </div>
                             <div class="col-12 mb-3">
                                 <label for="edit_immunization_status" class="form-label">Immunization Status</label>
-                                <textarea class="form-control" id="edit_immunization_status" name="immunization_status" rows="2"></textarea>
+                                <textarea class="form-control" id="edit_immunization_status" name="immunization_status" rows="2" placeholder="e.g., Normal"></textarea>
                             </div>
                         </div>
                     </div>

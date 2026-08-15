@@ -3,3 +3,4 @@
 *.txt
 database/config/secrets.php
 /vendor/
+/docs/
