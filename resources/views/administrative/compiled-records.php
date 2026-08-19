@@ -22,6 +22,8 @@ function compiledRecordSummary($category, $record){
             return ($record['attendance_date'] ?? '') . ' — ' . ($record['status'] ?? '');
         case 'Achievements':
             return $record['title'] ?? '';
+        case 'Reading Level':
+            return ($record['reading_level'] ?? '') . ' — ' . ($record['reading_language'] ?? '');
         default:
             return '';
     }
@@ -68,6 +70,12 @@ $categoryFieldLabels = [
         'category' => 'Category',
         'date_received' => 'Date Received',
         'awarding_body' => 'Awarding Body',
+    ],
+    'Reading Level' => [
+        'reading_level' => 'Reading Level',
+        'reading_language' => 'Language',
+        'assessment_date' => 'Assessment Date',
+        'remarks' => 'Remarks',
     ],
 ][$category] ?? [];
 ?>

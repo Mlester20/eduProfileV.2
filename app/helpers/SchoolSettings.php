@@ -22,6 +22,7 @@
                 'region' => 'Region II',
                 'division' => 'Division of Isabela',
                 'district' => 'District of Mallig',
+                'school_head' => '',
             ];
 
             if(!($con instanceof mysqli)){
@@ -29,7 +30,7 @@
             }
 
             try{
-                $result = $con->query("SELECT school_name, school_id, region, division, district FROM school_settings WHERE id = 1 LIMIT 1");
+                $result = $con->query("SELECT school_name, school_id, region, division, district, school_head FROM school_settings WHERE id = 1 LIMIT 1");
                 $row = $result ? $result->fetch_assoc() : null;
                 return self::$cache = $row ?: $defaults;
             }catch(Exception $e){

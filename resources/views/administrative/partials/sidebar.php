@@ -61,6 +61,22 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
+        <!-- Reports -->
+        <li class="menu-item <?php echo ($currentPage === 'reports.php') ? 'active' : ''; ?>">
+          <a href="reports.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
+            <div data-i18n="Reports">Reports</div>
+          </a>
+        </li>
+
+        <!-- Possible Duplicates -->
+        <li class="menu-item <?php echo ($currentPage === 'duplicates.php') ? 'active' : ''; ?>">
+          <a href="duplicates.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-copy-alt"></i>
+            <div data-i18n="Possible Duplicates">Possible Duplicates</div>
+          </a>
+        </li>
+
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Academic Setup</span>
         </li>

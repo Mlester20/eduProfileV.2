@@ -104,6 +104,7 @@ AuthRole::allowOnly(['admin']);
                         'region' => trim($_POST['region'] ?? ''),
                         'division' => trim($_POST['division'] ?? ''),
                         'district' => trim($_POST['district'] ?? ''),
+                        'school_head' => trim($_POST['school_head'] ?? ''),
                     ]
                 );
             }

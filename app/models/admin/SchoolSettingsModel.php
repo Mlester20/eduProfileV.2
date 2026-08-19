@@ -25,17 +25,19 @@ require_once __DIR__ . '/../../core/Model.php';
                     region = ?,
                     division = ?,
                     district = ?,
+                    school_head = ?,
                     updated_by = ?
                     WHERE id = 1
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param(
-                    "sssssi",
+                    "ssssssi",
                     $data['school_name'],
                     $data['school_id'],
                     $data['region'],
                     $data['division'],
                     $data['district'],
+                    $data['school_head'],
                     $updatedBy
                 );
                 return $stmt->execute();

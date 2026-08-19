@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../database/config/config.php';
 require_once __DIR__ . '/../../../app/controllers/administrative/compiledrecordscontroller.php';
 require_once __DIR__ . '/../../../app/helpers/SchoolSettings.php';
 
@@ -69,6 +70,12 @@ $categoryFieldLabels = [
         'category' => 'Category',
         'date_received' => 'Date Received',
         'awarding_body' => 'Awarding Body',
+    ],
+    'Reading Level' => [
+        'reading_level' => 'Reading Level',
+        'reading_language' => 'Language',
+        'assessment_date' => 'Assessment Date',
+        'remarks' => 'Remarks',
     ],
 ][$category] ?? [];
 ?>
@@ -202,7 +209,7 @@ $categoryFieldLabels = [
         </div>
         <div class="col-md-6">
             <p class="mb-0">Certified Correct:</p>
-            <p class="mb-0" style="border-top: 1px solid #333; width: 80%; padding-top: 4px;">&nbsp;</p>
+            <p class="mb-0" style="border-top: 1px solid #333; width: 80%; padding-top: 4px;"><?php echo !empty($school['school_head']) ? htmlspecialchars($school['school_head']) : '&nbsp;'; ?></p>
             <small class="text-muted">(Signature of School Head over Printed Name)</small>
         </div>
     </div>

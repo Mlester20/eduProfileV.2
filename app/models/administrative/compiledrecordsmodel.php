@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $health_profiles = 'health_profiles';
         protected $attendance = 'attendance';
         protected $achievements_profiles = 'achievements_profiles';
+        protected $reading_levels = 'reading_levels';
         protected $students = 'students';
         protected $sections = 'sections';
         protected $grade_levels = 'grade_levels';
@@ -23,11 +24,13 @@ require_once __DIR__ . '/../../core/Model.php';
          * today. No adviser/teacher_id filter is ever applied here;
          * administrative compiles across every teacher.
          *
-         * section_teacher_assignments is the per-year assignment history, but
-         * nothing in this codebase currently writes to it, so it's empty in
-         * practice. sections.adviser_id is the table every other module
-         * actually uses to know who teaches a section, so it's the fallback
-         * whenever there's no matching assignment row for that year.
+         * section_teacher_assignments is the per-year assignment history,
+         * kept in sync by SectionsModel::recordAssignmentForActiveYear()
+         * whenever a section's adviser is set — one row per (section_id,
+         * school_year_id), so reassigning next year adds a new row instead
+         * of rewriting the old one. sections.adviser_id is only the fallback
+         * for years that predate that write path (or a section with no
+         * assignment row yet).
          */
 
         private function baseJoins($table, $alias){
@@ -154,6 +157,10 @@ require_once __DIR__ . '/../../core/Model.php';
             return $this->countFiltered('ap', $this->achievements_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
+        public function countReadingLevelRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->countFiltered('rl', $this->reading_levels, $schoolYearId, $sectionId, $gradeLevelId);
+        }
+
         public function getAcademicRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
             return $this->fetchFiltered('ap', 'ap.*', $this->academic_profiles, $schoolYearId, $sectionId, $gradeLevelId, 's.last_name ASC, ap.grading_period ASC');
         }
@@ -176,5 +183,9 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function getAchievementRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
             return $this->fetchFiltered('ap', 'ap.*', $this->achievements_profiles, $schoolYearId, $sectionId, $gradeLevelId, 'ap.date_received DESC');
+        }
+
+        public function getReadingLevelRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
+            return $this->fetchFiltered('rl', 'rl.*', $this->reading_levels, $schoolYearId, $sectionId, $gradeLevelId, 'rl.assessment_date DESC, s.last_name ASC');
         }
     }

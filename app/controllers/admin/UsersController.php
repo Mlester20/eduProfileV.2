@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../models/admin/UsersModel.php';
+require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
@@ -12,10 +13,12 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
     class UsersController extends Controller{
         protected $auditLogs;
+        protected $sectionsModel;
 
         public function __construct($con) {
             parent::__construct(new UsersModel($con)); // $this->model is set by the parent
             $this->auditLogs = new AuditLogs($con);
+            $this->sectionsModel = new SectionsModel($con);
         }
 
         public function index(){
@@ -111,6 +114,17 @@ require_once __DIR__ . '/../../../database/config/config.php';
 
         public function setStatus($id, $status){
             try{
+                if($status === 'inactive'){
+                    $assignedSections = $this->sectionsModel->findByAdviser($id);
+                    if(!empty($assignedSections)){
+                        $sectionNames = array_map(function($s){
+                            return trim(($s['grade_level_name'] ?? '') . ' - ' . $s['section_name']);
+                        }, $assignedSections);
+                        FlashMessage::setFlash('warning', 'Cannot deactivate: this user is still the adviser of ' . implode(', ', $sectionNames) . '. Reassign the section(s) first.');
+                        header('Location: ../../../resources/views/admin/users.php');
+                        exit();
+                    }
+                }
                 if($this->model->setStatus($id, $status)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,

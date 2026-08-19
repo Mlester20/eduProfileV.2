@@ -209,7 +209,7 @@ $activeSchoolYear = ($school_years ?? [])[0]['school_year'] ?? '';
         </div>
         <div class="col-md-6">
             <p class="mb-0">Certified Correct:</p>
-            <p class="mb-0" style="border-top: 1px solid #333; width: 80%; padding-top: 4px;">&nbsp;</p>
+            <p class="mb-0" style="border-top: 1px solid #333; width: 80%; padding-top: 4px;"><?php echo !empty($school['school_head']) ? htmlspecialchars($school['school_head']) : '&nbsp;'; ?></p>
             <small class="text-muted">(Signature of School Head over Printed Name)</small>
         </div>
     </div>

@@ -69,6 +69,7 @@ AuthRole::allowOnly(['administrative']);
                     'Health' => $this->compiledRecordsModel->countHealthRecords($activeSyId),
                     'Attendance' => $this->compiledRecordsModel->countAttendanceRecords($activeSyId),
                     'Achievements' => $this->compiledRecordsModel->countAchievementRecords($activeSyId),
+                    'Reading Level' => $this->compiledRecordsModel->countReadingLevelRecords($activeSyId),
                 ],
             ];
         }

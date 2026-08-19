@@ -16,7 +16,7 @@ AuthRole::allowOnly(['administrative']);
         protected $sectionsModel;
         protected $gradeLevelsModel;
 
-        const CATEGORIES = ['Academic', 'Behavioral', 'Developmental', 'Health', 'Attendance', 'Achievements'];
+        const CATEGORIES = ['Academic', 'Behavioral', 'Developmental', 'Health', 'Attendance', 'Achievements', 'Reading Level'];
 
         public function __construct($con){
             $this->model = new CompiledRecordsModel($con);
@@ -37,6 +37,8 @@ AuthRole::allowOnly(['administrative']);
                     return $this->model->getAttendanceRecords($schoolYearId, $sectionId, $gradeLevelId);
                 case 'Achievements':
                     return $this->model->getAchievementRecords($schoolYearId, $sectionId, $gradeLevelId);
+                case 'Reading Level':
+                    return $this->model->getReadingLevelRecords($schoolYearId, $sectionId, $gradeLevelId);
                 case 'Academic':
                 default:
                     return $this->model->getAcademicRecords($schoolYearId, $sectionId, $gradeLevelId);

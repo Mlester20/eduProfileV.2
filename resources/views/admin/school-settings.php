@@ -110,6 +110,14 @@ AuthRole::allowOnly(['admin']);
                                        value="<?php echo htmlspecialchars($school_settings['district'] ?? ''); ?>">
                             </div>
 
+                            <div class="mb-3">
+                                <label for="school_head" class="form-label">School Head Name</label>
+                                <input type="text" class="form-control" id="school_head" name="school_head"
+                                       placeholder="e.g., Juan Dela Cruz"
+                                       value="<?php echo htmlspecialchars($school_settings['school_head'] ?? ''); ?>">
+                                <small class="text-muted d-block mt-1">Printed on the "Certified Correct" signature line of SF1/SF2 and Compiled Records printouts.</small>
+                            </div>
+
                             <button type="submit" name="update_school_settings" class="btn btn-primary">Save Changes</button>
                         </form>
                     </div>
