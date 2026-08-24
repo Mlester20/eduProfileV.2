@@ -204,7 +204,7 @@ $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? 
                             <!-- Submit Button -->
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                                <a href="dashboard.php" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="home.php" class="btn btn-outline-secondary">Cancel</a>
                             </div>
                         </form>
                     </div>
