@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 15, 2026 at 05:45 PM
+-- Generation Time: Sep 03, 2026 at 02:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -312,7 +312,9 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (445, 1, 'admin', 'Update Grade Level', 'Grade Level', NULL, 'Test Admin Updated the Grade Level ZZZ_TEST_GRADE_ADMIN_RENAMED', '', 'UNKNOWN', 'success', '2026-08-15 15:31:17'),
 (446, 1, 'admin', 'Deleted Grade Level', 'Grade Level', NULL, 'Deleted Grade Level', 'Test AdminDeleted Grade Level', 'UNKNOWN', 'success', '2026-08-15 15:31:29'),
 (447, 3, 'administrative', 'Grade Level', 'Grade Level', NULL, 'Created Grade Level', 'Administrative Created Grade Level ZZZ_TEST_GRADE_ADMINISTRATIVE', 'UNKNOWN', 'success', '2026-08-15 15:31:51'),
-(448, 3, 'administrative', 'Deleted Grade Level', 'Grade Level', NULL, 'Deleted Grade Level', 'AdministrativeDeleted Grade Level', 'UNKNOWN', 'success', '2026-08-15 15:32:08');
+(448, 3, 'administrative', 'Deleted Grade Level', 'Grade Level', NULL, 'Deleted Grade Level', 'AdministrativeDeleted Grade Level', 'UNKNOWN', 'success', '2026-08-15 15:32:08'),
+(449, 116, 'teacher', 'Importing students from Excel', 'Students', NULL, NULL, 'Mark Lester Raguindin Imported 1 student(s) via Excel', '::1', 'success', '2026-08-16 14:04:09'),
+(450, 3, 'administrative', 'Generated AI dashboard summary', 'Students', NULL, NULL, 'Administrative generated an AI dashboard summary for school year ID: 8', '::1', 'success', '2026-08-16 14:15:48');
 
 -- --------------------------------------------------------
 
@@ -352,7 +354,7 @@ CREATE TABLE `dashboard_ai_summaries` (
 --
 
 INSERT INTO `dashboard_ai_summaries` (`id`, `school_year_id`, `summary_text`, `generated_at`) VALUES
-(2, 8, 'For the 2026–2027 school year, foundational staffing and section advisory roles are fully established, but immediate administrative attention is required in **Grade 1 - Mahogani**. The primary concern in this section is a compounding risk pattern where severe academic struggle, chronic absenteeism, and recurring disciplinary incidents intersect at once. In the coming weeks, leadership should focus on deploying a coordinated, wrap-around intervention plan for Grade 1 - Mahogani to simultaneously address behavioral, attendance, and learning challenges before they further destabilize student progress.', '2026-07-23 16:03:28'),
+(2, 8, 'For the 2026–2027 school year, all instructional sections and grade levels are currently clear of at-risk flags, meaning no specific grade level or section requires immediate academic, attendance, or behavioral intervention. The most pressing operational pattern is the severe disproportion between our fully staffed section capacity and current active enrollment, which strongly suggests that student rostering data is incomplete. As a primary focus area for the coming weeks, administration should conduct a comprehensive enrollment reconciliation and rostering audit to ensure all incoming learners are properly registered and assigned to their sections.', '2026-08-16 14:15:48'),
 (11, 14, 'For the 2027–2028 school year, all four sections are fully staffed with assigned advisers, and no specific grade levels or sections currently contain learners flagged for academic, attendance, or behavioral risks. The most critical operational pattern requiring immediate attention is a severe imbalance between capacity and enrollment, as full advisory resources are actively maintained across four sections for only a single enrolled student. Over the coming weeks, the primary focus area should be conducting a comprehensive enrollment audit and recruitment initiative to reconcile section allocations with actual student roster data.', '2026-08-06 14:57:16');
 
 -- --------------------------------------------------------
@@ -443,6 +445,13 @@ CREATE TABLE `parents_guardians` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `parents_guardians`
+--
+
+INSERT INTO `parents_guardians` (`id`, `student_id`, `recorded_by`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_relationship`, `guardian_contact`, `created_at`, `updated_at`) VALUES
+(36, 148, 116, 'Pedro Dela Cruz', 'Farmer', '09171234567', 'Maria Dela Cruz', 'Vendor', '09179876543', '', '', '', '2026-08-16 14:04:09', '2026-08-16 14:04:09');
+
 -- --------------------------------------------------------
 
 --
@@ -475,6 +484,7 @@ CREATE TABLE `school_settings` (
   `region` varchar(100) DEFAULT NULL,
   `division` varchar(100) DEFAULT NULL,
   `district` varchar(100) DEFAULT NULL,
+  `school_head` varchar(150) DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -483,8 +493,8 @@ CREATE TABLE `school_settings` (
 -- Dumping data for table `school_settings`
 --
 
-INSERT INTO `school_settings` (`id`, `school_name`, `school_id`, `region`, `division`, `district`, `updated_by`, `updated_at`) VALUES
-(1, 'San Jose Sur Elementary', '103503', 'Region II', 'Division of Isabela', 'District of Mallig', NULL, '2026-08-15 15:07:39');
+INSERT INTO `school_settings` (`id`, `school_name`, `school_id`, `region`, `division`, `district`, `school_head`, `updated_by`, `updated_at`) VALUES
+(1, 'San Jose Sur Elementary', '103503', 'Region II', 'Division of Isabela', 'District of Mallig', NULL, NULL, '2026-08-15 15:07:39');
 
 -- --------------------------------------------------------
 
@@ -595,6 +605,13 @@ CREATE TABLE `students` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `students`
+--
+
+INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `birth_date`, `age_as_of_june`, `gender`, `mother_tongue`, `ip_ethnic_group`, `religion`, `address`, `house_number`, `street`, `sitio`, `purok`, `barangay`, `city_municipality`, `province`, `learning_modality`, `remarks`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `created_at`, `updated_at`) VALUES
+(148, '123456789012', 'Juan', 'Santos', 'Dela Cruz', NULL, '2018-06-15', 7, 'Male', 'Tagalog', 'Ilocano', 'Roman Catholic', NULL, '123', 'Rizal St.', 'Sitio Malaya', 'Purok 3', 'San Jose Sur', 'Rosario', 'Batangas', 'Face-to-Face', NULL, 8, 5, 2, 116, 'active', '2026-08-16 14:04:09', '2026-08-16 14:04:09');
 
 -- --------------------------------------------------------
 
@@ -826,7 +843,7 @@ ALTER TABLE `at_risk_insights`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=449;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=451;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
@@ -838,7 +855,7 @@ ALTER TABLE `behavioral_profiles`
 -- AUTO_INCREMENT for table `dashboard_ai_summaries`
 --
 ALTER TABLE `dashboard_ai_summaries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `developmental_profiles`
@@ -862,7 +879,7 @@ ALTER TABLE `health_profiles`
 -- AUTO_INCREMENT for table `parents_guardians`
 --
 ALTER TABLE `parents_guardians`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `reading_levels`
@@ -892,7 +909,7 @@ ALTER TABLE `section_teacher_assignments`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
 
 --
 -- AUTO_INCREMENT for table `users`
