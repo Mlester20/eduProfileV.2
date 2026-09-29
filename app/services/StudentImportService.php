@@ -3,9 +3,12 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../models/teacher/ParentGuardianModel.php';
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
     /**
@@ -78,8 +81,26 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
             $sheet->setTitle('Students');
 
             $headers = array_keys(self::COLUMNS);
+            $fields = array_values(self::COLUMNS);
             $sheet->fromArray($headers, null, 'A1');
             $sheet->fromArray(self::SAMPLE_ROW, null, 'A2');
+
+            // LRN and contact numbers are long digit-only strings — format
+            // their columns as Text so Excel never auto-converts them to
+            // numbers, which renders a 12-digit LRN as scientific notation
+            // and silently drops the leading zero off a contact number.
+            $textFields = ['lrn', 'father_contact', 'mother_contact', 'guardian_contact'];
+            foreach($fields as $colIndex => $field){
+                if(!in_array($field, $textFields, true)){
+                    continue;
+                }
+                $colLetter = Coordinate::stringFromColumnIndex($colIndex + 1);
+                $sheet->getStyle("{$colLetter}1:{$colLetter}1000")->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+                if(self::SAMPLE_ROW[$colIndex] !== ''){
+                    $sheet->setCellValueExplicit("{$colLetter}2", (string) self::SAMPLE_ROW[$colIndex], DataType::TYPE_STRING);
+                }
+            }
+
             $sheet->getStyle('A1:' . $sheet->getHighestColumn() . '1')->getFont()->setBold(true);
             foreach(range('A', $sheet->getHighestColumn()) as $col){
                 $sheet->getColumnDimension($col)->setAutoSize(true);

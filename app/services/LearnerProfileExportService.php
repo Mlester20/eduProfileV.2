@@ -10,6 +10,21 @@ require_once __DIR__ . '/AddressService.php';
 
     class LearnerProfileExportService{
 
+        /**
+         * Wraps a pure-digit string (LRN, contact numbers) as an Excel
+         * formula literal ("="value"") so Excel displays it as text
+         * instead of auto-converting to a number — which for a 12-digit
+         * LRN renders as scientific notation ("1.04E+11") and for a
+         * 0-prefixed contact number silently drops the leading zero.
+         */
+        private static function excelText($value){
+            $value = (string) $value;
+            if($value !== '' && preg_match('/^\d+$/', $value)){
+                return '="' . str_replace('"', '""', $value) . '"';
+            }
+            return $value;
+        }
+
         public static function formatLearnerLabel($student){
             $name = trim($student['last_name'] . ', ' . $student['first_name'] . ' ' . ($student['middle_name'] ?? '') . ' ' . ($student['suffix'] ?? ''));
             $lrn = $student['lrn'] ?? 'no LRN';
@@ -35,7 +50,7 @@ require_once __DIR__ . '/AddressService.php';
 
             fputcsv($out, [$schoolName . ' - Learner Profile']);
             fputcsv($out, ['Name', $fullName]);
-            fputcsv($out, ['LRN', $info['lrn'] ?? '']);
+            fputcsv($out, ['LRN', self::excelText($info['lrn'] ?? '')]);
             fputcsv($out, ['Age / Gender', StudentsAge::calculateAge($info['birth_date']) . ' / ' . $info['gender']]);
             fputcsv($out, ['Grade & Section', ($info['grade_name'] ?? '') . ' - ' . ($info['section_name'] ?? '')]);
             fputcsv($out, ['School Year', $info['school_year'] ?? '']);
@@ -71,7 +86,7 @@ require_once __DIR__ . '/AddressService.php';
             }else{
                 $pg = $profile['parent_guardian'];
                 fputcsv($out, ["Father's Name", "Father's Occupation", "Father's Contact", "Mother's Name", "Mother's Occupation", "Mother's Contact", "Guardian's Name", 'Guardian Relationship', "Guardian's Contact", 'Recorded By']);
-                fputcsv($out, [$pg['father_name'] ?? '', $pg['father_occupation'] ?? '', $pg['father_contact'] ?? '', $pg['mother_name'] ?? '', $pg['mother_occupation'] ?? '', $pg['mother_contact'] ?? '', $pg['guardian_name'] ?? '', $pg['guardian_relationship'] ?? '', $pg['guardian_contact'] ?? '', $pg['recorded_by_name'] ?? '']);
+                fputcsv($out, [$pg['father_name'] ?? '', $pg['father_occupation'] ?? '', self::excelText($pg['father_contact'] ?? ''), $pg['mother_name'] ?? '', $pg['mother_occupation'] ?? '', self::excelText($pg['mother_contact'] ?? ''), $pg['guardian_name'] ?? '', $pg['guardian_relationship'] ?? '', self::excelText($pg['guardian_contact'] ?? ''), $pg['recorded_by_name'] ?? '']);
             }
 
             fclose($out);

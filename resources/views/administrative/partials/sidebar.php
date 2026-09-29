@@ -49,7 +49,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <li class="menu-item <?php echo ($currentPage === 'learner-profile.php') ? 'active' : ''; ?>">
           <a href="learner-profile.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-id-card"></i>
-            <div data-i18n="Learner Profile">Learner Profile</div>
+            <div data-i18n="Learner Profile">Learner's Profile</div>
           </a>
         </li>
 
