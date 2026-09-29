@@ -266,8 +266,12 @@ AuthRole::allowOnly(['teacher']);
                     <tr>
                         <th>#</th>
                         <th>Student Name</th>
+                        <th>Father's Name</th>
+                        <th>Father's Contact</th>
+                        <th>Mother's Name</th>
+                        <th>Mother's Contact</th>
                         <th>Guardian Name</th>
-                        <th>Contact Number</th>
+                        <th>Guardian Contact</th>
                         <th>Relationship</th>
                     </tr>
                 </thead>
@@ -284,6 +288,10 @@ AuthRole::allowOnly(['teacher']);
                             <tr>
                                 <td><?= $pgOffset + $index + 1 ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['student_first_name'] . ' ' . $parentGuardian['student_middle_name'] . ' ' . $parentGuardian['student_last_name'] . ' ' . $parentGuardian['student_suffix']) ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['father_name']) ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['father_contact']) ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['mother_name']) ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['mother_contact']) ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['guardian_name']) ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['guardian_contact']) ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['guardian_relationship']) ?></td>
@@ -322,7 +330,7 @@ AuthRole::allowOnly(['teacher']);
                         <?php endforeach; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="5" class="text-center">No parent/guardian records found.</td>
+                            <td colspan="10" class="text-center">No parent/guardian records found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
