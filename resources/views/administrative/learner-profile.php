@@ -10,8 +10,8 @@ AuthRole::allowOnly(['administrative']);
 
 $school = SchoolSettings::get($con);
 
-if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
-    LearnerProfileExportService::exportCsv($profile, $school['school_name']);
+if(isset($_GET['export']) && $_GET['export'] === 'xlsx' && $profile !== null){
+    LearnerProfileExportService::exportXlsx($profile, $school['school_name']);
     exit();
 }
 ?>
@@ -98,7 +98,7 @@ if(isset($_GET['export']) && $_GET['export'] === 'csv' && $profile !== null){
                 <i class="bx bx-arrow-back"></i> Back to List
             </a>
             <div class="d-flex gap-2">
-                <a href="?student_id=<?php echo htmlspecialchars($selected_student_id); ?>&status=<?php echo htmlspecialchars($status_filter); ?>&export=csv" class="btn btn-outline-success">
+                <a href="?student_id=<?php echo htmlspecialchars($selected_student_id); ?>&status=<?php echo htmlspecialchars($status_filter); ?>&export=xlsx" class="btn btn-outline-success">
                     <i class="bx bx-file"></i> Export to Excel
                 </a>
                 <button type="button" class="btn btn-outline-primary" onclick="window.print()">
