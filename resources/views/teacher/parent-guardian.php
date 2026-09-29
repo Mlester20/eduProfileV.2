@@ -288,13 +288,13 @@ AuthRole::allowOnly(['teacher']);
                             <tr>
                                 <td><?= $pgOffset + $index + 1 ?></td>
                                 <td><?= htmlspecialchars($parentGuardian['student_first_name'] . ' ' . $parentGuardian['student_middle_name'] . ' ' . $parentGuardian['student_last_name'] . ' ' . $parentGuardian['student_suffix']) ?></td>
-                                <td><?= htmlspecialchars($parentGuardian['father_name']) ?></td>
-                                <td><?= htmlspecialchars($parentGuardian['father_contact']) ?></td>
-                                <td><?= htmlspecialchars($parentGuardian['mother_name']) ?></td>
-                                <td><?= htmlspecialchars($parentGuardian['mother_contact']) ?></td>
-                                <td><?= htmlspecialchars($parentGuardian['guardian_name']) ?></td>
-                                <td><?= htmlspecialchars($parentGuardian['guardian_contact']) ?></td>
-                                <td><?= htmlspecialchars($parentGuardian['guardian_relationship']) ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['father_name'] ?: '-') ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['father_contact'] ?: '-') ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['mother_name'] ?: '-') ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['mother_contact'] ?: '-') ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['guardian_name'] ?: '-') ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['guardian_contact'] ?: '-') ?></td>
+                                <td><?= htmlspecialchars($parentGuardian['guardian_relationship'] ?: '-') ?></td>
                                 <td>
                                     <button
                                         class="btn btn-sm btn-primary"
