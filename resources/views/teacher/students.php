@@ -84,7 +84,7 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                         </div>
                         <div class="ms-3 mb-4 flex-grow-1">
                             <h6 class="mb-1">Download the template</h6>
-                            <p class="text-muted small mb-2">Fill in one row per student. Every column has a sample value in row 2.</p>
+                            <p class="text-muted small mb-2">Fill in one row per student. Every column has a sample value in row 2. Or skip this step and upload an SF1 School Register export from LIS directly in step 2.</p>
                             <a href="../../../app/controllers/teacher/StudentImportController.php?template=1" class="btn btn-outline-secondary btn-sm">
                                 <i class="bx bx-download"></i> Download Template
                             </a>
@@ -96,15 +96,15 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                             <span class="avatar avatar-initial rounded-circle bg-label-primary d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; flex: 0 0 28px; font-weight: 600;">2</span>
                         </div>
                         <div class="ms-3 flex-grow-1">
-                            <h6 class="mb-3">Upload the filled-in template</h6>
+                            <h6 class="mb-3">Upload the filled-in template or an SF1 export</h6>
 
                             <form action="../../../app/controllers/teacher/StudentImportController.php" method="post" enctype="multipart/form-data">
                                 <?= Csrf::field() ?>
                                 <div class="border rounded p-3 bg-light">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label for="import_file" class="form-label">Excel File (.xlsx)</label>
-                                            <input class="form-control" type="file" name="import_file" id="import_file" accept=".xlsx" required>
+                                            <label for="import_file" class="form-label">Excel File (.xlsx or SF1 .xls)</label>
+                                            <input class="form-control" type="file" name="import_file" id="import_file" accept=".xlsx,.xls" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">School Year</label>

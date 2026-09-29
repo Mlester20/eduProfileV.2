@@ -33,14 +33,14 @@ if($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['template'])){
             }
 
             if(!isset($file) || $file['error'] !== UPLOAD_ERR_OK){
-                FlashMessage::setFlash('error', 'Please choose a valid .xlsx file to upload.');
+                FlashMessage::setFlash('error', 'Please choose a valid .xlsx or .xls file to upload.');
                 header('Location: ../../../resources/views/teacher/students.php');
                 exit();
             }
 
             $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-            if($ext !== 'xlsx'){
-                FlashMessage::setFlash('error', 'Only .xlsx files are supported. Download the template and fill that in.');
+            if(!in_array($ext, ['xlsx', 'xls'], true)){
+                FlashMessage::setFlash('error', 'Only .xlsx or .xls files are supported — either the downloaded template or an SF1 School Register export from LIS.');
                 header('Location: ../../../resources/views/teacher/students.php');
                 exit();
             }

@@ -91,15 +91,31 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
             $writer->save('php://output');
         }
 
+        /** Marker text in cell A1 of a genuine DepEd LIS SF1 School Register export. */
+        const SF1_MARKER = 'School Form 1';
+
         /**
          * Reads the uploaded file into an array of associative rows keyed
-         * by internal field name (self::COLUMNS values), skipping the
-         * header row. Unknown/extra columns are ignored.
+         * by internal field name (self::COLUMNS values). Accepts either
+         * our own generated template (header row 1) or a DepEd LIS SF1
+         * School Register export uploaded as-is (detected via the title
+         * in cell A1), so a teacher can import straight from LIS without
+         * re-typing the roster into our template first.
          */
 
         public function parseFile($filePath){
             $spreadsheet = IOFactory::load($filePath);
             $sheet = $spreadsheet->getActiveSheet();
+
+            $titleCell = trim((string) $sheet->getCell('A1')->getValue());
+            if(stripos($titleCell, self::SF1_MARKER) !== false){
+                return $this->parseSF1Sheet($sheet);
+            }
+
+            return $this->parseTemplateSheet($sheet);
+        }
+
+        private function parseTemplateSheet($sheet){
             $rows = $sheet->toArray(null, true, true, false);
 
             if(empty($rows)){
@@ -129,6 +145,150 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
             }
 
             return $parsed;
+        }
+
+        /**
+         * Parses a DepEd LIS SF1 School Register export. The sheet has a
+         * merged two-row header (rows 5-6), then one row per learner,
+         * interrupted by a "TOTAL MALE" subtotal row between the male and
+         * female blocks and a "TOTAL FEMALE"/"COMBINED" footer, followed
+         * by the legend/signature block. Rather than hardcode row ranges
+         * (section sizes vary), every row is tested for a 12-digit LRN in
+         * column A — the one thing only a genuine learner row has — and
+         * anything else (headers, subtotals, legend) is skipped.
+         *
+         * Column positions are fixed by the DepEd SF1 layout: A=LRN,
+         * C=Name ("Last, First, Middle" in one cell), G=Sex, H=Birth Date
+         * (mm-dd-yyyy), J=Age as of June, L=Mother Tongue, N=IP/Ethnic
+         * Group, O=Religion, P=combined House#/Street/Sitio/Purok,
+         * R=Barangay, U=Municipality/City, W=Province, AB=Father's Name,
+         * AF=Mother's Maiden Name, AK=Guardian Name, AO=Guardian
+         * Relationship, AP=shared parent/guardian contact number,
+         * AR=Learning Modality, AS=Remarks. There is no Suffix column.
+         */
+
+        private function parseSF1Sheet($sheet){
+            $highestRow = $sheet->getHighestRow();
+            $parsed = [];
+
+            for($row = 1; $row <= $highestRow; $row++){
+                $lrn = $this->extractLrn($sheet->getCell("A{$row}")->getValue());
+                if($lrn === null){
+                    continue;
+                }
+
+                [$lastName, $firstName, $middleName] = $this->splitDepedName($sheet->getCell("C{$row}")->getValue());
+                $fatherName = $this->trimCommas($sheet->getCell("AB{$row}")->getValue());
+                $motherName = $this->trimCommas($sheet->getCell("AF{$row}")->getValue());
+                $guardianName = $this->trimCommas($sheet->getCell("AK{$row}")->getValue());
+                $guardianRelationship = trim((string) $sheet->getCell("AO{$row}")->getValue());
+                $contactNumber = trim((string) $sheet->getCell("AP{$row}")->getValue());
+
+                // The SF1 form only has one shared contact number field for
+                // whichever parent/guardian is listed — attribute it to
+                // whichever of those three is actually present.
+                $fatherContact = '';
+                $motherContact = '';
+                $guardianContact = '';
+                if($contactNumber !== ''){
+                    if($guardianName !== ''){
+                        $guardianContact = $contactNumber;
+                    }elseif($fatherName !== ''){
+                        $fatherContact = $contactNumber;
+                    }elseif($motherName !== ''){
+                        $motherContact = $contactNumber;
+                    }
+                }
+
+                $parsed[] = [
+                    'lrn' => $lrn,
+                    'first_name' => $firstName,
+                    'middle_name' => $middleName,
+                    'last_name' => $lastName,
+                    'suffix' => '',
+                    'birth_date' => $this->normalizeSF1Date($sheet->getCell("H{$row}")->getValue()),
+                    'gender' => trim((string) $sheet->getCell("G{$row}")->getValue()),
+                    'age_as_of_june' => trim((string) $sheet->getCell("J{$row}")->getValue()),
+                    'mother_tongue' => trim((string) $sheet->getCell("L{$row}")->getValue()),
+                    'ip_ethnic_group' => trim((string) $sheet->getCell("N{$row}")->getValue()),
+                    'religion' => trim((string) $sheet->getCell("O{$row}")->getValue()),
+                    'house_number' => '',
+                    'street' => trim((string) $sheet->getCell("P{$row}")->getValue()),
+                    'sitio' => '',
+                    'purok' => '',
+                    'barangay' => trim((string) $sheet->getCell("R{$row}")->getValue()),
+                    'city_municipality' => trim((string) $sheet->getCell("U{$row}")->getValue()),
+                    'province' => trim((string) $sheet->getCell("W{$row}")->getValue()),
+                    'learning_modality' => $this->normalizeLearningModality($sheet->getCell("AR{$row}")->getValue()),
+                    'remarks' => trim((string) $sheet->getCell("AS{$row}")->getValue()),
+                    'father_name' => $fatherName,
+                    'father_occupation' => '',
+                    'father_contact' => $fatherContact,
+                    'mother_name' => $motherName,
+                    'mother_occupation' => '',
+                    'mother_contact' => $motherContact,
+                    'guardian_name' => $guardianName,
+                    'guardian_relationship' => $guardianRelationship,
+                    'guardian_contact' => $guardianContact,
+                ];
+            }
+
+            return $parsed;
+        }
+
+        /** Returns the 12-digit LRN as a string, or null if the cell isn't one (header/subtotal/legend rows). */
+        private function extractLrn($value){
+            if(is_numeric($value)){
+                $value = number_format((float) $value, 0, '', '');
+            }
+            $value = trim((string) $value);
+            return preg_match('/^\d{12}$/', $value) ? $value : null;
+        }
+
+        /** Splits the SF1 "Last Name, First Name, Middle Name" single cell into its three parts. */
+        private function splitDepedName($value){
+            $parts = array_map('trim', explode(',', (string) $value));
+            return [
+                $parts[0] ?? '',
+                $parts[1] ?? '',
+                $parts[2] ?? '',
+            ];
+        }
+
+        private function trimCommas($value){
+            return trim((string) $value, " \t\n\r\0\x0B,");
+        }
+
+        /** SF1 birth dates are mm-dd-yyyy despite the dash separator — parsed explicitly to avoid strtotime's dd-mm ambiguity. */
+        private function normalizeSF1Date($value){
+            if($value instanceof \DateTimeInterface){
+                return $value->format('Y-m-d');
+            }
+            if(is_numeric($value)){
+                return ExcelDate::excelToDateTimeObject($value)->format('Y-m-d');
+            }
+            $value = trim((string) $value);
+            if($value === ''){
+                return null;
+            }
+            $date = \DateTime::createFromFormat('m-d-Y', $value);
+            if($date === false){
+                return null;
+            }
+            return $date->format('Y-m-d');
+        }
+
+        private function normalizeLearningModality($value){
+            $value = trim((string) $value);
+            $map = [
+                'face to face' => 'Face-to-Face',
+                'face-to-face' => 'Face-to-Face',
+                'modular distance learning' => 'Modular Distance Learning',
+                'online distance learning' => 'Online Distance Learning',
+                'blended learning' => 'Blended Learning',
+                'homeschooling' => 'Homeschooling',
+            ];
+            return $map[strtolower($value)] ?? $value;
         }
 
         private function isBlankRow($row){
