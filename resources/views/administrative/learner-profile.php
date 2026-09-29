@@ -9,11 +9,6 @@ require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
 
 $school = SchoolSettings::get($con);
-
-if(isset($_GET['export']) && $_GET['export'] === 'xlsx' && $profile !== null){
-    LearnerProfileExportService::exportXlsx($profile, $school['school_name']);
-    exit();
-}
 ?>
 <!DOCTYPE html>
 <html
@@ -98,9 +93,6 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx' && $profile !== null){
                 <i class="bx bx-arrow-back"></i> Back to List
             </a>
             <div class="d-flex gap-2">
-                <a href="?student_id=<?php echo htmlspecialchars($selected_student_id); ?>&status=<?php echo htmlspecialchars($status_filter); ?>&export=xlsx" class="btn btn-outline-success">
-                    <i class="bx bx-file"></i> Export to Excel
-                </a>
                 <button type="button" class="btn btn-outline-primary" onclick="window.print()">
                     <i class="bx bx-printer"></i> Print
                 </button>
