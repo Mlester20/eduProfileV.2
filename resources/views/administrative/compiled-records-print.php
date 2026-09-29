@@ -38,18 +38,6 @@ $categoryFieldLabels = [
         'grade' => 'Grade',
         'remarks' => 'Remarks',
     ],
-    'Behavioral' => [
-        'observation_date' => 'Observation Date',
-        'category' => 'Category',
-        'observation' => 'Observation',
-        'intervention' => 'Intervention',
-        'remarks' => 'Remarks',
-    ],
-    'Developmental' => [
-        'domain' => 'Domain',
-        'observation' => 'Observation',
-        'recommendation' => 'Recommendation',
-    ],
     'Health' => [
         'height_cm' => 'Height (cm)',
         'weight_kg' => 'Weight (kg)',
@@ -57,19 +45,6 @@ $categoryFieldLabels = [
         'bmi_classification' => 'BMI Classification',
         'blood_type' => 'Blood Type',
         'allergies' => 'Allergies',
-    ],
-    'Attendance' => [
-        'attendance_date' => 'Date',
-        'session' => 'Session',
-        'status' => 'Status',
-        'remarks' => 'Remarks',
-    ],
-    'Achievements' => [
-        'title' => 'Title',
-        'level' => 'Level',
-        'category' => 'Category',
-        'date_received' => 'Date Received',
-        'awarding_body' => 'Awarding Body',
     ],
     'Reading Level' => [
         'reading_level' => 'Reading Level',

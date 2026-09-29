@@ -26,32 +26,6 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 400))
 })
 
-function renderRecordsTable(tbodyId, records, columns, emptyMessage){
-    const tbody = document.getElementById(tbodyId);
-    tbody.innerHTML = '';
-
-    if(!records || records.length === 0){
-        const row = document.createElement('tr');
-        const cell = document.createElement('td');
-        cell.colSpan = columns.length;
-        cell.className = 'text-center text-muted';
-        cell.textContent = emptyMessage;
-        row.appendChild(cell);
-        tbody.appendChild(row);
-        return;
-    }
-
-    records.forEach(function(record){
-        const row = document.createElement('tr');
-        columns.forEach(function(column){
-            const cell = document.createElement('td');
-            cell.textContent = record[column] ?? '';
-            row.appendChild(cell);
-        });
-        tbody.appendChild(row);
-    });
-}
-
 function viewStudent(id, lrn, full_name, section, school_year, age, gender, mother_tongue, ip_ethnic_group, religion, learning_modality, remarks){
     document.getElementById('view_student_lrn').textContent = lrn;
     document.getElementById('view_student_full_name').textContent = full_name;
@@ -65,20 +39,6 @@ function viewStudent(id, lrn, full_name, section, school_year, age, gender, moth
     document.getElementById('view_student_learning_modality').textContent = learning_modality;
     document.getElementById('view_student_remarks').textContent = remarks;
 
-    renderRecordsTable(
-        'view_behavior_records',
-        studentBehaviorRecords[id],
-        ['observation_date', 'category', 'observation', 'intervention', 'remarks'],
-        'No behavior records found.'
-    );
-
-    renderRecordsTable(
-        'view_developmental_records',
-        studentDevelopmentalRecords[id],
-        ['school_year', 'domain', 'observation', 'recommendation'],
-        'No developmental records found.'
-    );
-
     const pgFields = ['father_name', 'father_occupation', 'father_contact', 'mother_name', 'mother_occupation', 'mother_contact', 'guardian_name', 'guardian_relationship', 'guardian_contact'];
     const pg = studentParentGuardian[id] || null;
     pgFields.forEach(function(field){
@@ -86,9 +46,7 @@ function viewStudent(id, lrn, full_name, section, school_year, age, gender, moth
     });
     document.getElementById('view_pg_empty').style.display = pg ? 'none' : 'block';
 
-    document.getElementById('view_link_attendance').href = 'attendance.php?student_id=' + id;
     document.getElementById('view_link_academic').href = 'academic.php?student_id=' + id;
-    document.getElementById('view_link_achievements').href = 'achievement-profile.php?student_id=' + id;
     document.getElementById('view_link_health').href = 'student-health.php?student_id=' + id;
     document.getElementById('view_link_reading_level').href = 'reading-level.php?student_id=' + id;
     document.getElementById('view_link_parent_guardian').href = 'parent-guardian.php?student_id=' + id;

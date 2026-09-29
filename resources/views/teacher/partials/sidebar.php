@@ -68,57 +68,9 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">Observations</span>
-        </li>
-
-        <!-- Developmental -->
-        <li class="menu-item <?php echo ($currentPage === 'student-developmental.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Behavior">Developmental</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="student-developmental.php" class="menu-link">
-                <div data-i18n="Error">Student Developmental</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Behavior -->
-        <li class="menu-item <?php echo ($currentPage === 'student-behavior.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Student Developmental">Behavior</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="student-behavior.php" class="menu-link">
-                <div data-i18n="Error">Student Behavior</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Academic Records</span>
         </li>
 
-        <!-- Attendance -->
-        <li class="menu-item <?php echo ($currentPage === 'attendance.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-calendar"></i>
-            <div data-i18n="Attendance">Attendance</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="attendance.php" class="menu-link">
-                <div data-i18n="Error">Attendance</div>
-              </a>
-            </li>
-          </ul>
-        </li>
         <!-- Academic -->
         <li class="menu-item <?php echo ($currentPage === 'academic.php') ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -129,20 +81,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <li class="menu-item">
               <a href="academic.php" class="menu-link">
                 <div data-i18n="Error">Academic Records</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <!-- Achievements -->
-        <li class="menu-item <?php echo ($currentPage === 'achievement-profile.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bxs-medal"></i>
-            <div data-i18n="Academic">Student Achievements</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="achievement-profile.php" class="menu-link">
-                <div data-i18n="Error">Achievements</div>
               </a>
             </li>
           </ul>
@@ -166,11 +104,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <span class="menu-header-text">Healths</span>
         </li>
 
-        <!-- Attendance -->
+        <!-- Health -->
         <li class="menu-item <?php echo ($currentPage === 'student-health.php') ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bxs-band-aid"></i>
-            <div data-i18n="Attendance">Health Profile</div>
+            <div data-i18n="Health">Health Profile</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item">

@@ -9,18 +9,14 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $section_teacher_assignments = 'section_teacher_assignments';
         protected $users = 'users';
         protected $academic_profiles = 'academic_profiles';
-        protected $attendance = 'attendance';
-        protected $behavioral_profiles = 'behavioral_profiles';
 
         const FAILING_GRADE = 75;
-        const CHRONIC_ABSENCE_THRESHOLD = 5;
-        const DISCIPLINARY_THRESHOLD = 3;
 
         /**
-         * One row per active student with three pre-aggregated subquery
-         * counts (failing subjects, absences, disciplinary incidents) for
-         * the given school year. A student surfaces here if they cross ANY
-         * one of the three thresholds. Same section/teacher-resolution
+         * One row per active student with a pre-aggregated subquery count
+         * of failing subjects for the given school year. A student
+         * surfaces here if they have at least one failing subject. Same
+         * section/teacher-resolution
          * joins as CompiledRecordsModel::baseJoins() (section_teacher_assignments
          * first, falling back to sections.adviser_id), but keyed off
          * `students` as the base table since this aggregates across three
@@ -32,13 +28,9 @@ require_once __DIR__ . '/../../core/Model.php';
             $params = [];
 
             $failWhere = "grade < " . self::FAILING_GRADE;
-            $absnWhere = "status = 'Absent'";
-            $discWhere = "category = 'Disciplinary'";
 
             if($schoolYearId !== null){
                 $failWhere .= " AND school_year_id = ?";
-                $absnWhere .= " AND school_year_id = ?";
-                $discWhere .= " AND school_year_id = ?";
             }
 
             $query = "SELECT {$selectExtra}
@@ -52,9 +44,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     sec.section_name AS section_name,
                     gl.grade_name AS grade_name,
                     COALESCE(tu.full_name, adv.full_name) AS assigned_teacher_name,
-                    COALESCE(fail.cnt, 0) AS failing_count,
-                    COALESCE(absn.cnt, 0) AS absence_count,
-                    COALESCE(disc.cnt, 0) AS disciplinary_count
+                    COALESCE(fail.cnt, 0) AS failing_count
                 FROM {$this->students} s
                 LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                 LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
@@ -63,14 +53,10 @@ require_once __DIR__ . '/../../core/Model.php';
                 LEFT JOIN {$this->users} tu ON sta.teacher_id = tu.id
                 LEFT JOIN {$this->users} adv ON sec.adviser_id = adv.id
                 LEFT JOIN (SELECT student_id, COUNT(*) AS cnt FROM {$this->academic_profiles} WHERE {$failWhere} GROUP BY student_id) fail ON fail.student_id = s.id
-                LEFT JOIN (SELECT student_id, COUNT(*) AS cnt FROM {$this->attendance} WHERE {$absnWhere} GROUP BY student_id) absn ON absn.student_id = s.id
-                LEFT JOIN (SELECT student_id, COUNT(*) AS cnt FROM {$this->behavioral_profiles} WHERE {$discWhere} GROUP BY student_id) disc ON disc.student_id = s.id
                 WHERE s.status = 'active'";
 
             if($schoolYearId !== null){
-                $types .= "iii";
-                $params[] = $schoolYearId;
-                $params[] = $schoolYearId;
+                $types .= "i";
                 $params[] = $schoolYearId;
             }
 
@@ -105,9 +91,7 @@ require_once __DIR__ . '/../../core/Model.php';
             // skip the threshold gate — we already know why they're flagged,
             // we just want their numbers for the insight prompt.
             if($studentId === null){
-                $query .= " AND (COALESCE(fail.cnt, 0) >= 1
-                        OR COALESCE(absn.cnt, 0) >= " . self::CHRONIC_ABSENCE_THRESHOLD . "
-                        OR COALESCE(disc.cnt, 0) >= " . self::DISCIPLINARY_THRESHOLD . ")";
+                $query .= " AND COALESCE(fail.cnt, 0) >= 1";
             }
 
             return [$query, $types, $params];

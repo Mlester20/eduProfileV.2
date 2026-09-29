@@ -6,8 +6,6 @@ require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../models/admin/SectionsModel.php';
-require_once __DIR__ . '/../../models/teacher/StudentBehavioralProfileModel.php';
-require_once __DIR__ . '/../../models/teacher/StudentDevelopmentalProfileModel.php';
 require_once __DIR__ . '/../../models/teacher/ParentGuardianModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
@@ -19,8 +17,6 @@ require_once __DIR__ . '/../../../database/config/config.php';
         protected $sy;
         protected $section;
         protected $service;
-        protected $behavioralProfile;
-        protected $developmentalProfile;
         protected $parentGuardian;
 
         public function __construct($con){
@@ -30,8 +26,6 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->auditLogs            = new AuditLogs($con);
             $this->sy                   = new SchoolYearModel($con);
             $this->section              = new SectionsModel($con);
-            $this->behavioralProfile    = new StudentBehavioralProfileModel($con);
-            $this->developmentalProfile = new StudentDevelopmentalProfileModel($con);
             $this->parentGuardian       = new ParentGuardianModel($con);
         }
 
@@ -57,20 +51,6 @@ require_once __DIR__ . '/../../../database/config/config.php';
                 return [];
             }
             return $this->section->findByAdviser($teacherId);
-        }
-
-        public function getBehavioralProfiles(){
-            if(!isset($_SESSION['id'])){
-                return [];
-            }
-            return $this->behavioralProfile->index((int) $_SESSION['id']);
-        }
-
-        public function getDevelopmentalProfiles(){
-            if(!isset($_SESSION['id'])){
-                return [];
-            }
-            return $this->developmentalProfile->index((int) $_SESSION['id']);
         }
 
         public function getParentGuardians(){
@@ -188,16 +168,6 @@ require_once __DIR__ . '/../../../database/config/config.php';
         $students = $controller->index();
         $school_years = $controller->activeSy();
         $my_sections = $controller->getMySections();
-
-        $behavior_by_student = [];
-        foreach($controller->getBehavioralProfiles() as $record){
-            $behavior_by_student[$record['student_id']][] = $record;
-        }
-
-        $developmental_by_student = [];
-        foreach($controller->getDevelopmentalProfiles() as $record){
-            $developmental_by_student[$record['student_id']][] = $record;
-        }
 
         $parent_guardian_by_student = [];
         foreach($controller->getParentGuardians() as $record){
