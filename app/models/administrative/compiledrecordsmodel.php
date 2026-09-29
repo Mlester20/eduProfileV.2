@@ -4,8 +4,6 @@ require_once __DIR__ . '/../../core/Model.php';
     class CompiledRecordsModel extends Model{
         protected $academic_profiles = 'academic_profiles';
         protected $health_profiles = 'health_profiles';
-        protected $attendance = 'attendance';
-        protected $achievements_profiles = 'achievements_profiles';
         protected $reading_levels = 'reading_levels';
         protected $students = 'students';
         protected $sections = 'sections';
@@ -139,14 +137,6 @@ require_once __DIR__ . '/../../core/Model.php';
             return $this->countFiltered('hp', $this->health_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function countAttendanceRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->countFiltered('a', $this->attendance, $schoolYearId, $sectionId, $gradeLevelId);
-        }
-
-        public function countAchievementRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->countFiltered('ap', $this->achievements_profiles, $schoolYearId, $sectionId, $gradeLevelId);
-        }
-
         public function countReadingLevelRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
             return $this->countFiltered('rl', $this->reading_levels, $schoolYearId, $sectionId, $gradeLevelId);
         }
@@ -157,14 +147,6 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function getHealthRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
             return $this->fetchFiltered('hp', 'hp.*', $this->health_profiles, $schoolYearId, $sectionId, $gradeLevelId, 's.last_name ASC');
-        }
-
-        public function getAttendanceRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->fetchFiltered('a', 'a.*', $this->attendance, $schoolYearId, $sectionId, $gradeLevelId, 'a.attendance_date DESC, s.last_name ASC');
-        }
-
-        public function getAchievementRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->fetchFiltered('ap', 'ap.*', $this->achievements_profiles, $schoolYearId, $sectionId, $gradeLevelId, 'ap.date_received DESC');
         }
 
         public function getReadingLevelRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){

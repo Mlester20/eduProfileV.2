@@ -638,9 +638,7 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                             <hr>
                             <h6 class="text-uppercase text-muted small fw-bold mb-2">Other Records</h6>
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="#" id="view_link_attendance" class="btn btn-sm btn-outline-secondary"><i class="bx bx-calendar"></i> Attendance</a>
                                 <a href="#" id="view_link_academic" class="btn btn-sm btn-outline-secondary"><i class="bx bxs-book"></i> Academic Records</a>
-                                <a href="#" id="view_link_achievements" class="btn btn-sm btn-outline-secondary"><i class="bx bxs-medal"></i> Achievements</a>
                                 <a href="#" id="view_link_health" class="btn btn-sm btn-outline-secondary"><i class="bx bxs-band-aid"></i> Health Profile</a>
                                 <a href="#" id="view_link_reading_level" class="btn btn-sm btn-outline-secondary"><i class="bx bx-book-reader"></i> Reading Level</a>
                                 <a href="#" id="view_link_parent_guardian" class="btn btn-sm btn-outline-secondary"><i class="bx bx-group"></i> Manage Parent/Guardian</a>

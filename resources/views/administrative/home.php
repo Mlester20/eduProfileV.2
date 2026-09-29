@@ -16,9 +16,7 @@ $moduleIcons = [
     'Students' => 'bx-user',
     'Parent/Guardian' => 'bx-group',
     'Academic Profile' => 'bx-book',
-    'Achievement Profile' => 'bx-medal',
     'Student Health' => 'bx-band-aid',
-    'Attendance' => 'bx-calendar-check',
     'Section' => 'bx-building',
     'Section Teacher Assignment' => 'bx-user-check',
 ];

@@ -21,8 +21,6 @@ require_once __DIR__ . '/../../core/Model.php';
     class PastRecordsModel extends Model{
         protected $academic_profiles = 'academic_profiles';
         protected $health_profiles = 'health_profiles';
-        protected $attendance = 'attendance';
-        protected $achievements_profiles = 'achievements_profiles';
         protected $reading_levels = 'reading_levels';
         protected $parents_guardians = 'parents_guardians';
         protected $students = 'students';
@@ -78,14 +76,6 @@ require_once __DIR__ . '/../../core/Model.php';
         public function getHealthProfile($teacherId, $studentId){
             $rows = $this->fetchArchived('hp', 'hp.*', $this->health_profiles, $teacherId, $studentId, 'hp.id DESC', 1);
             return $rows[0] ?? null;
-        }
-
-        public function getAttendanceRecords($teacherId, $studentId){
-            return $this->fetchArchived('a', 'a.*', $this->attendance, $teacherId, $studentId, 'a.attendance_date DESC');
-        }
-
-        public function getAchievementRecords($teacherId, $studentId){
-            return $this->fetchArchived('ap', 'ap.*', $this->achievements_profiles, $teacherId, $studentId, 'ap.date_received DESC');
         }
 
         public function getReadingLevelRecords($teacherId, $studentId){

@@ -51,10 +51,6 @@ require_once __DIR__ . '/AddressService.php';
                 return [$r['subject_name'], $r['grading_period'], $r['grade'], $r['remarks'] ?? '', $r['school_year'] ?? '', $r['recorded_by_name'] ?? ''];
             }, 'No academic records.');
 
-            self::writeSection($out, 'ATTENDANCE RECORDS', ['Date', 'Session', 'Status', 'Remarks', 'Recorded By'], $profile['attendance'], function($r){
-                return [$r['attendance_date'], $r['session'], $r['status'], $r['remarks'] ?? '', $r['recorded_by_name'] ?? ''];
-            }, 'No attendance records.');
-
             fputcsv($out, ['HEALTH PROFILE']);
             if(!$profile['health']){
                 fputcsv($out, ['No health profile recorded.']);
@@ -64,10 +60,6 @@ require_once __DIR__ . '/AddressService.php';
                 fputcsv($out, [$h['height_cm'] ?? '', $h['weight_kg'] ?? '', $h['bmi'] ?? '', $h['bmi_classification'] ?? '', $h['blood_type'] ?? '', $h['allergies'] ?? '', $h['medical_conditions'] ?? '', $h['vision_screening_result'] ?? '', $h['hearing_screening_result'] ?? '', $h['immunization_status'] ?? '', $h['school_year'] ?? '', $h['recorded_by_name'] ?? '']);
             }
             fputcsv($out, []);
-
-            self::writeSection($out, 'ACHIEVEMENT RECORDS', ['Title', 'Category', 'Level', 'Date Received', 'Awarding Body', 'Recorded By'], $profile['achievements'], function($r){
-                return [$r['title'], $r['category'], $r['level'], $r['date_received'], $r['awarding_body'] ?? '', $r['recorded_by_name'] ?? ''];
-            }, 'No achievement records.');
 
             self::writeSection($out, 'READING LEVEL RECORDS', ['Assessment Date', 'Reading Level', 'Reading Language', 'Remarks', 'School Year', 'Recorded By'], $profile['reading_level'], function($r){
                 return [$r['assessment_date'], $r['reading_level'], $r['reading_language'], $r['remarks'] ?? '', $r['school_year'] ?? '', $r['recorded_by_name'] ?? ''];

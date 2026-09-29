@@ -180,9 +180,7 @@ AuthRole::allowOnly(['teacher']);
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" role="tablist">
                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_academic" type="button">Academic (<?php echo count($profile['academic']); ?>)</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_attendance" type="button">Attendance (<?php echo count($profile['attendance']); ?>)</button></li>
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_health" type="button">Health</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_achievements" type="button">Achievements (<?php echo count($profile['achievements']); ?>)</button></li>
                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_reading_level" type="button">Reading Level (<?php echo count($profile['reading_level']); ?>)</button></li>
                 </ul>
             </div>
@@ -210,27 +208,6 @@ AuthRole::allowOnly(['teacher']);
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="tab_attendance">
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead><tr><th>Date</th><th>Session</th><th>Status</th><th>Remarks</th><th>Recorded By</th></tr></thead>
-                                <tbody>
-                                    <?php if(empty($profile['attendance'])): ?>
-                                        <tr><td colspan="5" class="text-center text-muted">No past records found for the selected filters.</td></tr>
-                                    <?php else: foreach($profile['attendance'] as $r): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($r['attendance_date']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['session']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['status']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['remarks'] ?? ''); ?></td>
-                                            <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
-                                        </tr>
-                                    <?php endforeach; endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
                     <div class="tab-pane fade" id="tab_health">
                         <?php $h = $profile['health']; ?>
                         <?php if(!$h): ?>
@@ -248,28 +225,6 @@ AuthRole::allowOnly(['teacher']);
                                 <div class="col-12"><label class="form-label fw-bold mb-0">Recorded By</label><p class="mb-0"><?php echo htmlspecialchars($h['recorded_by_name'] ?? ''); ?></p></div>
                             </div>
                         <?php endif; ?>
-                    </div>
-
-                    <div class="tab-pane fade" id="tab_achievements">
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead><tr><th>Title</th><th>Category</th><th>Level</th><th>Date Received</th><th>Awarding Body</th><th>Recorded By</th></tr></thead>
-                                <tbody>
-                                    <?php if(empty($profile['achievements'])): ?>
-                                        <tr><td colspan="6" class="text-center text-muted">No past records found for the selected filters.</td></tr>
-                                    <?php else: foreach($profile['achievements'] as $r): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($r['title']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['category']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['level']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['date_received']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['awarding_body'] ?? ''); ?></td>
-                                            <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
-                                        </tr>
-                                    <?php endforeach; endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
 
                     <div class="tab-pane fade" id="tab_reading_level">

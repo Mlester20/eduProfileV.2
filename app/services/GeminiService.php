@@ -4,7 +4,7 @@
      * Calls the Gemini API to turn computed metrics into short narrative
      * text — either a per-student at-risk insight or a school-wide
      * dashboard summary. Both only ever receive aggregate counts (grade
-     * level, section, failing/absence counts) — never a
+     * level, section, failing count) — never a
      * student's name — so no personally-identifiable data leaves the
      * server.
      */
@@ -18,7 +18,6 @@
             $lines[] = "Grade level: " . ($metrics['grade_name'] ?? 'unknown');
             $lines[] = "Section: " . ($metrics['section_name'] ?? 'unknown');
             $lines[] = "Failing subjects this school year: " . (int) ($metrics['failing_count'] ?? 0);
-            $lines[] = "Recorded absences this school year: " . (int) ($metrics['absence_count'] ?? 0);
             $lines[] = "Write a brief (2-3 sentence), professional, actionable insight for the administrator. Interpret what these numbers suggest and recommend a follow-up or intervention. Do not simply restate the numbers. Do not use the learner's name (you were not given one).";
             return implode("\n", $lines);
         }
@@ -33,7 +32,6 @@
             $lines[] = "Sections without an assigned adviser: " . (int) ($metrics['sections_without_adviser'] ?? 0);
             $lines[] = "Learners currently flagged at-risk: " . (int) ($metrics['at_risk_count'] ?? 0);
             $lines[] = "  - of which failing academically: " . (int) ($metrics['at_risk_failing'] ?? 0);
-            $lines[] = "  - of which have chronic absences: " . (int) ($metrics['at_risk_absences'] ?? 0);
 
             $byLocation = $metrics['at_risk_by_location'] ?? [];
             if(!empty($byLocation)){

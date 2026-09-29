@@ -13,9 +13,7 @@ $moduleIcons = [
     'Students' => 'bx-user',
     'Parent/Guardian' => 'bx-group',
     'Academic Profile' => 'bx-book',
-    'Achievement Profile' => 'bx-medal',
     'Student Health' => 'bx-band-aid',
-    'Attendance' => 'bx-calendar-check',
 ];
 ?>
 
@@ -80,7 +78,7 @@ $moduleIcons = [
 
     <!-- Stat cards -->
     <div class="row">
-        <div class="col-md-3 col-sm-6 mb-4">
+        <div class="col-md-4 col-sm-6 mb-4">
             <div class="card h-100">
                 <div class="card-body d-flex justify-content-between align-items-start">
                     <div>
@@ -93,21 +91,7 @@ $moduleIcons = [
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body d-flex justify-content-between align-items-start">
-                    <div>
-                        <span class="text-muted d-block mb-1">Present Today</span>
-                        <h3 class="mb-0"><?php echo (int) $stats['attendance_today']['present']; ?> / <?php echo (int) $stats['attendance_today']['total']; ?></h3>
-                        <span class="text-muted small"><?php echo (int) $stats['attendance_today']['recorded']; ?> recorded so far</span>
-                    </div>
-                    <div class="avatar">
-                        <span class="avatar-initial rounded bg-label-success"><i class="bx bx-calendar-check fs-4"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 mb-4">
+        <div class="col-md-4 col-sm-6 mb-4">
             <div class="card h-100">
                 <div class="card-body d-flex justify-content-between align-items-start">
                     <div>
@@ -121,13 +105,12 @@ $moduleIcons = [
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-4">
+        <div class="col-md-4 col-sm-6 mb-4">
             <div class="card h-100">
                 <div class="card-body d-flex justify-content-between align-items-start">
                     <div>
                         <span class="text-muted d-block mb-1">Academic Records</span>
                         <h3 class="mb-0"><?php echo (int) $stats['academic_count']; ?></h3>
-                        <span class="text-muted small"><?php echo (int) $stats['achievement_count']; ?> achievements</span>
                     </div>
                     <div class="avatar">
                         <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-book fs-4"></i></span>
@@ -146,17 +129,11 @@ $moduleIcons = [
                     <a href="students.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-user text-primary"></i> Manage Students
                     </a>
-                    <a href="attendance.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-calendar-check text-primary"></i> Take Attendance
-                    </a>
                     <a href="academic.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-book text-primary"></i> Academic Records
                     </a>
                     <a href="student-health.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-band-aid text-primary"></i> Health Profiles
-                    </a>
-                    <a href="achievement-profile.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-medal text-primary"></i> Achievements
                     </a>
                     <a href="parent-guardian.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-group text-primary"></i> Parent/Guardian

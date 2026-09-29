@@ -4,9 +4,7 @@ session_start();
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../models/admin/SectionsModel.php';
-require_once __DIR__ . '/../../models/teacher/AttendanceModel.php';
 require_once __DIR__ . '/../../models/teacher/AcademicProfileModel.php';
-require_once __DIR__ . '/../../models/teacher/AchievementProfileModel.php';
 require_once __DIR__ . '/../../models/teacher/StudentHealthModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
@@ -27,9 +25,7 @@ AuthRole::allowOnly(['teacher']);
         protected $studentService;
         protected $schoolYearModel;
         protected $sectionsModel;
-        protected $attendanceModel;
         protected $academicModel;
-        protected $achievementModel;
         protected $healthModel;
         protected $auditLogs;
 
@@ -38,9 +34,7 @@ AuthRole::allowOnly(['teacher']);
             $this->studentService = new StudentService($con, $this->studentsModel);
             $this->schoolYearModel = new SchoolYearModel($con);
             $this->sectionsModel = new SectionsModel($con);
-            $this->attendanceModel = new AttendanceModel($con);
             $this->academicModel = new AcademicProfileModel($con);
-            $this->achievementModel = new AchievementProfileModel($con);
             $this->healthModel = new StudentHealthModel($con);
             $this->auditLogs = new AuditLogs($con);
         }
@@ -60,39 +54,17 @@ AuthRole::allowOnly(['teacher']);
 
             $mySections = $this->sectionsModel->findByAdviser($teacherId);
 
-            $today = date('Y-m-d');
-            $todaysAttendance = $this->attendanceModel->getStudentsForAttendance($teacherId, $today);
-            $presentToday = 0;
-            $recordedToday = 0;
-            foreach($todaysAttendance as $row){
-                $hasMorning = $row['morning_status'] !== null;
-                $hasAfternoon = $row['afternoon_status'] !== null;
-                if($hasMorning || $hasAfternoon){
-                    $recordedToday++;
-                }
-                if($row['morning_status'] === 'Present' || $row['afternoon_status'] === 'Present'){
-                    $presentToday++;
-                }
-            }
-
             $healthCovered = count($this->healthModel->getStudentIdsWithHealthProfile($teacherId));
 
             return [
                 'active_school_year' => $activeSy,
                 'my_sections' => $mySections,
                 'total_students' => $totalStudents,
-                'attendance_today' => [
-                    'date' => $today,
-                    'present' => $presentToday,
-                    'recorded' => $recordedToday,
-                    'total' => $totalStudents,
-                ],
                 'health_coverage' => [
                     'covered' => $healthCovered,
                     'total' => $totalStudents,
                 ],
                 'academic_count' => $this->academicModel->countAll($teacherId),
-                'achievement_count' => $this->achievementModel->countAll($teacherId),
             ];
         }
 

@@ -46,9 +46,7 @@ function viewStudent(id, lrn, full_name, section, school_year, age, gender, moth
     });
     document.getElementById('view_pg_empty').style.display = pg ? 'none' : 'block';
 
-    document.getElementById('view_link_attendance').href = 'attendance.php?student_id=' + id;
     document.getElementById('view_link_academic').href = 'academic.php?student_id=' + id;
-    document.getElementById('view_link_achievements').href = 'achievement-profile.php?student_id=' + id;
     document.getElementById('view_link_health').href = 'student-health.php?student_id=' + id;
     document.getElementById('view_link_reading_level').href = 'reading-level.php?student_id=' + id;
     document.getElementById('view_link_parent_guardian').href = 'parent-guardian.php?student_id=' + id;

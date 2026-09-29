@@ -65,8 +65,6 @@ AuthRole::allowOnly(['administrative']);
                 'records' => [
                     'Academic' => $this->compiledRecordsModel->countAcademicRecords($activeSyId),
                     'Health' => $this->compiledRecordsModel->countHealthRecords($activeSyId),
-                    'Attendance' => $this->compiledRecordsModel->countAttendanceRecords($activeSyId),
-                    'Achievements' => $this->compiledRecordsModel->countAchievementRecords($activeSyId),
                     'Reading Level' => $this->compiledRecordsModel->countReadingLevelRecords($activeSyId),
                 ],
             ];
@@ -89,11 +87,9 @@ AuthRole::allowOnly(['administrative']);
 
             $atRiskLearners = $this->atRiskModel->getAtRiskLearners($activeSyId);
             $failing = 0;
-            $absences = 0;
             $byLocation = [];
             foreach($atRiskLearners as $learner){
                 if((int) $learner['failing_count'] >= 1) $failing++;
-                if((int) $learner['absence_count'] >= AtRiskModel::CHRONIC_ABSENCE_THRESHOLD) $absences++;
 
                 $location = trim(($learner['grade_name'] ?? 'Unknown grade') . ' - ' . ($learner['section_name'] ?? 'Unknown section'));
                 $byLocation[$location] = ($byLocation[$location] ?? 0) + 1;
@@ -112,7 +108,6 @@ AuthRole::allowOnly(['administrative']);
                 'sections_without_adviser' => count($stats['sections_without_adviser']),
                 'at_risk_count' => $stats['at_risk_count'],
                 'at_risk_failing' => $failing,
-                'at_risk_absences' => $absences,
                 'at_risk_by_location' => $atRiskByLocation,
             ];
         }

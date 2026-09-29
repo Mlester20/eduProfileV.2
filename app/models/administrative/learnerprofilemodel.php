@@ -22,8 +22,6 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $users = 'users';
         protected $academic_profiles = 'academic_profiles';
         protected $health_profiles = 'health_profiles';
-        protected $attendance = 'attendance';
-        protected $achievements_profiles = 'achievements_profiles';
         protected $reading_levels = 'reading_levels';
         protected $parents_guardians = 'parents_guardians';
 
@@ -193,14 +191,6 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function getAcademicRecords($studentId){
             return $this->fetchForStudent('ap', $this->academic_profiles, $studentId, 'ap.grading_period ASC');
-        }
-
-        public function getAttendanceRecords($studentId){
-            return $this->fetchForStudent('a', $this->attendance, $studentId, 'a.attendance_date DESC');
-        }
-
-        public function getAchievementRecords($studentId){
-            return $this->fetchForStudent('ap', $this->achievements_profiles, $studentId, 'ap.date_received DESC');
         }
 
         public function getReadingLevelRecords($studentId){

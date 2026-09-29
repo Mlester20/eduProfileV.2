@@ -10,13 +10,11 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $users = 'users';
         protected $academic_profiles = 'academic_profiles';
         protected $health_profiles = 'health_profiles';
-        protected $attendance = 'attendance';
-        protected $achievements_profiles = 'achievements_profiles';
         protected $reading_levels = 'reading_levels';
 
         /**
          * One row per school year: how many students were enrolled that
-         * year and how many records were logged across all five categories
+         * year and how many records were logged across all three categories
          * combined, so administrative can see recording activity/trends
          * across years instead of only the currently active one — directly
          * surfaces the "delayed reporting" gap called out in the problem
@@ -33,8 +31,6 @@ require_once __DIR__ . '/../../core/Model.php';
                         COUNT(DISTINCT s.id) AS learner_count,
                         (SELECT COUNT(*) FROM {$this->academic_profiles} WHERE school_year_id = sy.id) +
                         (SELECT COUNT(*) FROM {$this->health_profiles} WHERE school_year_id = sy.id) +
-                        (SELECT COUNT(*) FROM {$this->attendance} WHERE school_year_id = sy.id) +
-                        (SELECT COUNT(*) FROM {$this->achievements_profiles} WHERE school_year_id = sy.id) +
                         (SELECT COUNT(*) FROM {$this->reading_levels} WHERE school_year_id = sy.id) AS total_records
                     FROM {$this->school_year} sy
                     LEFT JOIN {$this->students} s ON s.school_year_id = sy.id

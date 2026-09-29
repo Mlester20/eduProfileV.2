@@ -46,19 +46,6 @@ $categoryFieldLabels = [
         'blood_type' => 'Blood Type',
         'allergies' => 'Allergies',
     ],
-    'Attendance' => [
-        'attendance_date' => 'Date',
-        'session' => 'Session',
-        'status' => 'Status',
-        'remarks' => 'Remarks',
-    ],
-    'Achievements' => [
-        'title' => 'Title',
-        'level' => 'Level',
-        'category' => 'Category',
-        'date_received' => 'Date Received',
-        'awarding_body' => 'Awarding Body',
-    ],
     'Reading Level' => [
         'reading_level' => 'Reading Level',
         'reading_language' => 'Language',

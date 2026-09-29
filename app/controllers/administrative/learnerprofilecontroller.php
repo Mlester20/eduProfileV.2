@@ -29,7 +29,7 @@ AuthRole::allowOnly(['administrative']);
 
         /**
          * Everything the view needs for one student: their info, sibling
-         * rows from other school years (same LRN), and all six category
+         * rows from other school years (same LRN), and all three category
          * tables. Returns null when no student is selected or the id
          * doesn't resolve, so the view can show the empty/search state.
          */
@@ -46,9 +46,7 @@ AuthRole::allowOnly(['administrative']);
                 'info' => $info,
                 'other_years' => $this->model->getOtherYearRecords($info['lrn'], $studentId),
                 'academic' => $this->model->getAcademicRecords($studentId),
-                'attendance' => $this->model->getAttendanceRecords($studentId),
                 'health' => $this->model->getHealthProfile($studentId),
-                'achievements' => $this->model->getAchievementRecords($studentId),
                 'reading_level' => $this->model->getReadingLevelRecords($studentId),
                 'parent_guardian' => $this->model->getParentGuardian($studentId),
             ];
