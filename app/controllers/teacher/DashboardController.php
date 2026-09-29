@@ -7,8 +7,6 @@ require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../models/teacher/AttendanceModel.php';
 require_once __DIR__ . '/../../models/teacher/AcademicProfileModel.php';
 require_once __DIR__ . '/../../models/teacher/AchievementProfileModel.php';
-require_once __DIR__ . '/../../models/teacher/StudentBehavioralProfileModel.php';
-require_once __DIR__ . '/../../models/teacher/StudentDevelopmentalProfileModel.php';
 require_once __DIR__ . '/../../models/teacher/StudentHealthModel.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
@@ -32,8 +30,6 @@ AuthRole::allowOnly(['teacher']);
         protected $attendanceModel;
         protected $academicModel;
         protected $achievementModel;
-        protected $behavioralModel;
-        protected $developmentalModel;
         protected $healthModel;
         protected $auditLogs;
 
@@ -45,8 +41,6 @@ AuthRole::allowOnly(['teacher']);
             $this->attendanceModel = new AttendanceModel($con);
             $this->academicModel = new AcademicProfileModel($con);
             $this->achievementModel = new AchievementProfileModel($con);
-            $this->behavioralModel = new StudentBehavioralProfileModel($con);
-            $this->developmentalModel = new StudentDevelopmentalProfileModel($con);
             $this->healthModel = new StudentHealthModel($con);
             $this->auditLogs = new AuditLogs($con);
         }
@@ -99,8 +93,6 @@ AuthRole::allowOnly(['teacher']);
                 ],
                 'academic_count' => $this->academicModel->countAll($teacherId),
                 'achievement_count' => $this->achievementModel->countAll($teacherId),
-                'behavioral_count' => $this->behavioralModel->countAll($teacherId),
-                'developmental_count' => $this->developmentalModel->countAll($teacherId),
             ];
         }
 

@@ -539,12 +539,6 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#view_tab_profile" type="button">Profile</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_behavior" type="button">Behavior Records</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#view_tab_developmental" type="button">Developmental Records</button>
-                        </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="view_tab_profile">
@@ -650,37 +644,6 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                                 <a href="#" id="view_link_health" class="btn btn-sm btn-outline-secondary"><i class="bx bxs-band-aid"></i> Health Profile</a>
                                 <a href="#" id="view_link_reading_level" class="btn btn-sm btn-outline-secondary"><i class="bx bx-book-reader"></i> Reading Level</a>
                                 <a href="#" id="view_link_parent_guardian" class="btn btn-sm btn-outline-secondary"><i class="bx bx-group"></i> Manage Parent/Guardian</a>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="view_tab_behavior">
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Category</th>
-                                            <th>Observation</th>
-                                            <th>Intervention</th>
-                                            <th>Remarks</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="view_behavior_records"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="view_tab_developmental">
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>School Year</th>
-                                            <th>Domain</th>
-                                            <th>Observation</th>
-                                            <th>Recommendation</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="view_developmental_records"></tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
@@ -849,8 +812,6 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
     <script src="../../../public/assets/vendor/js/menu.js"></script>
     <script src="../../../public/assets/js/main.js"></script>
     <script>
-        const studentBehaviorRecords = <?php echo json_encode($behavior_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
-        const studentDevelopmentalRecords = <?php echo json_encode($developmental_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
         const studentParentGuardian = <?php echo json_encode($parent_guardian_by_student ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
     </script>
 <script src="../../../public/js/teacher/home.js"></script>

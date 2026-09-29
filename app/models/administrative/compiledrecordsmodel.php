@@ -3,8 +3,6 @@ require_once __DIR__ . '/../../core/Model.php';
 
     class CompiledRecordsModel extends Model{
         protected $academic_profiles = 'academic_profiles';
-        protected $behavioral_profiles = 'behavioral_profiles';
-        protected $developmental_profiles = 'developmental_profiles';
         protected $health_profiles = 'health_profiles';
         protected $attendance = 'attendance';
         protected $achievements_profiles = 'achievements_profiles';
@@ -137,14 +135,6 @@ require_once __DIR__ . '/../../core/Model.php';
             return $this->countFiltered('ap', $this->academic_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
 
-        public function countBehavioralRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->countFiltered('bp', $this->behavioral_profiles, $schoolYearId, $sectionId, $gradeLevelId);
-        }
-
-        public function countDevelopmentalRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->countFiltered('dp', $this->developmental_profiles, $schoolYearId, $sectionId, $gradeLevelId);
-        }
-
         public function countHealthRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
             return $this->countFiltered('hp', $this->health_profiles, $schoolYearId, $sectionId, $gradeLevelId);
         }
@@ -163,14 +153,6 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function getAcademicRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
             return $this->fetchFiltered('ap', 'ap.*', $this->academic_profiles, $schoolYearId, $sectionId, $gradeLevelId, 's.last_name ASC, ap.grading_period ASC');
-        }
-
-        public function getBehavioralRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->fetchFiltered('bp', 'bp.*', $this->behavioral_profiles, $schoolYearId, $sectionId, $gradeLevelId, 'bp.observation_date DESC');
-        }
-
-        public function getDevelopmentalRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){
-            return $this->fetchFiltered('dp', 'dp.*', $this->developmental_profiles, $schoolYearId, $sectionId, $gradeLevelId, 's.last_name ASC, dp.domain ASC');
         }
 
         public function getHealthRecords($schoolYearId = null, $sectionId = null, $gradeLevelId = null){

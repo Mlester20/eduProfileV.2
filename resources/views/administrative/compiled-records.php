@@ -12,10 +12,6 @@ function compiledRecordSummary($category, $record){
     switch($category){
         case 'Academic':
             return ($record['subject_name'] ?? '') . ' — ' . ($record['grade'] ?? '');
-        case 'Behavioral':
-            return $record['category'] ?? '';
-        case 'Developmental':
-            return $record['domain'] ?? '';
         case 'Health':
             return $record['bmi_classification'] ?? '';
         case 'Attendance':
@@ -37,18 +33,6 @@ $categoryFieldLabels = [
         'grading_period' => 'Grading Period',
         'grade' => 'Grade',
         'remarks' => 'Remarks',
-    ],
-    'Behavioral' => [
-        'observation_date' => 'Observation Date',
-        'category' => 'Category',
-        'observation' => 'Observation',
-        'intervention' => 'Intervention',
-        'remarks' => 'Remarks',
-    ],
-    'Developmental' => [
-        'domain' => 'Domain',
-        'observation' => 'Observation',
-        'recommendation' => 'Recommendation',
     ],
     'Health' => [
         'height_cm' => 'Height (cm)',

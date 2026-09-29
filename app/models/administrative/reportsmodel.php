@@ -9,8 +9,6 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $section_teacher_assignments = 'section_teacher_assignments';
         protected $users = 'users';
         protected $academic_profiles = 'academic_profiles';
-        protected $behavioral_profiles = 'behavioral_profiles';
-        protected $developmental_profiles = 'developmental_profiles';
         protected $health_profiles = 'health_profiles';
         protected $attendance = 'attendance';
         protected $achievements_profiles = 'achievements_profiles';
@@ -18,7 +16,7 @@ require_once __DIR__ . '/../../core/Model.php';
 
         /**
          * One row per school year: how many students were enrolled that
-         * year and how many records were logged across all seven categories
+         * year and how many records were logged across all five categories
          * combined, so administrative can see recording activity/trends
          * across years instead of only the currently active one — directly
          * surfaces the "delayed reporting" gap called out in the problem
@@ -34,8 +32,6 @@ require_once __DIR__ . '/../../core/Model.php';
                         sy.status,
                         COUNT(DISTINCT s.id) AS learner_count,
                         (SELECT COUNT(*) FROM {$this->academic_profiles} WHERE school_year_id = sy.id) +
-                        (SELECT COUNT(*) FROM {$this->behavioral_profiles} WHERE school_year_id = sy.id) +
-                        (SELECT COUNT(*) FROM {$this->developmental_profiles} WHERE school_year_id = sy.id) +
                         (SELECT COUNT(*) FROM {$this->health_profiles} WHERE school_year_id = sy.id) +
                         (SELECT COUNT(*) FROM {$this->attendance} WHERE school_year_id = sy.id) +
                         (SELECT COUNT(*) FROM {$this->achievements_profiles} WHERE school_year_id = sy.id) +

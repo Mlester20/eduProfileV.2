@@ -14,8 +14,6 @@ $moduleIcons = [
     'Parent/Guardian' => 'bx-group',
     'Academic Profile' => 'bx-book',
     'Achievement Profile' => 'bx-medal',
-    'Student Behavioral' => 'bx-note',
-    'Developmental' => 'bx-note',
     'Student Health' => 'bx-band-aid',
     'Attendance' => 'bx-calendar-check',
 ];
@@ -153,12 +151,6 @@ $moduleIcons = [
                     </a>
                     <a href="academic.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-book text-primary"></i> Academic Records
-                    </a>
-                    <a href="student-behavior.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-note text-primary"></i> Behavior Records
-                    </a>
-                    <a href="student-developmental.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-note text-primary"></i> Developmental Records
                     </a>
                     <a href="student-health.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-band-aid text-primary"></i> Health Profiles

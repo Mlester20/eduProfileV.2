@@ -38,18 +38,6 @@ $categoryFieldLabels = [
         'grade' => 'Grade',
         'remarks' => 'Remarks',
     ],
-    'Behavioral' => [
-        'observation_date' => 'Observation Date',
-        'category' => 'Category',
-        'observation' => 'Observation',
-        'intervention' => 'Intervention',
-        'remarks' => 'Remarks',
-    ],
-    'Developmental' => [
-        'domain' => 'Domain',
-        'observation' => 'Observation',
-        'recommendation' => 'Recommendation',
-    ],
     'Health' => [
         'height_cm' => 'Height (cm)',
         'weight_kg' => 'Weight (kg)',

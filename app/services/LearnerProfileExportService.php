@@ -55,14 +55,6 @@ require_once __DIR__ . '/AddressService.php';
                 return [$r['attendance_date'], $r['session'], $r['status'], $r['remarks'] ?? '', $r['recorded_by_name'] ?? ''];
             }, 'No attendance records.');
 
-            self::writeSection($out, 'BEHAVIORAL RECORDS', ['Date', 'Category', 'Observation', 'Intervention', 'Remarks', 'Recorded By'], $profile['behavioral'], function($r){
-                return [$r['observation_date'], $r['category'], $r['observation'], $r['intervention'] ?? '', $r['remarks'] ?? '', $r['recorded_by_name'] ?? ''];
-            }, 'No behavioral records.');
-
-            self::writeSection($out, 'DEVELOPMENTAL RECORDS', ['Domain', 'Observation', 'Recommendation', 'School Year', 'Recorded By'], $profile['developmental'], function($r){
-                return [$r['domain'], $r['observation'], $r['recommendation'] ?? '', $r['school_year'] ?? '', $r['recorded_by_name'] ?? ''];
-            }, 'No developmental records.');
-
             fputcsv($out, ['HEALTH PROFILE']);
             if(!$profile['health']){
                 fputcsv($out, ['No health profile recorded.']);

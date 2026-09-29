@@ -68,40 +68,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">Observations</span>
-        </li>
-
-        <!-- Developmental -->
-        <li class="menu-item <?php echo ($currentPage === 'student-developmental.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Behavior">Developmental</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="student-developmental.php" class="menu-link">
-                <div data-i18n="Error">Student Developmental</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Behavior -->
-        <li class="menu-item <?php echo ($currentPage === 'student-behavior.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Student Developmental">Behavior</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="student-behavior.php" class="menu-link">
-                <div data-i18n="Error">Student Behavior</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Academic Records</span>
         </li>
 

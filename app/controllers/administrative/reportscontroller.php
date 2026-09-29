@@ -42,13 +42,11 @@ AuthRole::allowOnly(['administrative']);
             foreach($sections as &$row){
                 $sectionId = $row['section_id'];
                 $row['academic_count'] = $this->compiledRecordsModel->countAcademicRecords($schoolYearId, $sectionId);
-                $row['behavioral_count'] = $this->compiledRecordsModel->countBehavioralRecords($schoolYearId, $sectionId);
-                $row['developmental_count'] = $this->compiledRecordsModel->countDevelopmentalRecords($schoolYearId, $sectionId);
                 $row['health_count'] = $this->compiledRecordsModel->countHealthRecords($schoolYearId, $sectionId);
                 $row['attendance_count'] = $this->compiledRecordsModel->countAttendanceRecords($schoolYearId, $sectionId);
                 $row['achievements_count'] = $this->compiledRecordsModel->countAchievementRecords($schoolYearId, $sectionId);
                 $row['reading_level_count'] = $this->compiledRecordsModel->countReadingLevelRecords($schoolYearId, $sectionId);
-                $row['total_records'] = $row['academic_count'] + $row['behavioral_count'] + $row['developmental_count']
+                $row['total_records'] = $row['academic_count']
                     + $row['health_count'] + $row['attendance_count'] + $row['achievements_count'] + $row['reading_level_count'];
                 $row['at_risk_count'] = count($this->atRiskModel->getAtRiskLearners($schoolYearId, $sectionId));
             }

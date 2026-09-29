@@ -67,9 +67,8 @@ AuthRole::allowOnly(['administrative']);
         <h5 class="card-header">At-Risk Learners</h5>
         <div class="card-body py-2">
             <p class="text-muted mb-0 small">
-                Flagged when a learner has a subject grade below <?php echo AtRiskModel::FAILING_GRADE; ?>,
-                <?php echo AtRiskModel::CHRONIC_ABSENCE_THRESHOLD; ?>+ recorded absences, or
-                <?php echo AtRiskModel::DISCIPLINARY_THRESHOLD; ?>+ Disciplinary behavioral entries for the selected school year.
+                Flagged when a learner has a subject grade below <?php echo AtRiskModel::FAILING_GRADE; ?>
+                or <?php echo AtRiskModel::CHRONIC_ABSENCE_THRESHOLD; ?>+ recorded absences for the selected school year.
             </p>
         </div>
         <div class="table-responsive nowrap">
@@ -99,9 +98,6 @@ AuthRole::allowOnly(['administrative']);
                                 <?php endif; ?>
                                 <?php if((int) $learner['absence_count'] >= AtRiskModel::CHRONIC_ABSENCE_THRESHOLD): ?>
                                     <span class="badge bg-label-warning">Chronic Absence (<?php echo (int) $learner['absence_count']; ?>)</span>
-                                <?php endif; ?>
-                                <?php if((int) $learner['disciplinary_count'] >= AtRiskModel::DISCIPLINARY_THRESHOLD): ?>
-                                    <span class="badge bg-label-secondary">Disciplinary (<?php echo (int) $learner['disciplinary_count']; ?>)</span>
                                 <?php endif; ?>
                             </td>
                             <td style="min-width: 260px;">

@@ -37,7 +37,7 @@ AuthRole::allowOnly(['teacher']);
 
         /**
          * Everything for one archived student at once: their info plus all
-         * seven category tables — the teacher-scoped counterpart to
+         * five category tables — the teacher-scoped counterpart to
          * LearnerProfileController::getProfile(). Returns null when no
          * student is selected or the id doesn't resolve to one of this
          * teacher's own archived students.
@@ -55,8 +55,6 @@ AuthRole::allowOnly(['teacher']);
             return [
                 'info' => $info,
                 'academic' => $this->model->getAcademicRecords($teacherId, $studentId),
-                'behavioral' => $this->model->getBehavioralRecords($teacherId, $studentId),
-                'developmental' => $this->model->getDevelopmentalRecords($teacherId, $studentId),
                 'health' => $this->model->getHealthProfile($teacherId, $studentId),
                 'attendance' => $this->model->getAttendanceRecords($teacherId, $studentId),
                 'achievements' => $this->model->getAchievementRecords($teacherId, $studentId),

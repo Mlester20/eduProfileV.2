@@ -20,8 +20,6 @@ require_once __DIR__ . '/../../core/Model.php';
 
     class PastRecordsModel extends Model{
         protected $academic_profiles = 'academic_profiles';
-        protected $behavioral_profiles = 'behavioral_profiles';
-        protected $developmental_profiles = 'developmental_profiles';
         protected $health_profiles = 'health_profiles';
         protected $attendance = 'attendance';
         protected $achievements_profiles = 'achievements_profiles';
@@ -75,14 +73,6 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function getAcademicRecords($teacherId, $studentId){
             return $this->fetchArchived('ap', 'ap.*', $this->academic_profiles, $teacherId, $studentId, 'ap.grading_period ASC');
-        }
-
-        public function getBehavioralRecords($teacherId, $studentId){
-            return $this->fetchArchived('bp', 'bp.*', $this->behavioral_profiles, $teacherId, $studentId, 'bp.observation_date DESC');
-        }
-
-        public function getDevelopmentalRecords($teacherId, $studentId){
-            return $this->fetchArchived('dp', 'dp.*', $this->developmental_profiles, $teacherId, $studentId, 'dp.domain ASC');
         }
 
         public function getHealthProfile($teacherId, $studentId){

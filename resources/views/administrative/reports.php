@@ -83,8 +83,6 @@ foreach(($school_years ?? []) as $sy){
                         <th>Teacher</th>
                         <th>Active Learners</th>
                         <th>Academic</th>
-                        <th>Behavioral</th>
-                        <th>Developmental</th>
                         <th>Health</th>
                         <th>Attendance</th>
                         <th>Achievements</th>
@@ -101,8 +99,6 @@ foreach(($school_years ?? []) as $sy){
                             <td><?php echo htmlspecialchars($row['teacher_name'] ?? '—'); ?></td>
                             <td><?php echo (int) $row['learner_count']; ?></td>
                             <td><?php echo (int) $row['academic_count']; ?></td>
-                            <td><?php echo (int) $row['behavioral_count']; ?></td>
-                            <td><?php echo (int) $row['developmental_count']; ?></td>
                             <td><?php echo (int) $row['health_count']; ?></td>
                             <td><?php echo (int) $row['attendance_count']; ?></td>
                             <td><?php echo (int) $row['achievements_count']; ?></td>

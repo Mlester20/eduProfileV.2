@@ -47,8 +47,6 @@ AuthRole::allowOnly(['administrative']);
                 'other_years' => $this->model->getOtherYearRecords($info['lrn'], $studentId),
                 'academic' => $this->model->getAcademicRecords($studentId),
                 'attendance' => $this->model->getAttendanceRecords($studentId),
-                'behavioral' => $this->model->getBehavioralRecords($studentId),
-                'developmental' => $this->model->getDevelopmentalRecords($studentId),
                 'health' => $this->model->getHealthProfile($studentId),
                 'achievements' => $this->model->getAchievementRecords($studentId),
                 'reading_level' => $this->model->getReadingLevelRecords($studentId),
