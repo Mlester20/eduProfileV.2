@@ -316,8 +316,9 @@ AuthRole::allowOnly(['teacher']);
                           '<?= htmlspecialchars($reading_level['remarks']) ?>',
                           '<?= htmlspecialchars($reading_level['recorded_by']) ?>'
                       )"
+                      title="Edit"
                     >
-                      Edit
+                      <i class="bx bx-edit"></i>
                     </button>
 
                     <form action="../../../app/controllers/teacher/ReadingLevelController.php" method="post" class="d-inline">
@@ -327,8 +328,9 @@ AuthRole::allowOnly(['teacher']);
                           type="submit"
                           name="delete_reading_level"
                           class="btn btn-sm btn-danger"
+                          title="Delete"
                           onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this record?');">
-                            Delete
+                            <i class="bx bx-trash"></i>
                         </button>
                     </form>
                   </td>

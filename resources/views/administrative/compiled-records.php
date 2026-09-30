@@ -177,8 +177,9 @@ $categoryFieldLabels = [
                                     data-bs-toggle="modal"
                                     data-bs-target="#viewRecordModal"
                                     onclick='viewCompiledRecord(<?php echo json_encode($jsRecord, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>)'
+                                    title="View"
                                 >
-                                    <i class="bx bx-show"></i> View
+                                    <i class="bx bx-show"></i>
                                 </button>
                             </td>
                         </tr>

@@ -191,8 +191,9 @@ AuthRole::allowOnly([$role]);
                                             '<?= htmlspecialchars($section['section_name']); ?>',
                                             '<?= htmlspecialchars($section['adviser_id']); ?>'
                                         )"
+                                        title="Edit"
                                     >
-                                        Edit
+                                        <i class="bx bx-edit"></i>
                                     </button>
 
                                     <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/SectionsController.php" method="post" style="display: inline;">
@@ -202,9 +203,10 @@ AuthRole::allowOnly([$role]);
                                             type="submit"
                                             class="btn btn-sm btn-danger"
                                             name="delete_section"
+                                            title="Delete"
                                             onclick="return confirm('Are you sure you want to delete this section? this action cannot be undone.')"
                                         >
-                                            Delete
+                                            <i class="bx bx-trash"></i>
                                         </button>
                                     </form>
                                 </td>

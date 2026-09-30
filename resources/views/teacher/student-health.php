@@ -464,15 +464,17 @@ if($filter_student_id !== null){
                           '<?= htmlspecialchars($record['hearing_screening_result'] ?? '') ?>',
                           '<?= htmlspecialchars($record['immunization_status'] ?? '') ?>'
                       )"
+                      title="Edit"
                     >
-                      Edit
+                      <i class="bx bx-edit"></i>
                     </button>
                     <button
                       type="button"
                       class="btn btn-sm btn-danger d-inline"
+                      title="Delete"
                       onclick="event.stopPropagation(); deleteHealthProfile(<?= (int) $record['id'] ?>)"
                     >
-                      Delete
+                      <i class="bx bx-trash"></i>
                     </button>
                   </td>
                 </tr>

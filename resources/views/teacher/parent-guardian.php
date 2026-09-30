@@ -312,17 +312,19 @@ AuthRole::allowOnly(['teacher']);
                                         data-guardian-relationship="<?= htmlspecialchars($parentGuardian['guardian_relationship']) ?>"
                                         data-guardian-contact="<?= htmlspecialchars($parentGuardian['guardian_contact']) ?>"
                                         onclick="editParentGuardian(this)"
-                                    >Edit</button>
-                                    
+                                        title="Edit"
+                                    ><i class="bx bx-edit"></i></button>
+
                                     <form action="../../../app/controllers/teacher/ParentGuardianController.php" method="post" class="d-inline">
                                         <?= Csrf::field() ?>
                                         <input type="hidden" name="id" value="<?= htmlspecialchars($parentGuardian['id']); ?>">
-                                        <button 
-                                            type="submit" 
+                                        <button
+                                            type="submit"
                                             name="delete_parent_guardian"
-                                            class="btn btn-sm btn-danger" 
+                                            class="btn btn-sm btn-danger"
+                                            title="Delete"
                                             onclick="return confirm('Are you sure you want to delete this record?');">
-                                            Delete
+                                            <i class="bx bx-trash"></i>
                                         </button>
                                     </form>
                                 </td>

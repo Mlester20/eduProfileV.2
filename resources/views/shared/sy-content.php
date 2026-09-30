@@ -176,8 +176,9 @@ AuthRole::allowOnly([$role]);
                         '<?= htmlspecialchars($sy['end_date']); ?>',
                         '<?= htmlspecialchars($sy['status']); ?>'
                       )"
+                      title="Edit"
                     >
-                      Edit
+                      <i class="bx bx-edit"></i>
                     </button>
                     <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/SchoolYearController.php" method="POST" style="display:inline-block;">
                         <?= Csrf::field() ?>
@@ -186,9 +187,10 @@ AuthRole::allowOnly([$role]);
                           type="submit"
                           name="delete_sy"
                           class="btn btn-danger btn-sm"
+                          title="Delete"
                           onclick="return confirm('are you sure you want to delete this record?')"
                         >
-                        Delete
+                        <i class="bx bx-trash"></i>
                       </button>
                     </form>
                   </td>

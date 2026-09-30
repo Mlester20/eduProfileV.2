@@ -234,18 +234,20 @@ AuthRole::allowOnly(['teacher']);
                                         '<?php echo htmlspecialchars($profile['grade']); ?>',
                                         '<?php echo htmlspecialchars($profile['remarks']); ?>'
                                     )"
+                                    title="Edit"
                                 >
                                     <i class="bx bx-edit"></i>
                                 </button>
-                                
+
                                 <form action="../../../app/controllers/teacher/AcademicProfileController.php" method="post" class="d-inline">
                                     <?= Csrf::field() ?>
-                                
+
                                     <input type="hidden" name="id" value="<?php echo $profile['id']; ?>">
-                                    <button 
-                                        type="submit" 
-                                        class="btn btn-sm btn-danger" 
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-danger"
                                         name="delete_academic_profile"
+                                        title="Delete"
                                         onclick="return confirm('Are you sure you want to delete this academic profile?');">
                                         <i class="bx bx-trash"></i>
                                     </button>

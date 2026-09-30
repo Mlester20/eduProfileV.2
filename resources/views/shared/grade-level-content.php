@@ -139,8 +139,9 @@ AuthRole::allowOnly([$role]);
                                             '<?= htmlspecialchars($grade_level['id']); ?>',
                                             '<?= htmlspecialchars($grade_level['grade_name']); ?>'
                                         )"
+                                        title="Edit"
                                     >
-                                        Edit
+                                        <i class="bx bx-edit"></i>
                                     </button>
 
                                     <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/GradeLevelsController.php" method="post" style="display: inline;">
@@ -151,9 +152,10 @@ AuthRole::allowOnly([$role]);
                                             type="submit"
                                             class="btn btn-sm btn-danger"
                                             name="delete_grade_level"
+                                            title="Delete"
                                             onclick="return confirm('Are you sure you want to delete this record? this action cannot be undone.')";
                                         >
-                                            Delete
+                                            <i class="bx bx-trash"></i>
                                         </button>
                                     </form>
                                 </td>

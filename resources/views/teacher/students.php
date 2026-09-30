@@ -748,8 +748,9 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                           '<?php echo $student['section_id']; ?>',
                           '<?php echo $student['recorded_by']; ?>'
                         )"
+                        title="Edit"
                       >
-                        Edit
+                        <i class="bx bx-edit"></i>
                       </button>
 
                       <!-- delete method -->
@@ -760,9 +761,10 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                           type="submit"
                           class="btn btn-sm btn-danger"
                           name="delete_student"
+                          title="Delete"
                           onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this student? this action cannot be undone.');"
                         >
-                          Delete
+                          <i class="bx bx-trash"></i>
                         </button>
                       </form>
                     </td>

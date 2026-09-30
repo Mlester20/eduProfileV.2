@@ -200,8 +200,9 @@ AuthRole::allowOnly(['admin']);
                                         '<?= htmlspecialchars($user['email']) ?>',
                                         '<?= htmlspecialchars($user['role']) ?>'
                                     )"
+                                    title="Edit"
                                     >
-                                    Edit
+                                    <i class="bx bx-edit"></i>
                                 </button>
 
                                 <button class="btn btn-sm btn-secondary"
@@ -211,8 +212,9 @@ AuthRole::allowOnly(['admin']);
                                         '<?= htmlspecialchars($user['id']) ?>',
                                         '<?= htmlspecialchars($user['full_name']) ?>'
                                     )"
+                                    title="Reset Password"
                                     >
-                                    Reset Password
+                                    <i class="bx bx-key"></i>
                                 </button>
 
                                 <form action="../../../app/controllers/admin/UsersController.php" method="POST" style="display: inline;">
@@ -223,9 +225,10 @@ AuthRole::allowOnly(['admin']);
                                         type="submit"
                                         class="btn btn-sm <?= $isActive ? 'btn-danger' : 'btn-success' ?>"
                                         name="toggleUserStatus"
+                                        title="<?= $isActive ? 'Deactivate' : 'Activate' ?>"
                                         onclick="return confirm('Are you sure you want to <?= $isActive ? 'deactivate' : 'activate' ?> this user?')"
                                         >
-                                        <?= $isActive ? 'Deactivate' : 'Activate' ?>
+                                        <i class="bx <?= $isActive ? 'bx-block' : 'bx-check-circle' ?>"></i>
                                     </button>
                                 </form>
                             </td>
