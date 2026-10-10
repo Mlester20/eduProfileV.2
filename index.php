@@ -60,7 +60,8 @@ $school = SchoolSettings::get($con);
         </div>
 
         <div>
-          <h2 class="auth-left-headline">Student Profile System</h2>
+          <p class="auth-left-title">EduProfile</p>
+          <p class="auth-left-tagline">An Innovative Student Profiling System for Learners of San Jose Sur Elementary School</p>
           <p class="auth-left-subtext"><?php echo htmlspecialchars($school['school_name']); ?> &nbsp;•&nbsp; <?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></p>
         </div>
       </div>
@@ -69,10 +70,10 @@ $school = SchoolSettings::get($con);
       <div class="auth-right-panel">
         <div class="auth-card">
 
-          <h1 class="auth-title">EduProfile</h1>
+          <!-- <h1 class="auth-title">EduProfile</h1> -->
 
-          <hr class="auth-divider" />
           <p class="auth-desc">Sign in to your account to access the student profiling system.</p>
+          <hr class="auth-divider" />
 
           <form id="formAuthentication" class="mb-3" action="<?= base_url('app/controllers/Auth.php') ?>" method="POST">
             <?= Csrf::field() ?>
@@ -115,10 +116,10 @@ $school = SchoolSettings::get($con);
 
           </form>
 
-          <div class="auth-card-footer">
+          <!-- <div class="auth-card-footer">
             <p class="auth-school"><?php echo htmlspecialchars($school['school_name']); ?></p>
             <p class="auth-footer-text"><?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></p>
-          </div>
+          </div> -->
 
         </div>
       </div>
