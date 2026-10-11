@@ -45,6 +45,19 @@
             return implode("\n", $lines);
         }
 
+        private static function buildFeedingProgramPrompt($metrics){
+            $lines = [];
+            $lines[] = "You are assisting a school administrator reviewing a learner flagged for the DepEd School-Based Feeding Program.";
+            $lines[] = "Grade level: " . ($metrics['grade_name'] ?? 'unknown');
+            $lines[] = "Section: " . ($metrics['section_name'] ?? 'unknown');
+            $lines[] = "BMI classification: " . ($metrics['bmi_classification'] ?? 'unknown');
+            $lines[] = "BMI: " . ($metrics['bmi'] ?? 'unknown');
+            $lines[] = "Height (cm): " . ($metrics['height_cm'] ?? 'unknown');
+            $lines[] = "Weight (kg): " . ($metrics['weight_kg'] ?? 'unknown');
+            $lines[] = "Write a brief (2-3 sentence), professional, actionable insight for the administrator about this learner's nutritional status and feeding program follow-up. Interpret what these numbers suggest and recommend a follow-up (e.g. feeding schedule, parent coordination, re-weighing cadence). Do not simply restate the numbers. Do not use the learner's name (you were not given one).";
+            return implode("\n", $lines);
+        }
+
         private static function callApi($prompt){
             $secretsFile = __DIR__ . '/../../database/config/secrets.php';
             if(!defined('GEMINI_API_KEY') && file_exists($secretsFile)){
@@ -97,5 +110,9 @@
 
         public static function generateDashboardSummary($metrics){
             return self::callApi(self::buildSummaryPrompt($metrics));
+        }
+
+        public static function generateFeedingProgramInsight($metrics){
+            return self::callApi(self::buildFeedingProgramPrompt($metrics));
         }
     }

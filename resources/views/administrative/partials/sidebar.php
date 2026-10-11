@@ -61,6 +61,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
+        <!-- Feeding Program -->
+        <li class="menu-item <?php echo ($currentPage === 'feeding-program.php') ? 'active' : ''; ?>">
+          <a href="feeding-program.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-bowl-hot"></i>
+            <div data-i18n="Feeding Program">Feeding Program</div>
+          </a>
+        </li>
+
         <!-- Reports -->
         <li class="menu-item <?php echo ($currentPage === 'reports.php') ? 'active' : ''; ?>">
           <a href="reports.php" class="menu-link">

@@ -204,6 +204,20 @@ INSERT INTO `dashboard_ai_summaries` (`id`, `school_year_id`, `summary_text`, `g
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `feeding_program_insights`
+--
+
+CREATE TABLE `feeding_program_insights` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `school_year_id` int(11) NOT NULL,
+  `insight_text` text NOT NULL,
+  `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `developmental_profiles`
 --
 
@@ -990,6 +1004,13 @@ ALTER TABLE `dashboard_ai_summaries`
   ADD UNIQUE KEY `school_year_unique` (`school_year_id`);
 
 --
+-- Indexes for table `feeding_program_insights`
+--
+ALTER TABLE `feeding_program_insights`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `student_year_unique` (`student_id`,`school_year_id`);
+
+--
 -- Indexes for table `developmental_profiles`
 --
 ALTER TABLE `developmental_profiles`
@@ -1130,6 +1151,12 @@ ALTER TABLE `behavioral_profiles`
 --
 ALTER TABLE `dashboard_ai_summaries`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `feeding_program_insights`
+--
+ALTER TABLE `feeding_program_insights`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `developmental_profiles`
