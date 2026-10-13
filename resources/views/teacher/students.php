@@ -716,6 +716,17 @@ if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
                     <!-- dynamic age based on the birth date -->
                     <td><?php echo StudentsAge::calculateAge($student['birth_date']); ?></td>
                     <td>
+                      <!-- print button -->
+                      <a
+                        href="student-print.php?id=<?php echo $student['id']; ?>"
+                        target="_blank"
+                        class="btn btn-sm btn-outline-primary"
+                        title="Print"
+                        onclick="event.stopPropagation();"
+                      >
+                        <i class="bx bx-printer"></i>
+                      </a>
+
                       <!-- update button -->
                       <button
                         class="btn btn-sm btn-warning"
