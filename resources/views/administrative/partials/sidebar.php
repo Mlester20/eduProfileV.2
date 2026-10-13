@@ -106,6 +106,18 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">Staff</span>
+        </li>
+
+        <!-- Manage Teachers -->
+        <li class="menu-item <?php echo ($currentPage === 'teachers.php') ? 'active' : ''; ?>">
+          <a href="teachers.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-chalkboard"></i>
+            <div data-i18n="Manage Teachers">Manage Teachers</div>
+          </a>
+        </li>
+
+        <li class="menu-header small text-uppercase">
           <span class="menu-header-text">School Year</span>
         </li>
 

@@ -18,6 +18,20 @@ require_once __DIR__ . '/../../helpers/password.php';
             }
         }
 
+        public function indexByRole($role){
+            try{
+                $query = "SELECT id, full_name, email, role, status FROM {$this->users} WHERE role = ? ORDER BY full_name ASC";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("s", $role);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_all(MYSQLI_ASSOC);
+            }catch(Exception $e){
+                error_log($e->getMessage());
+                return [];
+            }
+        }
+
         public function getAvailableTeachers(){
             try{
                 $query = "SELECT id, full_name, role FROM {$this->users} WHERE role = 'teacher' AND status = 'active' ORDER BY full_name ASC";
