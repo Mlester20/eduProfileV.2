@@ -39,32 +39,18 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
         <!-- Students Information Management -->
         <li class="menu-item <?php echo ($currentPage === 'students.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <a href="students.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-dock-top"></i>
-            <div data-i18n="Students Management">Students</div>
+            <div data-i18n="Students">Students</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="students.php" class="menu-link">
-                <div data-i18n="Account">Manage Students</div>
-              </a>
-            </li>
-          </ul>
         </li>
 
         <!-- Parent/Guardian -->
         <li class="menu-item <?php echo ($currentPage === 'parent-guardian.php' || $currentPage === 'pages-misc-under-maintenance.html') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <a href="parent-guardian.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-group"></i>
             <div data-i18n="Parent/Guardian">Parent/Guardian</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="parent-guardian.php" class="menu-link">
-                <div data-i18n="Parent/Guardian">Manage Parent/Guardian</div>
-              </a>
-            </li>
-          </ul>
         </li>
 
         <li class="menu-header small text-uppercase">
@@ -73,31 +59,17 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
         <!-- Academic -->
         <li class="menu-item <?php echo ($currentPage === 'academic.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <a href="academic.php" class="menu-link">
             <i class="menu-icon tf-icons bx bxs-book"></i>
             <div data-i18n="Academic">Academic Records</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="academic.php" class="menu-link">
-                <div data-i18n="Error">Academic Records</div>
-              </a>
-            </li>
-          </ul>
         </li>
         <!-- Reading Level -->
         <li class="menu-item <?php echo ($currentPage === 'reading-level.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <a href="reading-level.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-book-reader"></i>
             <div data-i18n="Reading Level">Reading Level</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="reading-level.php" class="menu-link">
-                <div data-i18n="Error">Reading Level</div>
-              </a>
-            </li>
-          </ul>
         </li>
 
         <li class="menu-header small text-uppercase">
@@ -106,17 +78,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
         <!-- Health -->
         <li class="menu-item <?php echo ($currentPage === 'student-health.php') ? 'active' : ''; ?>">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <a href="student-health.php" class="menu-link">
             <i class="menu-icon tf-icons bx bxs-band-aid"></i>
             <div data-i18n="Health">Health Profile</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="student-health.php" class="menu-link">
-                <div data-i18n="Student Health">Students Healths</div>
-              </a>
-            </li>
-          </ul>
         </li>
 
         <li class="menu-header small text-uppercase">
