@@ -51,7 +51,7 @@ AuthRole::allowOnly([$role]);
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-header" id="createGradeLevelLabel">Add Grade Level</h5>
-                    <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/GradeLevelsController.php" method="post">
                     <?= Csrf::field() ?>
@@ -67,7 +67,7 @@ AuthRole::allowOnly([$role]);
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button
                             type="submit"
                             class="btn btn-primary" name="create_grade_level"
@@ -85,7 +85,7 @@ AuthRole::allowOnly([$role]);
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-header" id="editGradeLevelLabel">Add Grade Level</h5>
-                    <button type="button" class="btn-close" data-bs-dismis="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/GradeLevelsController.php" method="post">
                     <?= Csrf::field() ?>
@@ -97,7 +97,7 @@ AuthRole::allowOnly([$role]);
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button
                             type="submit"
                             class="btn btn-primary" name="update_grade_level"
