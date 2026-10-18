@@ -122,6 +122,10 @@ $school = SchoolSettings::get($con);
                         <p class="mb-0"><?php echo htmlspecialchars($info['lrn'] ?? ''); ?></p>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="form-label fw-bold mb-0">Birthdate</label>
+                        <p class="mb-0"><?php echo !empty($info['birth_date']) ? htmlspecialchars((new DateTime($info['birth_date']))->format('F j, Y')) : ''; ?></p>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
                         <label class="form-label fw-bold mb-0">Age / Gender</label>
                         <p class="mb-0"><?php echo htmlspecialchars(StudentsAge::calculateAge($info['birth_date'])); ?> &middot; <?php echo htmlspecialchars($info['gender']); ?></p>
                     </div>
@@ -167,7 +171,7 @@ $school = SchoolSettings::get($con);
                     </div>
                 </div>
 
-                <hr>
+                <hr class="text-white">
                 <h6 class="fw-bold mb-3">Parent/Guardian Information</h6>
                 <?php $pg = $profile['parent_guardian']; ?>
                 <?php if(!$pg): ?>
@@ -299,12 +303,92 @@ $school = SchoolSettings::get($con);
     <?php endif; ?>
 
     <?php if($profile === null): ?>
+    <?php
+        $masterListQueryBase = 'status=' . urlencode($status_filter);
+        if($section_filter !== null){
+            $masterListQueryBase .= '&section_id=' . (int) $section_filter;
+        }
+        if($school_year_filter !== null){
+            $masterListQueryBase .= '&school_year_id=' . (int) $school_year_filter;
+        }
+        if($grade_level_filter !== null){
+            $masterListQueryBase .= '&grade_level_id=' . (int) $grade_level_filter;
+        }
+        if($gender_filter !== null){
+            $masterListQueryBase .= '&gender=' . urlencode($gender_filter);
+        }
+    ?>
+    <form action="learner-profile.php" method="get" class="d-flex flex-wrap align-items-end gap-2 mb-3 no-print">
+        <input type="hidden" name="status" value="<?php echo htmlspecialchars($status_filter); ?>">
+        <div>
+            <label for="filter_school_year_id" class="form-label mb-0">School Year</label>
+            <select class="form-select" id="filter_school_year_id" name="school_year_id" onchange="this.form.submit()">
+                <option value="">-- All School Years --</option>
+                <?php foreach(($school_years ?? []) as $sy_opt): ?>
+                    <option value="<?php echo htmlspecialchars($sy_opt['id']); ?>" <?php echo ($school_year_filter !== null && (int) $school_year_filter === (int) $sy_opt['id']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($sy_opt['school_year']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label for="filter_grade_level_id" class="form-label mb-0">Grade Level</label>
+            <select class="form-select" id="filter_grade_level_id" name="grade_level_id" onchange="this.form.submit()">
+                <option value="">-- All Grade Levels --</option>
+                <?php foreach(($grade_levels ?? []) as $gl_opt): ?>
+                    <option value="<?php echo htmlspecialchars($gl_opt['id']); ?>" <?php echo ($grade_level_filter !== null && (int) $grade_level_filter === (int) $gl_opt['id']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($gl_opt['grade_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label for="filter_section_id" class="form-label mb-0">Section</label>
+            <select class="form-select" id="filter_section_id" name="section_id" onchange="this.form.submit()">
+                <option value="">-- All Sections<?php echo ($grade_level_filter !== null) ? ' in this Grade' : ''; ?> --</option>
+                <?php foreach(($sections ?? []) as $sec_opt): ?>
+                    <option value="<?php echo htmlspecialchars($sec_opt['id']); ?>" <?php echo ($section_filter !== null && (int) $section_filter === (int) $sec_opt['id']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars(($sec_opt['grade_level_name'] ?? '') . ' - ' . $sec_opt['section_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label for="filter_gender" class="form-label mb-0">Gender</label>
+            <select class="form-select" id="filter_gender" name="gender" onchange="this.form.submit()">
+                <option value="">-- All --</option>
+                <option value="Male" <?php echo ($gender_filter === 'Male') ? 'selected' : ''; ?>>Male</option>
+                <option value="Female" <?php echo ($gender_filter === 'Female') ? 'selected' : ''; ?>>Female</option>
+            </select>
+        </div>
+        <?php if($section_filter !== null || $school_year_filter !== null || $grade_level_filter !== null || $gender_filter !== null): ?>
+            <div>
+                <a href="learner-profile.php?status=<?php echo htmlspecialchars($status_filter); ?>" class="btn btn-outline-secondary">Clear filters</a>
+            </div>
+        <?php endif; ?>
+    </form>
+    <?php if($section_filter !== null || $gender_filter !== null): ?>
+        <div class="alert alert-info d-flex justify-content-between align-items-center no-print">
+            <span>
+                Showing
+                <?php if($gender_filter !== null): ?>
+                    <strong><?php echo htmlspecialchars($gender_filter); ?></strong>
+                <?php endif; ?>
+                learners
+                <?php if($section_filter !== null): ?>
+                    for <strong><?php echo htmlspecialchars($section_filter_label ?? 'the selected section'); ?></strong>
+                <?php endif; ?>
+                only.
+            </span>
+            <a href="learner-profile.php?status=<?php echo htmlspecialchars($status_filter); ?>" class="btn btn-sm btn-outline-secondary">Clear filter</a>
+        </div>
+    <?php endif; ?>
     <div class="card mt-4 no-print">
         <h5 class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span>All Learners</span>
+            <span><?php echo ($section_filter !== null || $gender_filter !== null) ? 'Section Roster' : 'All Learners'; ?></span>
             <div class="btn-group" role="group">
-                <a href="?status=active" class="btn btn-sm <?php echo ($status_filter === 'active') ? 'btn-primary' : 'btn-outline-primary'; ?>">Active</a>
-                <a href="?status=archived" class="btn btn-sm <?php echo ($status_filter === 'archived') ? 'btn-primary' : 'btn-outline-primary'; ?>">Archived</a>
+                <a href="?<?php echo str_replace('status=' . urlencode($status_filter), 'status=active', $masterListQueryBase); ?>" class="btn btn-sm <?php echo ($status_filter === 'active') ? 'btn-primary' : 'btn-outline-primary'; ?>">Active</a>
+                <a href="?<?php echo str_replace('status=' . urlencode($status_filter), 'status=archived', $masterListQueryBase); ?>" class="btn btn-sm <?php echo ($status_filter === 'archived') ? 'btn-primary' : 'btn-outline-primary'; ?>">Archived</a>
             </div>
         </h5>
         <div class="table-responsive nowrap">
@@ -336,7 +420,7 @@ $school = SchoolSettings::get($con);
                                 role="button"
                                 style="cursor: pointer;"
                                 class="<?php echo ($selected_student_id !== null && (int) $selected_student_id === (int) $s['id']) ? 'table-active' : ''; ?>"
-                                onclick="window.location.href='learner-profile.php?student_id=<?php echo htmlspecialchars($s['id']); ?>&page=<?php echo $masterPage; ?>&status=<?php echo htmlspecialchars($status_filter); ?>'"
+                                onclick="window.location.href='learner-profile.php?student_id=<?php echo htmlspecialchars($s['id']); ?>&page=<?php echo $masterPage; ?>&<?php echo htmlspecialchars($masterListQueryBase); ?>'"
                             >
                                 <td><?php echo $masterOffset + $index + 1; ?></td>
                                 <td><?php echo htmlspecialchars($s['lrn'] ?? ''); ?></td>
@@ -360,15 +444,15 @@ $school = SchoolSettings::get($con);
           <nav>
             <ul class="pagination justify-content-center mb-0">
               <li class="page-item <?php echo $masterPage <= 1 ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?status=<?php echo htmlspecialchars($status_filter); ?>&page=<?php echo $masterPage - 1; ?>">&laquo;</a>
+                <a class="page-link" href="?<?php echo htmlspecialchars($masterListQueryBase); ?>&page=<?php echo $masterPage - 1; ?>">&laquo;</a>
               </li>
               <?php for ($p = 1; $p <= $masterPages; $p++): ?>
                 <li class="page-item <?php echo $p === $masterPage ? 'active' : ''; ?>">
-                  <a class="page-link" href="?status=<?php echo htmlspecialchars($status_filter); ?>&page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                  <a class="page-link" href="?<?php echo htmlspecialchars($masterListQueryBase); ?>&page=<?php echo $p; ?>"><?php echo $p; ?></a>
                 </li>
               <?php endfor; ?>
               <li class="page-item <?php echo $masterPage >= $masterPages ? 'disabled' : ''; ?>">
-                <a class="page-link" href="?status=<?php echo htmlspecialchars($status_filter); ?>&page=<?php echo $masterPage + 1; ?>">&raquo;</a>
+                <a class="page-link" href="?<?php echo htmlspecialchars($masterListQueryBase); ?>&page=<?php echo $masterPage + 1; ?>">&raquo;</a>
               </li>
             </ul>
           </nav>

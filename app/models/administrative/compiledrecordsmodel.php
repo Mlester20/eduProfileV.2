@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $grade_levels = 'grade_levels';
         protected $school_year = 'school_year';
-        protected $section_teacher_assignments = 'section_teacher_assignments';
+        protected $section_teacher_assignments = 'latest_section_teacher_assignments';
         protected $users = 'users';
 
         /**

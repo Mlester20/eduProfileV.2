@@ -21,14 +21,7 @@ AuthRole::allowOnly(['administrative']);
         }
 
         public function index($schoolYearId = null, $sectionId = null){
-            $learners = $this->model->getAtRiskLearners($schoolYearId, $sectionId);
-            foreach($learners as &$learner){
-                $cached = $this->model->getInsight($learner['student_id'], $learner['school_year_id']);
-                $learner['insight_text'] = $cached['insight_text'] ?? null;
-                $learner['insight_generated_at'] = $cached['generated_at'] ?? null;
-            }
-            unset($learner);
-            return $learners;
+            return $this->model->getAtRiskLearners($schoolYearId, $sectionId);
         }
 
         public function getSchoolYears(){

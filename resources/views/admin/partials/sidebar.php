@@ -8,13 +8,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <div class="layout-container">
 
     <!-- Menu -->
-    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu sidebar-navy">
       <div class="app-brand demo">
         <a href="dashboard.php" class="app-brand-link">
           <span class="app-brand-logo demo">
-            <img src="<?= base_url('public/assets/img/favicon/logo.png') ?>" alt="logo" style="width: 50px; height: 50px;">
+            <img src="<?= base_url('public/assets/img/favicon/logo.png') ?>" alt="logo" style="width: 72px; height: 72px;">
           </span>
-          <span class="app-brand-text demo menu-text fw-bolder ms-2">EduProfile</span>
+          <span class="app-brand-text demo menu-text fw-bolder ms-2"><span class="brand-accent">Edu</span>Profile</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -66,21 +66,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
           </ul>
         </li>
-        <!-- Grade Level -->
+        <!-- Grade Levels & Section -->
         <li class="menu-item <?php echo ($currentPage === 'grade-level.php' || $currentPage === 'sections.php') ? 'active' : ''; ?>">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-note"></i>
-            <div data-i18n="Grade Level">Grade Levels</div>
+            <div data-i18n="Grade Levels & Section">Grade Levels & Section</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item">
               <a href="grade-level.php" class="menu-link">
-                <div data-i18n="Error">Manage Grade Level</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="sections.php" class="menu-link">
-                <div data-i18n="Error">Manage Sections</div>
+                <div data-i18n="Error">Manage Grade Levels & Section</div>
               </a>
             </li>
           </ul>

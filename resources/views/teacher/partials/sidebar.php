@@ -8,13 +8,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <div class="layout-container">
 
     <!-- Menu -->
-    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu sidebar-navy">
       <div class="app-brand demo">
         <a href="home.php" class="app-brand-link">
           <span class="app-brand-logo demo">
-            <img src="<?= base_url('public/assets/img/favicon/logo.png') ?>" alt="logo" style="width: 50px; height: 50px;">
+            <img src="<?= base_url('public/assets/img/favicon/logo.png') ?>" alt="logo" style="width: 72px; height: 72px;">
           </span>
-          <span class="app-brand-text demo menu-text fw-bolder ms-2">EduProfile</span>
+          <span class="app-brand-text demo menu-text fw-bolder ms-2"><span class="brand-accent">Edu</span>Profile</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -45,45 +45,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
-        <!-- Parent/Guardian -->
-        <li class="menu-item <?php echo ($currentPage === 'parent-guardian.php' || $currentPage === 'pages-misc-under-maintenance.html') ? 'active' : ''; ?>">
-          <a href="parent-guardian.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-group"></i>
-            <div data-i18n="Parent/Guardian">Parent/Guardian</div>
-          </a>
-        </li>
-
-        <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">Academic Records</span>
-        </li>
-
-        <!-- Academic -->
-        <li class="menu-item <?php echo ($currentPage === 'academic.php') ? 'active' : ''; ?>">
-          <a href="academic.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bxs-book"></i>
-            <div data-i18n="Academic">Academic Records</div>
-          </a>
-        </li>
-        <!-- Reading Level -->
-        <li class="menu-item <?php echo ($currentPage === 'reading-level.php') ? 'active' : ''; ?>">
-          <a href="reading-level.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-book-reader"></i>
-            <div data-i18n="Reading Level">Reading Level</div>
-          </a>
-        </li>
-
-        <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">Healths</span>
-        </li>
-
-        <!-- Health -->
-        <li class="menu-item <?php echo ($currentPage === 'student-health.php') ? 'active' : ''; ?>">
-          <a href="student-health.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bxs-band-aid"></i>
-            <div data-i18n="Health">Health Profile</div>
-          </a>
-        </li>
-
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Alerts</span>
         </li>
@@ -99,8 +60,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <!-- Feeding Program -->
         <li class="menu-item <?php echo ($currentPage === 'feeding-program.php') ? 'active' : ''; ?>">
           <a href="feeding-program.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-bowl-hot"></i>
+            <i class="menu-icon tf-icons bx bx-dish"></i>
             <div data-i18n="Feeding Program">Feeding Program</div>
+          </a>
+        </li>
+
+        <!-- Class List -->
+        <li class="menu-item <?php echo ($currentPage === 'class-list.php') ? 'active' : ''; ?>">
+          <a href="class-list.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-clipboard"></i>
+            <div data-i18n="Class List">Class List</div>
           </a>
         </li>
 
@@ -113,6 +82,18 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <a href="past-records.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-history"></i>
             <div data-i18n="Past Records">Past Records</div>
+          </a>
+        </li>
+
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">History</span>
+        </li>
+
+        <!-- Audit Logs -->
+        <li class="menu-item <?php echo ($currentPage === 'audit.php') ? 'active' : ''; ?>">
+          <a href="audit.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-history"></i>
+            <div data-i18n="Past Records">Audit Logs</div>
           </a>
         </li>
       </ul>

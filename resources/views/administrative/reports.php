@@ -70,88 +70,123 @@ foreach(($school_years ?? []) as $sy){
     </form>
 
     <div class="card mb-4">
-        <h5 class="card-header">
-            Section Breakdown <?php echo $currentSchoolYearLabel !== '' ? '&mdash; ' . htmlspecialchars($currentSchoolYearLabel) : ''; ?>
-        </h5>
-        <p class="text-muted px-4 mb-2 small">Record counts per section for the selected school year, across all categories — sections with low counts relative to their learner count may be behind on recording.</p>
-        <div class="table-responsive nowrap">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Grade</th>
-                        <th>Section</th>
-                        <th>Teacher</th>
-                        <th>Active Learners</th>
-                        <th>Academic</th>
-                        <th>Health</th>
-                        <th>Reading Level</th>
-                        <th>Total Records</th>
-                        <th>At-Risk</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach(($sectionBreakdown ?? []) as $row): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['grade_name'] ?? ''); ?></td>
-                            <td><?php echo htmlspecialchars($row['section_name'] ?? ''); ?></td>
-                            <td><?php echo htmlspecialchars($row['teacher_name'] ?? '—'); ?></td>
-                            <td><?php echo (int) $row['learner_count']; ?></td>
-                            <td><?php echo (int) $row['academic_count']; ?></td>
-                            <td><?php echo (int) $row['health_count']; ?></td>
-                            <td><?php echo (int) $row['reading_level_count']; ?></td>
-                            <td><strong><?php echo (int) $row['total_records']; ?></strong></td>
-                            <td>
-                                <?php if((int) $row['at_risk_count'] > 0): ?>
-                                    <span class="badge bg-label-danger"><?php echo (int) $row['at_risk_count']; ?></span>
-                                <?php else: ?>
-                                    <span class="badge bg-label-success">0</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    <?php if(empty($sectionBreakdown)): ?>
-                        <tr>
-                            <td colspan="13" class="text-center text-muted">No sections found for the selected filters.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="reportsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-btn-section-breakdown" data-bs-toggle="tab" data-bs-target="#tab-section-breakdown" type="button" role="tab">Section Breakdown</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-btn-recording-activity" data-bs-toggle="tab" data-bs-target="#tab-recording-activity" type="button" role="tab">Recording Activity</button>
+                </li>
+            </ul>
         </div>
-    </div>
+        <div class="card-body">
+            <div class="tab-content" id="reportsTabContent">
 
-    <div class="card mb-4">
-        <h5 class="card-header">Recording Activity by School Year</h5>
-        <p class="text-muted px-4 mb-2 small">Learner count and total records logged across all categories, per school year — a year with few records relative to its learner count signals delayed reporting.</p>
-        <div class="table-responsive nowrap">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>School Year</th>
-                        <th>Status</th>
-                        <th>Learners</th>
-                        <th>Total Records</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach(($schoolYearComparison ?? []) as $row): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($row['school_year']); ?></td>
-                            <td>
-                                <span class="badge bg-label-<?php echo $row['status'] === 'active' ? 'success' : ($row['status'] === 'archived' ? 'secondary' : 'warning'); ?>">
-                                    <?php echo htmlspecialchars(ucfirst($row['status'])); ?>
-                                </span>
-                            </td>
-                            <td><?php echo (int) $row['learner_count']; ?></td>
-                            <td><?php echo (int) $row['total_records']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    <?php if(empty($schoolYearComparison)): ?>
-                        <tr>
-                            <td colspan="4" class="text-center text-muted">No school years found.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                <!-- Section Breakdown -->
+                <div class="tab-pane fade show active" id="tab-section-breakdown" role="tabpanel">
+                    <p class="text-muted small">
+                        Record counts per section for the selected school year<?php echo $currentSchoolYearLabel !== '' ? ' (' . htmlspecialchars($currentSchoolYearLabel) . ')' : ''; ?>, across all categories — sections with low counts relative to their learner count may be behind on recording.
+                    </p>
+                    <div class="table-responsive nowrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Grade</th>
+                                    <th>Section</th>
+                                    <th>Teacher</th>
+                                    <th>Active Learners</th>
+                                    <th>Male</th>
+                                    <th>Female</th>
+                                    <th>Academic</th>
+                                    <th>Health</th>
+                                    <th>Reading Level</th>
+                                    <th>Total Records</th>
+                                    <th>At-Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach(($sectionBreakdown ?? []) as $row): ?>
+                                    <?php
+                                        $rowSectionId = (int) $row['section_id'];
+                                        $syParam = $school_year_filter !== null ? '&school_year_id=' . (int) $school_year_filter : '';
+                                        $learnersLink = "learner-profile.php?section_id={$rowSectionId}{$syParam}";
+                                        $maleLink = "learner-profile.php?section_id={$rowSectionId}{$syParam}&gender=Male";
+                                        $femaleLink = "learner-profile.php?section_id={$rowSectionId}{$syParam}&gender=Female";
+                                        $academicLink = "compiled-records.php?category=Academic&section_id={$rowSectionId}{$syParam}";
+                                        $healthLink = "compiled-records.php?category=Health&section_id={$rowSectionId}{$syParam}";
+                                        $readingLink = "compiled-records.php?category=" . urlencode('Reading Level') . "&section_id={$rowSectionId}{$syParam}";
+                                        $atRiskLink = "at-risk.php?section_id={$rowSectionId}{$syParam}";
+                                    ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['grade_name'] ?? ''); ?></td>
+                                        <td><?php echo htmlspecialchars($row['section_name'] ?? ''); ?></td>
+                                        <td><?php echo htmlspecialchars($row['teacher_name'] ?? '—'); ?></td>
+                                        <td><a href="<?php echo htmlspecialchars($learnersLink); ?>"><?php echo (int) $row['learner_count']; ?></a></td>
+                                        <td><a href="<?php echo htmlspecialchars($maleLink); ?>"><?php echo (int) $row['male_count']; ?></a></td>
+                                        <td><a href="<?php echo htmlspecialchars($femaleLink); ?>"><?php echo (int) $row['female_count']; ?></a></td>
+                                        <td><a href="<?php echo htmlspecialchars($academicLink); ?>"><?php echo (int) $row['academic_count']; ?></a></td>
+                                        <td><a href="<?php echo htmlspecialchars($healthLink); ?>"><?php echo (int) $row['health_count']; ?></a></td>
+                                        <td><a href="<?php echo htmlspecialchars($readingLink); ?>"><?php echo (int) $row['reading_level_count']; ?></a></td>
+                                        <td><strong><?php echo (int) $row['total_records']; ?></strong></td>
+                                        <td>
+                                            <a href="<?php echo htmlspecialchars($atRiskLink); ?>" class="text-decoration-none">
+                                                <?php if((int) $row['at_risk_count'] > 0): ?>
+                                                    <span class="badge bg-label-danger"><?php echo (int) $row['at_risk_count']; ?></span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-label-success">0</span>
+                                                <?php endif; ?>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <?php if(empty($sectionBreakdown)): ?>
+                                    <tr>
+                                        <td colspan="11" class="text-center text-muted">No sections found for the selected filters.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recording Activity by School Year -->
+                <div class="tab-pane fade" id="tab-recording-activity" role="tabpanel">
+                    <p class="text-muted small">Learner count and total records logged across all categories, per school year — a year with few records relative to its learner count signals delayed reporting.</p>
+                    <div class="table-responsive nowrap">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>School Year</th>
+                                    <th>Status</th>
+                                    <th>Learners</th>
+                                    <th>Total Records</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach(($schoolYearComparison ?? []) as $row): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['school_year']); ?></td>
+                                        <td>
+                                            <span class="badge bg-label-<?php echo $row['status'] === 'active' ? 'success' : ($row['status'] === 'archived' ? 'secondary' : 'warning'); ?>">
+                                                <?php echo htmlspecialchars(ucfirst($row['status'])); ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo (int) $row['learner_count']; ?></td>
+                                        <td><?php echo (int) $row['total_records']; ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <?php if(empty($schoolYearComparison)): ?>
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">No school years found.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 

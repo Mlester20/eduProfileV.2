@@ -1,13 +1,13 @@
 <?php
-session_start();
+if(session_status() === PHP_SESSION_NONE){
+    session_start();
+}
 
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../models/teacher/ParentGuardianModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
-require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
-require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class ParentGuardianController extends Controller{
@@ -22,27 +22,38 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->studentsModel = new StudentsModel($con);
         }
 
-        public function index($page = 1, $student_id = null){
-            $perPage = 10;
-            if(!isset($_SESSION['id'])){
-                return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
-            }
-            $teacherId = (int) $_SESSION['id'];
-            $offset = Paginator::offset($page, $perPage);
-            $rows = $this->model->getPage($perPage, $offset, $teacherId, $student_id);
-            $total = $this->model->countAll($teacherId, $student_id);
-            return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
+        public function index(){
+            return [];
         }
 
-        public function students(){
+        public function getByStudent($studentId){
             if(!isset($_SESSION['id'])){
-                return [];
+                return null;
             }
-            return $this->studentsModel->index((int) $_SESSION['id']);
+            return $this->model->getByStudent($studentId, (int) $_SESSION['id']);
+        }
+
+        public function upsert($data){
+            if(!isset($_SESSION['id'])){
+                return ['success' => false, 'message' => 'Not authenticated.'];
+            }
+            $teacherId = (int) $_SESSION['id'];
+            $studentId = (int) ($data['student_id'] ?? 0);
+
+            if(!$this->studentsModel->belongsToAdviser($studentId, $teacherId)){
+                return ['success' => false, 'message' => 'You are not authorized to manage this student.'];
+            }
+
+            $existing = $this->model->getByStudent($studentId, $teacherId);
+            if($existing){
+                return $this->update($existing['id'], $data);
+            }
+            return $this->create($data);
         }
 
         public function create($data){
             try{
+                $data['recorded_by'] = $_SESSION['id'] ?? null;
                 if($this->model->create($data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
@@ -51,45 +62,36 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'Parent/Guardian',
                         null,
                         null,
-                        $_SESSION['full_name'] . ' Added Parent/Guardian ' . $data['guardian_name']
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' added a parent/guardian record for student ' . $data['student_id']
                     );
-                    FlashMessage::setFlash('success', 'Parent/Guardian added successfully.');
-                    header("location: ../../../resources/views/teacher/parent-guardian.php");
-                    exit();
-                }else{
-                    FlashMessage::setFlash('error', 'Failed to add Parent/Guardian.');
-                    header("location: ../../../resources/views/teacher/parent-guardian.php");
-                    exit();
+                    return ['success' => true, 'message' => 'Parent/guardian information saved successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to save parent/guardian information.'];
             }catch(Exception $e){
-                error_log("Error " . $e->getMessage());
-                return false;
+                error_log("Error creating parent/guardian record: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong saving parent/guardian information.'];
             }
         }
 
         public function update($id, $data){
             try{
+                $data['recorded_by'] = $_SESSION['id'] ?? null;
                 if($this->model->update($id, $data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
                         $_SESSION['role'] ?? 'unknown',
                         'Updated Parent/Guardian',
                         'Parent/Guardian',
+                        $id,
                         null,
-                        null,
-                        $_SESSION['full_name'] . ' Updated Parent/Guardian ' . $data['guardian_name']
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' updated a parent/guardian record for student ' . $data['student_id']
                     );
-                    FlashMessage::setFlash('success', 'Parent/Guardian updated successfully.');
-                    header("location: ../../../resources/views/teacher/parent-guardian.php");
-                    exit();
-                }else{
-                    FlashMessage::setFlash('error', 'Failed to update Parent/Guardian.');
-                    header("location: ../../../resources/views/teacher/parent-guardian.php");
-                    exit();
+                    return ['success' => true, 'message' => 'Parent/guardian information saved successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to save parent/guardian information.'];
             }catch(Exception $e){
-                error_log("Error " . $e->getMessage());
-                return false;
+                error_log("Error updating parent/guardian record: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong saving parent/guardian information.'];
             }
         }
 
@@ -101,84 +103,50 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         $_SESSION['role'] ?? 'unknown',
                         'Deleted Parent/Guardian',
                         'Parent/Guardian',
+                        $id,
                         null,
-                        null,
-                        $_SESSION['full_name'] . ' Deleted Parent/Guardian'
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' deleted a parent/guardian record'
                     );
-                    FlashMessage::setFlash('success', 'Parent/Guardian deleted successfully.');
-                    header("location: ../../../resources/views/teacher/parent-guardian.php");
-                    exit();
-                }else{
-                    FlashMessage::setFlash('error', 'Failed to delete Parent/Guardian.');
-                    header("location: ../../../resources/views/teacher/parent-guardian.php");
-                    exit();
+                    return ['success' => true, 'message' => 'Parent/guardian record deleted successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to delete parent/guardian record.'];
             }catch(Exception $e){
-                error_log("Error " . $e->getMessage());
-                return false;
+                error_log("Error deleting parent/guardian record: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong deleting parent/guardian information.'];
             }
         }
     }
 
     try{
         $controller = new ParentGuardianController($con);
-        $filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-        $parentGuardians = $controller->index($page, $filter_student_id);
-        $students = $controller->students();
-        $filtered_student = null;
-        if($filter_student_id !== null){
-            foreach($students as $s){
-                if((int) $s['id'] === $filter_student_id){
-                    $filtered_student = $s;
+        $method = $_SERVER['REQUEST_METHOD'];
+        header('Content-Type: application/json');
+
+        switch($method){
+            case 'GET':
+                $studentId = (int) ($_GET['student_id'] ?? 0);
+                $record = $controller->getByStudent($studentId);
+                echo json_encode(['success' => true, 'data' => $record]);
+                break;
+
+            case 'POST':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                if(!is_array($data)){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
                     break;
                 }
-            }
-        }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->upsert($data));
+                break;
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            Csrf::requireValidOnPost('../../../resources/views/teacher/parent-guardian.php');
-            if(isset($_POST['create_parent_guardian'])){
-                $controller->create(
-                    [
-                        'student_id' => $_POST['student_id'],
-                        'recorded_by' => $_SESSION['id'] ?? null,
-                        'father_name' => $_POST['father_name'],
-                        'father_occupation' => $_POST['father_occupation'],
-                        'father_contact' => $_POST['father_contact'],
-                        'mother_name' => $_POST['mother_name'],
-                        'mother_occupation' => $_POST['mother_occupation'],
-                        'mother_contact' => $_POST['mother_contact'],
-                        'guardian_name' => $_POST['guardian_name'],
-                        'guardian_relationship' => $_POST['guardian_relationship'],
-                        'guardian_contact' => $_POST['guardian_contact']
-                    ]
-                );
-            }
-            if(isset($_POST['update_parent_guardian'])){
-                $controller->update(
-                    $_POST['id'],
-                    [
-                        'student_id' => $_POST['student_id'],
-                        'recorded_by' => $_SESSION['id'] ?? null,
-                        'father_name' => $_POST['father_name'],
-                        'father_occupation' => $_POST['father_occupation'],
-                        'father_contact' => $_POST['father_contact'],
-                        'mother_name' => $_POST['mother_name'],
-                        'mother_occupation' => $_POST['mother_occupation'],
-                        'mother_contact' => $_POST['mother_contact'],
-                        'guardian_name' => $_POST['guardian_name'],
-                        'guardian_relationship' => $_POST['guardian_relationship'],
-                        'guardian_contact' => $_POST['guardian_contact']
-                    ]
-                );
-            }
-            if(isset($_POST['delete_parent_guardian'])){
-                $guardian_id = $_POST['id'];
-                $controller->delete($guardian_id);
-            }
+            default:
+                http_response_code(405);
+                echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
         }
     }catch(Exception $e){
-        error_log("Error " . $e->getMessage());
-        die("An error occurred while initializing the controller.");
+        error_log("Error in ParentGuardianController endpoint: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Something went wrong.']);
     }

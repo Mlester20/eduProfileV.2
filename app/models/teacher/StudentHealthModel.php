@@ -7,6 +7,33 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $school_year = 'school_year';
 
+        /**
+         * The single health profile row for one student (uniq_student_health_profile
+         * means there's at most one), scoped to the given teacher's own
+         * advisees. Used by StudentHealthService::upsert() to decide
+         * create vs update. Returns null if none recorded yet.
+         */
+
+        public function getByStudentId($studentId, $teacherId){
+            try{
+                $query = "SELECT hp.*
+                    FROM {$this->health_profiles} hp
+                    LEFT JOIN {$this->student} s ON hp.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE hp.student_id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                    LIMIT 1
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $studentId, $teacherId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_assoc();
+            }catch(Exception $e){
+                error_log("Error fetching health profile for student: " . $e->getMessage());
+                return null;
+            }
+        }
+
         public function index($teacher_id, $student_id = null){
             try{
                 $query = "SELECT
@@ -128,10 +155,10 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function create($data){
             try{
-                $insert = "INSERT INTO {$this->health_profiles}(student_id, school_year_id, height_cm, weight_kg, bmi, bmi_classification, blood_type, allergies, medical_conditions, vision_screening_result, hearing_screening_result, immunization_status, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $insert = "INSERT INTO {$this->health_profiles}(student_id, school_year_id, height_cm, weight_kg, bmi, bmi_classification, blood_type, allergies, has_medical_condition, medical_conditions, vision_screening_result, hearing_screening_result, immunization_status, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $this->con->prepare($insert);
                 $stmt->bind_param(
-                    "iidddsssssssi",
+                    "iidddssssssssi",
                     $data['student_id'],
                     $data['school_year_id'],
                     $data['height_cm'],
@@ -140,6 +167,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     $data['bmi_classification'],
                     $data['blood_type'],
                     $data['allergies'],
+                    $data['has_medical_condition'],
                     $data['medical_conditions'],
                     $data['vision_screening_result'],
                     $data['hearing_screening_result'],
@@ -155,10 +183,10 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function update($id, $data){
             try{
-                $update = "UPDATE {$this->health_profiles} SET student_id = ?, school_year_id = ?, height_cm = ?, weight_kg = ?, bmi = ?, bmi_classification = ?, blood_type = ?, allergies = ?, medical_conditions = ?, vision_screening_result = ?, hearing_screening_result = ?, immunization_status = ?, recorded_by = ? WHERE id = ?";
+                $update = "UPDATE {$this->health_profiles} SET student_id = ?, school_year_id = ?, height_cm = ?, weight_kg = ?, bmi = ?, bmi_classification = ?, blood_type = ?, allergies = ?, has_medical_condition = ?, medical_conditions = ?, vision_screening_result = ?, hearing_screening_result = ?, immunization_status = ?, recorded_by = ? WHERE id = ?";
                 $stmt = $this->con->prepare($update);
                 $stmt->bind_param(
-                    "iidddsssssssii",
+                    "iidddssssssssii",
                     $data['student_id'],
                     $data['school_year_id'],
                     $data['height_cm'],
@@ -167,6 +195,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     $data['bmi_classification'],
                     $data['blood_type'],
                     $data['allergies'],
+                    $data['has_medical_condition'],
                     $data['medical_conditions'],
                     $data['vision_screening_result'],
                     $data['hearing_screening_result'],

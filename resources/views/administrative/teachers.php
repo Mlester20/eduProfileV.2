@@ -70,6 +70,28 @@ AuthRole::allowOnly(['administrative']);
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" placeholder="e.g., juan.delacruz@school.edu.ph" required>
                         </div>
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_number" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="contact_number" name="contact_number" placeholder="e.g., 09171234567">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="birth_date" class="form-label">Birth Date</label>
+                                <input type="date" class="form-control" id="birth_date" name="birth_date">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sex" class="form-label">Sex</label>
+                            <select class="form-select" id="sex" name="sex">
+                                <option value="">Select Sex</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="address" name="address" placeholder="e.g., San Jose Sur, Mallig, Isabela">
+                        </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control" id="password" name="password" placeholder="Enter a strong password" minlength="8" required>
@@ -103,6 +125,28 @@ AuthRole::allowOnly(['administrative']);
                         <div class="mb-3">
                             <label for="editEmail" class="form-label">Email</label>
                             <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="editContactNumber" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="editContactNumber" name="contact_number" placeholder="e.g., 09171234567">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editBirthDate" class="form-label">Birth Date</label>
+                                <input type="date" class="form-control" id="editBirthDate" name="birth_date">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSex" class="form-label">Sex</label>
+                            <select class="form-select" id="editSex" name="sex">
+                                <option value="">Select Sex</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAddress" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="editAddress" name="address" placeholder="e.g., San Jose Sur, Mallig, Isabela">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -175,11 +219,14 @@ AuthRole::allowOnly(['administrative']);
                                     <button class="btn btn-sm btn-warning"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editTeacherModal"
-                                        onclick="editTeacher(
-                                            '<?= htmlspecialchars($teacher['id']) ?>',
-                                            '<?= htmlspecialchars($teacher['full_name']) ?>',
-                                            '<?= htmlspecialchars($teacher['email']) ?>'
-                                        )"
+                                        data-id="<?= htmlspecialchars($teacher['id']) ?>"
+                                        data-full-name="<?= htmlspecialchars($teacher['full_name']) ?>"
+                                        data-email="<?= htmlspecialchars($teacher['email']) ?>"
+                                        data-contact-number="<?= htmlspecialchars($teacher['contact_number'] ?? '') ?>"
+                                        data-address="<?= htmlspecialchars($teacher['address'] ?? '') ?>"
+                                        data-birth-date="<?= htmlspecialchars($teacher['birth_date'] ?? '') ?>"
+                                        data-sex="<?= htmlspecialchars($teacher['sex'] ?? '') ?>"
+                                        onclick="editTeacher(this.dataset)"
                                         title="Edit"
                                         >
                                         <i class="bx bx-edit"></i>

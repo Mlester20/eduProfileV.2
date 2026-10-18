@@ -1,64 +1,40 @@
 <?php
-session_start();
+if(session_status() === PHP_SESSION_NONE){
+    session_start();
+}
 require_once __DIR__ . '/../../models/teacher/AcademicProfileModel.php';
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
-require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
-require_once __DIR__ . '/../../services/StudentService.php';
-require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
-require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class AcademicProfileController extends Controller{
         protected $studentsModel;
-        protected $schoolYearModel;
-        protected $sy;
         protected $auditLogs;
-        protected $studentService;
 
         public function __construct($con){
             parent::__construct(
                 new AcademicProfileModel($con)
             );
             $this->studentsModel = new StudentsModel($con);
-            $this->schoolYearModel = new SchoolYearModel($con);
-            $this->sy = new SchoolYearModel($con);
             $this->auditLogs = new AuditLogs($con);
-            $this->studentService = new StudentService($con);
         }
 
-        public function index($student_id = null, $page = 1){
-            $perPage = 10;
-            if(!isset($_SESSION['id'])){
-                return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
-            }
-            $teacherId = (int) $_SESSION['id'];
-            $offset = Paginator::offset($page, $perPage);
-            $rows = $this->model->getPage($teacherId, $perPage, $offset, $student_id);
-            $total = $this->model->countAll($teacherId, $student_id);
-            return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
-        }
-
-        public function getStudents(){
+        public function index($student_id = null){
             if(!isset($_SESSION['id'])){
                 return [];
             }
-            return $this->studentService->getStudentsByAdviser((int) $_SESSION['id']);
-        }
-
-        public function getSchoolYears(){
-            return $this->schoolYearModel->index();
+            return $this->model->index((int) $_SESSION['id'], $student_id);
         }
 
         public function create($data){
             try{
-                if(!$this->studentsModel->belongsToAdviser($data['student_id'], $_SESSION['id'])){
-                    FlashMessage::setFlash('error', 'You are not authorized to add academic records for this student.');
-                    header('Location: ../../../resources/views/teacher/academic.php');
-                    exit();
+                $teacherId = (int) ($_SESSION['id'] ?? 0);
+                if(!$this->studentsModel->belongsToAdviser($data['student_id'], $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to add academic records for this student.'];
                 }
+                $data['recorded_by'] = $teacherId;
                 if($this->model->create($data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
@@ -67,29 +43,27 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'Academic Profile',
                         null,
                         null,
-                        $_SESSION['full_name'] . ' Added an academic profile for student ID: ' . $data['student_id']
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' added an academic record for student ' . $data['student_id']
                     );
-                    FlashMessage::setFlash('success', 'Academic profile created successfully.');
-                    header('Location: ../../../resources/views/teacher/academic.php');
-                    exit();
-                }else{
-                    FlashMessage::setFlash('error', 'Failed to create academic profile.');
-                    header('Location: ../../../resources/views/teacher/academic.php');
-                    exit();
+                    return ['success' => true, 'message' => 'Academic record added successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to add academic record.'];
             }catch(Exception $e){
-                error_log("Error in AcademicProfileController: " . $e->getMessage());
-                FlashMessage::setFlash('error', 'Failed to create academic profile.');
+                error_log("Error in AcademicProfileController::create: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong adding the academic record.'];
             }
         }
 
         public function update($id, $data){
             try{
-                if(!$this->studentsModel->belongsToAdviser($data['student_id'], $_SESSION['id'])){
-                    FlashMessage::setFlash('error', 'You are not authorized to update academic records for this student.');
-                    header('Location: ../../../resources/views/teacher/academic.php');
-                    exit();
+                $teacherId = (int) ($_SESSION['id'] ?? 0);
+                if(!$this->model->belongsToAdviser($id, $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to update this academic record.'];
                 }
+                if(!$this->studentsModel->belongsToAdviser($data['student_id'], $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to update academic records for this student.'];
+                }
+                $data['recorded_by'] = $teacherId;
                 if($this->model->update($id, $data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
@@ -98,24 +72,23 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'Academic Profile',
                         $id,
                         null,
-                        $_SESSION['full_name'] . ' Updated an academic profile with ID: ' . $id
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' updated an academic record with ID: ' . $id
                     );
-                    FlashMessage::setFlash('success', 'Academic profile updated successfully.');
-                    header('Location: ../../../resources/views/teacher/academic.php');
-                    exit();
-                }else{
-                    FlashMessage::setFlash('error', 'Failed to update academic profile.');
-                    header('Location: ../../../resources/views/teacher/academic.php');
-                    exit();
+                    return ['success' => true, 'message' => 'Academic record updated successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to update academic record.'];
             }catch(Exception $e){
-                error_log("Error in AcademicProfileController: " . $e->getMessage());
-                FlashMessage::setFlash('error', 'Failed to update academic profile.');
+                error_log("Error in AcademicProfileController::update: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong updating the academic record.'];
             }
         }
 
         public function delete($id){
             try{
+                $teacherId = (int) ($_SESSION['id'] ?? 0);
+                if(!$this->model->belongsToAdviser($id, $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to delete this academic record.'];
+                }
                 if($this->model->delete($id)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
@@ -124,73 +97,73 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'Academic Profile',
                         $id,
                         null,
-                        $_SESSION['full_name'] . ' Deleted an academic profile with ID: ' . $id
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' deleted an academic record with ID: ' . $id
                     );
-                    FlashMessage::setFlash('success', 'Academic profile deleted successfully.');
-                    header('Location: ../../../resources/views/teacher/academic.php');
-                    exit();
+                    return ['success' => true, 'message' => 'Academic record deleted successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to delete academic record.'];
             }catch(Exception $e){
-                error_log("Error in AcademicProfileController: " . $e->getMessage());
-                FlashMessage::setFlash('error', 'Failed to delete academic profile.');
+                error_log("Error in AcademicProfileController::delete: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong deleting the academic record.'];
             }
         }
     }
 
     try{
         $controller = new AcademicProfileController($con);
-        $filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-        $academicProfiles = $controller->index($filter_student_id, $page);
-        $students = $controller->getStudents();
-        $school_years = $controller->getSchoolYears();
-        $filtered_student = null;
-        if($filter_student_id !== null){
-            foreach($students as $s){
-                if((int) $s['id'] === $filter_student_id){
-                    $filtered_student = $s;
+        $method = $_SERVER['REQUEST_METHOD'];
+        header('Content-Type: application/json');
+
+        switch($method){
+            case 'GET':
+                $studentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
+                echo json_encode(['success' => true, 'data' => $controller->index($studentId)]);
+                break;
+
+            case 'POST':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                if(!is_array($data)){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
                     break;
                 }
-            }
-        }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->create($data));
+                break;
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            Csrf::requireValidOnPost('../../../resources/views/teacher/academic.php');
-            $academic_id = $_POST['id'] ?? null;
+            case 'PUT':
+            case 'PATCH':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                if(!is_array($data) || !isset($data['id'])){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
+                    break;
+                }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->update((int) $data['id'], $data));
+                break;
 
-            if(isset($_POST['add_academic_profile'])){
-                $controller->create(
-                    [
-                        'student_id' => $_POST['student_id'],
-                        'school_year_id' => $_POST['school_year_id'],
-                        'subject_name' => $_POST['subject_name'],
-                        'grading_period' => $_POST['grading_period'],
-                        'grade' => $_POST['grade'],
-                        'remarks' => $_POST['remarks'],
-                        'recorded_by' => $_SESSION['id']
-                    ]
-                );
-            }
+            case 'DELETE':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                $id = isset($data['id']) ? (int) $data['id'] : (isset($_GET['id']) ? (int) $_GET['id'] : null);
+                if(!$id){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Missing record id.']);
+                    break;
+                }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->delete($id));
+                break;
 
-            if(isset($_POST['update_academic_profile']) && $academic_id !== null){
-                $controller->update(
-                    $academic_id,
-                    [
-                        'student_id' => $_POST['student_id'],
-                        'school_year_id' => $_POST['school_year_id'],
-                        'subject_name' => $_POST['subject_name'],
-                        'grading_period' => $_POST['grading_period'],
-                        'grade' => $_POST['grade'],
-                        'remarks' => $_POST['remarks'],
-                        'recorded_by' => $_SESSION['id']
-                    ]
-                );
-            }
-
-            if(isset($_POST['delete_academic_profile']) && $academic_id !== null){
-                $controller->delete($academic_id);
-            }
+            default:
+                http_response_code(405);
+                echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
         }
     }catch(Exception $e){
-        error_log("Error in AcademicProfileController: " . $e->getMessage());
+        error_log("Error in AcademicProfileController endpoint: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Something went wrong.']);
     }

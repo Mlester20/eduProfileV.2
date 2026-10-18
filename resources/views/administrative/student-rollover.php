@@ -40,15 +40,28 @@ AuthRole::allowOnly(['administrative']);
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <form action="student-rollover.php" method="get" class="d-flex align-items-center gap-2">
-            <label for="filter_school_year_id" class="form-label mb-0">From School Year</label>
-            <select class="form-select" id="filter_school_year_id" name="school_year_id" onchange="this.form.submit()">
-                <option value="" <?php echo $school_year_filter === null ? 'selected' : ''; ?>>-- Choose School Year --</option>
-                <?php foreach(($school_years ?? []) as $school_year): ?>
-                    <option value="<?php echo htmlspecialchars($school_year['id']); ?>" <?php echo ($school_year_filter !== null && (int) $school_year_filter === (int) $school_year['id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($school_year['school_year']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <div>
+                <label for="filter_school_year_id" class="form-label mb-0">From School Year</label>
+                <select class="form-select" id="filter_school_year_id" name="school_year_id" onchange="this.form.submit()">
+                    <option value="" <?php echo $school_year_filter === null ? 'selected' : ''; ?>>-- Choose School Year --</option>
+                    <?php foreach(($school_years ?? []) as $school_year): ?>
+                        <option value="<?php echo htmlspecialchars($school_year['id']); ?>" <?php echo ($school_year_filter !== null && (int) $school_year_filter === (int) $school_year['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($school_year['school_year']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="filter_section_id" class="form-label mb-0">Section</label>
+                <select class="form-select" id="filter_section_id" name="section_id" onchange="this.form.submit()">
+                    <option value="">-- All Sections --</option>
+                    <?php foreach(($all_sections ?? []) as $section): ?>
+                        <option value="<?php echo htmlspecialchars($section['id']); ?>" <?php echo ($section_filter !== null && (int) $section_filter === (int) $section['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars(($section['grade_level_name'] ?? '') . ' - ' . $section['section_name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </form>
     </div>
 
@@ -58,7 +71,7 @@ AuthRole::allowOnly(['administrative']);
             <?php if($school_year_filter === null): ?>
                 <p class="text-muted mb-0">Choose a school year above to see its active students.</p>
             <?php elseif(empty($rolloverCandidates)): ?>
-                <p class="text-muted mb-0">No active students found for the selected school year.</p>
+                <p class="text-muted mb-0">No active students found for the selected school year<?php echo $section_filter !== null ? ' and section' : ''; ?>.</p>
             <?php else: ?>
                 <form action="../../../app/controllers/administrative/studentrollovercontroller.php" method="post" id="rolloverForm">
                     <?= Csrf::field() ?>

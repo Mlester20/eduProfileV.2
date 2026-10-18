@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function index(){
             try{
-                $query = "SELECT id, full_name, email, role, status FROM {$this->users} ORDER BY id ASC";
+                $query = "SELECT id, full_name, email, contact_number, address, birth_date, sex, role, status FROM {$this->users} ORDER BY id ASC";
                 $stmt = $this->con->prepare($query);
                 $stmt->execute();
                 $users = $stmt->get_result();
@@ -20,7 +20,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function indexByRole($role){
             try{
-                $query = "SELECT id, full_name, email, role, status FROM {$this->users} WHERE role = ? ORDER BY full_name ASC";
+                $query = "SELECT id, full_name, email, contact_number, address, birth_date, sex, role, status FROM {$this->users} WHERE role = ? ORDER BY full_name ASC";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("s", $role);
                 $stmt->execute();
@@ -47,13 +47,27 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function create($data){
             try{
-                $query = "INSERT INTO {$this->users} (full_name, email, password, role) VALUES (?, ?, ?, ?)";
+                $query = "INSERT INTO {$this->users} (full_name, email, contact_number, address, birth_date, sex, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $this->con->prepare($query);
                 $hashedPassword = HashPassword::passwordHash($data['password']);
                 if(!$stmt){
                     throw new Exception("Error preparing statement");
                 }
-                $stmt->bind_param("ssss", $data['full_name'], $data['email'], $hashedPassword, $data['role']);
+                $contactNumber = $data['contact_number'] ?? null;
+                $address = $data['address'] ?? null;
+                $birthDate = !empty($data['birth_date']) ? $data['birth_date'] : null;
+                $sex = $data['sex'] ?? null;
+                $stmt->bind_param(
+                    "ssssssss",
+                    $data['full_name'],
+                    $data['email'],
+                    $contactNumber,
+                    $address,
+                    $birthDate,
+                    $sex,
+                    $hashedPassword,
+                    $data['role']
+                );
                 $stmt->execute();
                 return true;
             }catch(Exception $e){
@@ -64,12 +78,26 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function update($id, $data){
             try{
-                $query = "UPDATE {$this->users} SET full_name = ?, email = ?, role = ? WHERE id = ?";
+                $query = "UPDATE {$this->users} SET full_name = ?, email = ?, contact_number = ?, address = ?, birth_date = ?, sex = ?, role = ? WHERE id = ?";
                 $stmt = $this->con->prepare($query);
                 if(!$stmt){
                     throw new Exception("Error preparing statement");
                 }
-                $stmt->bind_param("sssi", $data['full_name'], $data['email'], $data['role'], $id);
+                $contactNumber = $data['contact_number'] ?? null;
+                $address = $data['address'] ?? null;
+                $birthDate = !empty($data['birth_date']) ? $data['birth_date'] : null;
+                $sex = $data['sex'] ?? null;
+                $stmt->bind_param(
+                    "sssssssi",
+                    $data['full_name'],
+                    $data['email'],
+                    $contactNumber,
+                    $address,
+                    $birthDate,
+                    $sex,
+                    $data['role'],
+                    $id
+                );
                 $stmt->execute();
                 return true;
             }catch(Exception $e){

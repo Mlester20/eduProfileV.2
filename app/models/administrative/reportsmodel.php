@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $grade_levels = 'grade_levels';
         protected $school_year = 'school_year';
-        protected $section_teacher_assignments = 'section_teacher_assignments';
+        protected $section_teacher_assignments = 'latest_section_teacher_assignments';
         protected $users = 'users';
         protected $academic_profiles = 'academic_profiles';
         protected $health_profiles = 'health_profiles';
@@ -58,12 +58,22 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function getSectionEnrollment($schoolYearId, $gradeLevelId = null){
             try{
+                // "Lastname, Firstname Middlename" — same formatting as the
+                // Manage Grade Levels & Section table's assigned_teacher
+                // column — then sorted alphabetically by that last name
+                // instead of by grade/section.
                 $query = "SELECT
                         sec.id AS section_id,
                         sec.section_name,
                         gl.grade_name,
-                        COALESCE(tu.full_name, adv.full_name) AS teacher_name,
-                        COUNT(DISTINCT s.id) AS learner_count
+                        CONCAT(
+                            SUBSTRING_INDEX(COALESCE(tu.full_name, adv.full_name), ' ', -1),
+                            ', ',
+                            TRIM(REPLACE(COALESCE(tu.full_name, adv.full_name), SUBSTRING_INDEX(COALESCE(tu.full_name, adv.full_name), ' ', -1), ''))
+                        ) AS teacher_name,
+                        COUNT(DISTINCT s.id) AS learner_count,
+                        COUNT(DISTINCT CASE WHEN s.gender = 'Male' THEN s.id END) AS male_count,
+                        COUNT(DISTINCT CASE WHEN s.gender = 'Female' THEN s.id END) AS female_count
                     FROM {$this->sections} sec
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
                     LEFT JOIN {$this->students} s ON s.section_id = sec.id AND s.school_year_id = ? AND s.status = 'active'
@@ -78,7 +88,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     $types .= "i";
                     $params[] = $gradeLevelId;
                 }
-                $query .= " GROUP BY sec.id ORDER BY gl.grade_name ASC, sec.section_name ASC";
+                $query .= " GROUP BY sec.id ORDER BY teacher_name ASC";
 
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param($types, ...$params);

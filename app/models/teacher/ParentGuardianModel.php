@@ -31,6 +31,31 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        /**
+         * The single parent/guardian row for one student, scoped to the
+         * given teacher's own advisees. Returns null if none recorded yet.
+         */
+
+        public function getByStudent($studentId, $teacherId){
+            try{
+                $query = "SELECT pg.*
+                    FROM {$this->parent_guardian} pg
+                    LEFT JOIN {$this->students} s ON pg.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE pg.student_id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                    LIMIT 1
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $studentId, $teacherId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_assoc();
+            }catch(Exception $e){
+                error_log("Error fetching parent/guardian for student: " . $e->getMessage());
+                return null;
+            }
+        }
+
         public function index(){
             try{
                 $query = "SELECT

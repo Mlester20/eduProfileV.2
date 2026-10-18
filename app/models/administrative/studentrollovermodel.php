@@ -6,7 +6,15 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $grade_levels = 'grade_levels';
 
-        public function getActiveStudentsBySchoolYear($schoolYearId){
+        /**
+         * Optional $sectionId narrows the rollover roster to one section at
+         * a time -- without it, every active student across every section
+         * is listed together, which gets unmanageable fast on a school with
+         * several sections. Default order groups by section first (sec.id)
+         * so the unfiltered "all sections" view is still scannable.
+         */
+
+        public function getActiveStudentsBySchoolYear($schoolYearId, $sectionId = null){
             try{
                 $query = "SELECT
                     s.*,
@@ -15,11 +23,18 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->students} s
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
-                    WHERE s.school_year_id = ? AND s.status = 'active'
-                    ORDER BY s.last_name ASC, s.first_name ASC
-                ";
+                    WHERE s.school_year_id = ? AND s.status = 'active'";
+                $types = "i";
+                $params = [$schoolYearId];
+                if($sectionId !== null){
+                    $query .= " AND s.section_id = ?";
+                    $types .= "i";
+                    $params[] = $sectionId;
+                }
+                $query .= " ORDER BY sec.id ASC, s.last_name ASC, s.first_name ASC";
+
                 $stmt = $this->con->prepare($query);
-                $stmt->bind_param("i", $schoolYearId);
+                $stmt->bind_param($types, ...$params);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 return $result->fetch_all(MYSQLI_ASSOC);

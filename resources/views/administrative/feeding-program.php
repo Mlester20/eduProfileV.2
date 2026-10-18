@@ -4,6 +4,23 @@ require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
 require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
+
+// "Export this one section" vs "export every flagged learner" is just
+// whatever the current school year/section filters already narrowed
+// $feedingProgramLearners down to — no separate scope logic needed.
+$sectionLabel = 'All Sections';
+foreach(($sections ?? []) as $sec){
+    if($section_filter !== null && (int) $section_filter === (int) $sec['id']){
+        $sectionLabel = trim(($sec['grade_level_name'] ?? '') . ' - ' . ($sec['section_name'] ?? ''));
+        break;
+    }
+}
+
+if(isset($_GET['export']) && $_GET['export'] === 'xlsx'){
+    require_once __DIR__ . '/../../../app/services/FeedingProgramExportService.php';
+    FeedingProgramExportService::exportXlsx($feedingProgramLearners, $sectionLabel, true);
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html
@@ -37,6 +54,22 @@ AuthRole::allowOnly(['administrative']);
 
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
+
+    <div class="d-flex justify-content-end gap-2 mb-2">
+        <a
+            href="?<?php echo htmlspecialchars(http_build_query(array_filter(['school_year_id' => $school_year_filter, 'section_id' => $section_filter]))); ?>&export=xlsx"
+            class="btn btn-outline-success"
+        >
+            <i class="bx bx-download"></i> Export to Excel
+        </a>
+        <a
+            href="feeding-program-print.php?school_year_id=<?php echo urlencode((string) ($school_year_filter ?? '')); ?>&section_id=<?php echo urlencode((string) ($section_filter ?? '')); ?>"
+            target="_blank"
+            class="btn btn-outline-primary"
+        >
+            <i class="bx bx-printer"></i> Print
+        </a>
+    </div>
 
     <form action="feeding-program.php" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div>
@@ -81,7 +114,6 @@ AuthRole::allowOnly(['administrative']);
                         <th>Assigned Teacher</th>
                         <th>BMI</th>
                         <th>Status</th>
-                        <th>AI Insight</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,27 +129,17 @@ AuthRole::allowOnly(['administrative']);
                                 <?php $classBadge = ($learner['bmi_classification'] ?? '') === 'Severely Wasted' ? 'bg-label-danger' : 'bg-label-warning'; ?>
                                 <span class="badge <?php echo $classBadge; ?>"><?php echo htmlspecialchars($learner['bmi_classification'] ?? ''); ?></span>
                             </td>
-                            <td style="min-width: 260px;">
-                                <div class="insight-cell" data-student-id="<?php echo (int) $learner['student_id']; ?>" data-school-year-id="<?php echo (int) $learner['school_year_id']; ?>">
-                                    <p class="insight-text small mb-1"><?php echo $learner['insight_text'] ? nl2br(htmlspecialchars($learner['insight_text'])) : '<span class="text-muted">No insight generated yet.</span>'; ?></p>
-                                    <button type="button" class="btn btn-sm btn-outline-primary generate-insight-btn" onclick="generateInsight(this)">
-                                        <?php echo $learner['insight_text'] ? 'Regenerate' : 'Generate Insight'; ?>
-                                    </button>
-                                </div>
-                            </td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if(empty($feedingProgramLearners)): ?>
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No learners currently flagged for the selected filters.</td>
+                            <td colspan="7" class="text-center text-muted">No learners currently flagged for the selected filters.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <?= Csrf::field() ?>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>
 
@@ -129,46 +151,5 @@ AuthRole::allowOnly(['administrative']);
   <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
   <script src="../../../public/assets/vendor/js/menu.js"></script>
   <script src="../../../public/assets/js/main.js"></script>
-  <script>
-    function generateInsight(button){
-        const cell = button.closest('.insight-cell');
-        const studentId = cell.dataset.studentId;
-        const schoolYearId = cell.dataset.schoolYearId;
-        const textEl = cell.querySelector('.insight-text');
-        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
-
-        button.disabled = true;
-        const originalLabel = button.textContent;
-        button.textContent = 'Generating...';
-
-        const params = new URLSearchParams();
-        params.set('student_id', studentId);
-        params.set('school_year_id', schoolYearId);
-        params.set('csrf_token', csrfToken);
-
-        fetch('../../../app/controllers/administrative/feedinginsightcontroller.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params.toString()
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success){
-                textEl.textContent = data.insight;
-                button.textContent = 'Regenerate';
-            }else{
-                alert(data.message || 'Failed to generate insight.');
-                button.textContent = originalLabel;
-            }
-        })
-        .catch(() => {
-            alert('Network error while generating insight.');
-            button.textContent = originalLabel;
-        })
-        .finally(() => {
-            button.disabled = false;
-        });
-    }
-  </script>
 </body>
 </html>

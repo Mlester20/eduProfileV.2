@@ -34,7 +34,7 @@ AuthRole::allowOnly([$role]);
     <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
-    <link rel="stylesheet" href="../../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/libs/apex-charts/apex-charts.css" />
     <script src="../../../public/assets/vendor/js/helpers.js"></script>
     <script src="../../../public/assets/js/config.js"></script>
@@ -137,17 +137,19 @@ AuthRole::allowOnly([$role]);
               <th>School Year</th>
               <th>Start Date</th>
               <th>End Date</th>
+              <th>Added At</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($school_years as $sy): ?>
+            <?php foreach ($school_years as $index => $sy): ?>
                 <tr>
-                  <td><?= htmlspecialchars($sy['id']); ?></td>
+                  <td><?= $index + 1 ?></td>
                   <td><?= htmlspecialchars($sy['school_year']); ?></td>
                   <td><?= htmlspecialchars($sy['start_date']); ?></td>
                   <td><?= htmlspecialchars($sy['end_date']); ?> </td>
+                  <td><?= htmlspecialchars(date('F d, Y', strtotime($sy['created_at']))); ?></td>
                   <td>
                       <?php
                           $status = strtolower($sy['status']);

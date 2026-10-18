@@ -101,6 +101,25 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        public function belongsToAdviser($id, $teacher_id){
+            try{
+                $query = "SELECT ap.id
+                    FROM {$this->academic_profiles} ap
+                    LEFT JOIN {$this->student} s ON ap.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE ap.id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $id, $teacher_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->num_rows > 0;
+            }catch(Exception $e){
+                error_log("Error checking academic record ownership: " . $e->getMessage());
+                return false;
+            }
+        }
+
         public function create($data){
             try{
                 $insert = "INSERT INTO {$this->academic_profiles} (student_id, school_year_id,subject_name, grading_period, grade, remarks, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -158,26 +177,26 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function update($id, $data){
            try{
-                $update = "UPDATE {$this->academic_profiles} SET 
-                    student_id = ?, 
+                $update = "UPDATE {$this->academic_profiles} SET
+                    student_id = ?,
                     school_year_id = ?,
-                    subject_name = ?, 
-                    grading_period = ?, 
-                    grade = ?, 
-                    remarks = ?, 
+                    subject_name = ?,
+                    grading_period = ?,
+                    grade = ?,
+                    remarks = ?,
                     recorded_by = ?
                     WHERE id = ?";
                 $stmt = $this->con->prepare($update);
                 $stmt->bind_param(
-                    "iissssi",
+                    "iissssii",
                     $data['student_id'],
                     $data['school_year_id'],
                     $data['subject_name'],
                     $data['grading_period'],
-                    $data['grade'], 
-                    $data['remarks'], 
+                    $data['grade'],
+                    $data['remarks'],
                     $data['recorded_by'],
-                    $data['id']
+                    $id
                 );
                 $stmt->execute();
                 return true;

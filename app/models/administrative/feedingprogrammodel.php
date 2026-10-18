@@ -6,8 +6,7 @@ require_once __DIR__ . '/../../core/Model.php';
      * (SBFP) based on their recorded BMI classification — the same
      * eligibility criteria DepEd itself uses (Severely Wasted / Wasted on
      * a learner's nutritional status). Structured the same way as
-     * AtRiskModel: one query builder shared by the listing, the count,
-     * and the single-student lookup used for the AI insight prompt.
+     * AtRiskModel: one query builder shared by the listing and the count.
      *
      * health_profiles holds one row per student ever (not per school
      * year — see its uniq_student_health_profile key), so a student only
@@ -20,19 +19,20 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $grade_levels = 'grade_levels';
         protected $school_year = 'school_year';
-        protected $section_teacher_assignments = 'section_teacher_assignments';
+        protected $section_teacher_assignments = 'latest_section_teacher_assignments';
         protected $users = 'users';
         protected $health_profiles = 'health_profiles';
 
         /** DepEd SBFP eligibility: undernourished classifications only. */
         const TARGET_CLASSIFICATIONS = ['Severely Wasted', 'Wasted'];
 
-        private function buildQuery($schoolYearId, $sectionId, $selectExtra = '', $studentId = null, $teacherId = null){
+        private function buildQuery($schoolYearId, $sectionId, $selectExtra = '', $teacherId = null, $gradeLevelId = null){
             $types = "";
             $params = [];
 
             $query = "SELECT {$selectExtra}
                     s.id AS student_id,
+                    s.lrn AS lrn,
                     s.school_year_id AS school_year_id,
                     s.first_name AS student_first_name,
                     s.middle_name AS student_middle_name,
@@ -66,37 +66,33 @@ require_once __DIR__ . '/../../core/Model.php';
                 $types .= "i";
                 $params[] = $sectionId;
             }
-            if($studentId !== null){
-                $query .= " AND s.id = ?";
-                $types .= "i";
-                $params[] = $studentId;
-            }
             if($teacherId !== null){
-                // Same security boundary as AtRiskModel: a teacher can
-                // never fetch/generate an insight for a student who
-                // isn't theirs, since the row simply won't match.
+                // Same security boundary as AtRiskModel: a teacher only
+                // ever sees their own advisees, since the row simply
+                // won't match otherwise.
                 $query .= " AND sec.adviser_id = ?";
                 $types .= "i";
                 $params[] = $teacherId;
             }
+            if($gradeLevelId !== null){
+                $query .= " AND sec.grade_level_id = ?";
+                $types .= "i";
+                $params[] = $gradeLevelId;
+            }
 
-            // Looking up one known student (getMetricsForStudent) skips the
-            // classification gate — we already know why they're flagged.
-            if($studentId === null){
-                $placeholders = implode(',', array_fill(0, count(self::TARGET_CLASSIFICATIONS), '?'));
-                $query .= " AND hp.bmi_classification IN ({$placeholders})";
-                foreach(self::TARGET_CLASSIFICATIONS as $classification){
-                    $types .= "s";
-                    $params[] = $classification;
-                }
+            $placeholders = implode(',', array_fill(0, count(self::TARGET_CLASSIFICATIONS), '?'));
+            $query .= " AND hp.bmi_classification IN ({$placeholders})";
+            foreach(self::TARGET_CLASSIFICATIONS as $classification){
+                $types .= "s";
+                $params[] = $classification;
             }
 
             return [$query, $types, $params];
         }
 
-        public function getFlaggedLearners($schoolYearId = null, $sectionId = null, $teacherId = null){
+        public function getFlaggedLearners($schoolYearId = null, $sectionId = null, $teacherId = null, $gradeLevelId = null){
             try{
-                [$query, $types, $params] = $this->buildQuery($schoolYearId, $sectionId, '', null, $teacherId);
+                [$query, $types, $params] = $this->buildQuery($schoolYearId, $sectionId, '', $teacherId, $gradeLevelId);
                 $query .= " ORDER BY s.last_name ASC, s.first_name ASC";
 
                 $stmt = $this->con->prepare($query);
@@ -114,7 +110,7 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function countFlagged($schoolYearId = null, $teacherId = null){
             try{
-                [$innerQuery, $types, $params] = $this->buildQuery($schoolYearId, null, '', null, $teacherId);
+                [$innerQuery, $types, $params] = $this->buildQuery($schoolYearId, null, '', $teacherId);
                 $query = "SELECT COUNT(*) AS total FROM ({$innerQuery}) AS feeding_program";
 
                 $stmt = $this->con->prepare($query);
@@ -130,47 +126,4 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function getMetricsForStudent($studentId, $schoolYearId = null, $teacherId = null){
-            try{
-                [$query, $types, $params] = $this->buildQuery($schoolYearId, null, '', $studentId, $teacherId);
-                $stmt = $this->con->prepare($query);
-                if($types !== ""){
-                    $stmt->bind_param($types, ...$params);
-                }
-                $stmt->execute();
-                $result = $stmt->get_result();
-                return $result->fetch_assoc();
-            }catch(Exception $e){
-                error_log("Error fetching feeding program metrics for student: " . $e->getMessage());
-                return null;
-            }
-        }
-
-        public function getInsight($studentId, $schoolYearId){
-            try{
-                $query = "SELECT insight_text, generated_at FROM feeding_program_insights WHERE student_id = ? AND school_year_id = ? LIMIT 1";
-                $stmt = $this->con->prepare($query);
-                $stmt->bind_param("ii", $studentId, $schoolYearId);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                return $result->fetch_assoc();
-            }catch(Exception $e){
-                error_log("Error fetching feeding program insight: " . $e->getMessage());
-                return null;
-            }
-        }
-
-        public function saveInsight($studentId, $schoolYearId, $text){
-            try{
-                $query = "INSERT INTO feeding_program_insights (student_id, school_year_id, insight_text) VALUES (?, ?, ?)
-                    ON DUPLICATE KEY UPDATE insight_text = VALUES(insight_text), generated_at = CURRENT_TIMESTAMP";
-                $stmt = $this->con->prepare($query);
-                $stmt->bind_param("iis", $studentId, $schoolYearId, $text);
-                $stmt->execute();
-                return true;
-            }catch(Exception $e){
-                error_log("Error saving feeding program insight: " . $e->getMessage());
-                return false;
-            }
-        }
     }

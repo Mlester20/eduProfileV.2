@@ -129,14 +129,8 @@ $moduleIcons = [
                     <a href="students.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-user text-primary"></i> Manage Students
                     </a>
-                    <a href="academic.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-book text-primary"></i> Academic Records
-                    </a>
-                    <a href="student-health.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-band-aid text-primary"></i> Health Profiles
-                    </a>
-                    <a href="parent-guardian.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-group text-primary"></i> Parent/Guardian
+                    <a href="students.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                        <i class="bx bx-book text-primary"></i> Academic, Health &amp; Reading Records
                     </a>
                     <a href="past-records.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
                         <i class="bx bx-history text-primary"></i> Past Records

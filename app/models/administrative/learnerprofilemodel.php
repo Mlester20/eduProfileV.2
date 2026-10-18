@@ -54,8 +54,49 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function getPage($limit, $offset, $status = null){
+        /**
+         * Shared WHERE-clause builder for getPage()/countAll() — section_id
+         * and school_year_id together are how the Reports > Overview page
+         * links into "this section's roster, as of that snapshot" instead
+         * of the full school-wide list.
+         */
+
+        private function buildMasterListFilter($status, $sectionId, $schoolYearId, $gender = null, $gradeLevelId = null){
+            $where = [];
+            $types = "";
+            $params = [];
+            if($status !== null){
+                $where[] = "s.status = ?";
+                $types .= "s";
+                $params[] = $status;
+            }
+            if($sectionId !== null){
+                $where[] = "s.section_id = ?";
+                $types .= "i";
+                $params[] = $sectionId;
+            }
+            if($schoolYearId !== null){
+                $where[] = "s.school_year_id = ?";
+                $types .= "i";
+                $params[] = $schoolYearId;
+            }
+            if($gender !== null){
+                $where[] = "s.gender = ?";
+                $types .= "s";
+                $params[] = $gender;
+            }
+            if($gradeLevelId !== null){
+                $where[] = "sec.grade_level_id = ?";
+                $types .= "i";
+                $params[] = $gradeLevelId;
+            }
+            $clause = $where ? (" WHERE " . implode(" AND ", $where)) : "";
+            return [$clause, $types, $params];
+        }
+
+        public function getPage($limit, $offset, $status = null, $sectionId = null, $schoolYearId = null, $gender = null, $gradeLevelId = null){
             try{
+                [$whereClause, $types, $params] = $this->buildMasterListFilter($status, $sectionId, $schoolYearId, $gender, $gradeLevelId);
                 $query = "SELECT
                     s.id,
                     s.lrn,
@@ -71,15 +112,8 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
-                ";
-                $types = "";
-                $params = [];
-                if($status !== null){
-                    $query .= " WHERE s.status = ?";
-                    $types .= "s";
-                    $params[] = $status;
-                }
-                $query .= " ORDER BY s.last_name ASC, s.first_name ASC, sy.id DESC LIMIT ? OFFSET ?";
+                    {$whereClause}
+                    ORDER BY s.last_name ASC, s.first_name ASC, sy.id DESC LIMIT ? OFFSET ?";
                 $types .= "ii";
                 $params[] = $limit;
                 $params[] = $offset;
@@ -95,16 +129,11 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function countAll($status = null){
+        public function countAll($status = null, $sectionId = null, $schoolYearId = null, $gender = null, $gradeLevelId = null){
             try{
-                $query = "SELECT COUNT(*) AS total FROM {$this->students} s";
-                $types = "";
-                $params = [];
-                if($status !== null){
-                    $query .= " WHERE s.status = ?";
-                    $types .= "s";
-                    $params[] = $status;
-                }
+                [$whereClause, $types, $params] = $this->buildMasterListFilter($status, $sectionId, $schoolYearId, $gender, $gradeLevelId);
+                $joinSections = $gradeLevelId !== null ? " LEFT JOIN {$this->sections} sec ON s.section_id = sec.id" : "";
+                $query = "SELECT COUNT(*) AS total FROM {$this->students} s{$joinSections}{$whereClause}";
                 $stmt = $this->con->prepare($query);
                 if($types !== ""){
                     $stmt->bind_param($types, ...$params);

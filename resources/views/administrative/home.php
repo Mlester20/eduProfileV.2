@@ -10,7 +10,6 @@ AuthRole::allowOnly(['administrative']);
 $dashboard = new AdminDashboardController($con);
 $stats = $dashboard->getStats();
 $recentActivity = $dashboard->getRecentActivity(8);
-$cachedSummary = $dashboard->getCachedSummary($stats['active_school_year']['id'] ?? null);
 
 $moduleIcons = [
     'Students' => 'bx-user',
@@ -76,10 +75,10 @@ $moduleIcons = [
   <?php endif; ?>
 
   <!-- Stat cards -->
-  <div class="row">
-      <div class="col-md-3 col-sm-6 mb-4">
-          <div class="card h-100">
-              <div class="card-body d-flex justify-content-between align-items-start">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-4 mb-1">
+      <div class="col">
+          <div class="card h-100 stat-card stat-card-primary">
+              <a href="learner-profile.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                   <div>
                       <span class="text-muted d-block mb-1">Active Learners</span>
                       <h3 class="mb-0"><?php echo (int) $stats['active_learners']; ?></h3>
@@ -88,12 +87,12 @@ $moduleIcons = [
                   <div class="avatar">
                       <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-user fs-4"></i></span>
                   </div>
-              </div>
+              </a>
           </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-4">
-          <div class="card h-100">
-              <div class="card-body d-flex justify-content-between align-items-start">
+      <div class="col">
+          <div class="card h-100 stat-card stat-card-info">
+              <a href="grade-level.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                   <div>
                       <span class="text-muted d-block mb-1">Sections</span>
                       <h3 class="mb-0"><?php echo (int) $stats['total_sections']; ?></h3>
@@ -102,12 +101,12 @@ $moduleIcons = [
                   <div class="avatar">
                       <span class="avatar-initial rounded bg-label-info"><i class="bx bx-building fs-4"></i></span>
                   </div>
-              </div>
+              </a>
           </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-4">
-          <div class="card h-100">
-              <div class="card-body d-flex justify-content-between align-items-start">
+      <div class="col">
+          <div class="card h-100 stat-card stat-card-warning">
+              <a href="teachers.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                   <div>
                       <span class="text-muted d-block mb-1">Teachers</span>
                       <h3 class="mb-0"><?php echo (int) $stats['total_teachers']; ?></h3>
@@ -115,12 +114,12 @@ $moduleIcons = [
                   <div class="avatar">
                       <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-chalkboard fs-4"></i></span>
                   </div>
-              </div>
+              </a>
           </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-4">
-          <div class="card h-100">
-              <div class="card-body d-flex justify-content-between align-items-start">
+      <div class="col">
+          <div class="card h-100 stat-card stat-card-success">
+              <a href="reports.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                   <div>
                       <span class="text-muted d-block mb-1">Records This Year</span>
                       <h3 class="mb-0"><?php echo (int) array_sum($stats['records']); ?></h3>
@@ -129,11 +128,11 @@ $moduleIcons = [
                   <div class="avatar">
                       <span class="avatar-initial rounded bg-label-success"><i class="bx bx-spreadsheet fs-4"></i></span>
                   </div>
-              </div>
+              </a>
           </div>
       </div>
-      <div class="col-md-3 col-sm-6 mb-4">
-          <div class="card h-100">
+      <div class="col">
+          <div class="card h-100 stat-card stat-card-danger">
               <a href="at-risk.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                   <div>
                       <span class="text-muted d-block mb-1">At-Risk Learners</span>
@@ -148,45 +147,9 @@ $moduleIcons = [
       </div>
   </div>
 
-  <!-- AI Summary -->
-  <div class="row">
-      <div class="col-12 mb-4">
-          <div class="card">
-              <h5 class="card-header d-flex align-items-center gap-2">
-                  <i class="bx bx-bulb text-warning"></i> AI Summary
-              </h5>
-              <div class="card-body">
-                  <p id="dashboardSummaryText" class="mb-3">
-                      <?php echo $cachedSummary ? nl2br(htmlspecialchars($cachedSummary['summary_text'])) : '<span class="text-muted">No summary generated yet.</span>'; ?>
-                  </p>
-                  <button type="button" class="btn btn-sm btn-outline-primary" id="generateSummaryBtn" onclick="generateDashboardSummary()">
-                      <?php echo $cachedSummary ? 'Regenerate Summary' : 'Generate Summary'; ?>
-                  </button>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <?= Csrf::field() ?>
-
-  <div class="row">
-      <!-- Records breakdown -->
-      <div class="col-lg-4 mb-4">
-          <div class="card h-100">
-              <h5 class="card-header">Records This Year</h5>
-              <div class="list-group list-group-flush">
-                  <?php foreach($stats['records'] as $category => $count): ?>
-                      <div class="list-group-item d-flex justify-content-between align-items-center">
-                          <span><?php echo htmlspecialchars($category); ?></span>
-                          <span class="badge bg-label-primary rounded-pill"><?php echo (int) $count; ?></span>
-                      </div>
-                  <?php endforeach; ?>
-              </div>
-          </div>
-      </div>
-
+  <div class="row mt-3">
       <!-- Quick links -->
-      <div class="col-lg-4 mb-4">
+      <div class="col-lg-6 mb-4">
           <div class="card h-100">
               <h5 class="card-header">Quick Links</h5>
               <div class="list-group list-group-flush">
@@ -207,7 +170,7 @@ $moduleIcons = [
       </div>
 
       <!-- Recent activity -->
-      <div class="col-lg-4 mb-4">
+      <div class="col-lg-6 mb-4">
           <div class="card h-100">
               <h5 class="card-header">Recent Activity</h5>
               <div class="list-group list-group-flush" style="max-height: 420px; overflow-y: auto;">
@@ -246,42 +209,5 @@ $moduleIcons = [
   <script src="../../../public/assets/vendor/js/menu.js"></script>
   <script src="../../../public/assets/js/main.js"></script>
   <script src="../../../public/js/administrative/home.js"></script>
-  <script>
-    function generateDashboardSummary(){
-        const button = document.getElementById('generateSummaryBtn');
-        const textEl = document.getElementById('dashboardSummaryText');
-        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
-
-        button.disabled = true;
-        const originalLabel = button.textContent;
-        button.textContent = 'Generating...';
-
-        const params = new URLSearchParams();
-        params.set('csrf_token', csrfToken);
-
-        fetch('../../../app/controllers/administrative/dashboardsummarycontroller.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params.toString()
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success){
-                textEl.textContent = data.summary;
-                button.textContent = 'Regenerate Summary';
-            }else{
-                alert(data.message || 'Failed to generate summary.');
-                button.textContent = originalLabel;
-            }
-        })
-        .catch(() => {
-            alert('Network error while generating summary.');
-            button.textContent = originalLabel;
-        })
-        .finally(() => {
-            button.disabled = false;
-        });
-    }
-  </script>
 </body>
 </html>

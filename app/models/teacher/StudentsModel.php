@@ -61,20 +61,21 @@ require_once __DIR__ . '/../../core/Model.php';
         public function create($data){
             try{
                 $insert = "INSERT INTO {$this->students}(
-                    lrn, first_name, middle_name, last_name, suffix, birth_date,
+                    lrn, first_name, middle_name, last_name, suffix, picture, birth_date,
                     age_as_of_june, gender, mother_tongue, ip_ethnic_group, religion,
                     house_number, street, sitio, purok, barangay, city_municipality, province,
                     learning_modality, remarks,
                     school_year_id, grade_level_id, section_id, recorded_by
-                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $this->con->prepare($insert);
                 $stmt->bind_param(
-                    "ssssssisssssssssssssiiii",
+                    "sssssssisssssssssssssiiii",
                     $data['lrn'],
                     $data['first_name'],
                     $data['middle_name'],
                     $data['last_name'],
                     $data['suffix'],
+                    $data['picture'],
                     $data['birth_date'],
                     $data['age_as_of_june'],
                     $data['gender'],
@@ -96,9 +97,52 @@ require_once __DIR__ . '/../../core/Model.php';
                     $data['recorded_by'],
                 );
                 $stmt->execute();
-                return true;
+                return $this->con->insert_id;
             }catch(Exception $e){
                 error_log("Error creating student " . $e->getMessage());
+                return false;
+            }
+        }
+
+        /**
+         * One student, scoped to this teacher's own advisees — used by the
+         * Edit Student tab to populate the modal via AJAX instead of the
+         * old raw-unescaped-into-inline-JS approach.
+         */
+
+        public function getById($id, $teacher_id){
+            try{
+                $query = "SELECT
+                    s.*,
+                    sy.school_year AS school_year,
+                    gl.grade_name AS grade_name,
+                    ss.section_name AS section_name
+                    FROM {$this->students} s
+                    LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
+                    LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
+                    LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
+                    WHERE s.id = ? AND ss.adviser_id = ? AND s.status = 'active'
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $id, $teacher_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->fetch_assoc();
+            }catch(Exception $e){
+                error_log("Error fetching student by id: " . $e->getMessage());
+                return null;
+            }
+        }
+
+        public function updatePicture($id, $picturePath){
+            try{
+                $query = "UPDATE {$this->students} SET picture = ? WHERE id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("si", $picturePath, $id);
+                $stmt->execute();
+                return true;
+            }catch(Exception $e){
+                error_log("Error updating student picture: " . $e->getMessage());
                 return false;
             }
         }
@@ -262,7 +306,7 @@ require_once __DIR__ . '/../../core/Model.php';
         public function update($id, $data){
             try{
                 $update = "UPDATE {$this->students} SET
-                    lrn = ?, first_name = ?, middle_name = ?, last_name = ?, suffix = ?, birth_date = ?,
+                    lrn = ?, first_name = ?, middle_name = ?, last_name = ?, suffix = ?, picture = ?, birth_date = ?,
                     age_as_of_june = ?, gender = ?, mother_tongue = ?, ip_ethnic_group = ?, religion = ?,
                     house_number = ?, street = ?, sitio = ?, purok = ?, barangay = ?, city_municipality = ?, province = ?,
                     learning_modality = ?, remarks = ?,
@@ -270,12 +314,13 @@ require_once __DIR__ . '/../../core/Model.php';
                     WHERE id = ? ";
                 $stmt = $this->con->prepare($update);
                 $stmt->bind_param(
-                    "ssssssisssssssssssssiiiii",
+                    "sssssssisssssssssssssiiiii",
                     $data['lrn'],
                     $data['first_name'],
                     $data['middle_name'],
                     $data['last_name'],
                     $data['suffix'],
+                    $data['picture'],
                     $data['birth_date'],
                     $data['age_as_of_june'],
                     $data['gender'],

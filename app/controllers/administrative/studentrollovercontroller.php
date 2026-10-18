@@ -26,11 +26,11 @@ AuthRole::allowOnly(['administrative']);
             $this->auditLogs = new AuditLogs($con);
         }
 
-        public function index($schoolYearId = null){
+        public function index($schoolYearId = null, $sectionId = null){
             if($schoolYearId === null){
                 return [];
             }
-            return $this->model->getActiveStudentsBySchoolYear($schoolYearId);
+            return $this->model->getActiveStudentsBySchoolYear($schoolYearId, $sectionId);
         }
 
         public function getSchoolYears(){
@@ -93,7 +93,8 @@ AuthRole::allowOnly(['administrative']);
     try{
         $controller = new StudentRolloverController($con);
         $school_year_filter = isset($_GET['school_year_id']) && $_GET['school_year_id'] !== '' ? (int) $_GET['school_year_id'] : null;
-        $rolloverCandidates = $controller->index($school_year_filter);
+        $section_filter = isset($_GET['section_id']) && $_GET['section_id'] !== '' ? (int) $_GET['section_id'] : null;
+        $rolloverCandidates = $controller->index($school_year_filter, $section_filter);
         $school_years = $controller->getSchoolYears();
         $all_sections = $controller->getAllSections();
 

@@ -1,4 +1,7 @@
 <?php
+if(session_status() === PHP_SESSION_NONE){
+    session_start();
+}
 
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../models/teacher/StudentHealthModel.php';
@@ -7,6 +10,7 @@ require_once __DIR__ . '/../../services/StudentHealthService.php';
 require_once __DIR__ . '/../../services/StudentService.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
+require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
@@ -74,6 +78,27 @@ require_once __DIR__ . '/../../../database/config/config.php';
             }));
         }
 
+        public function getByStudent($studentId){
+            if(!isset($_SESSION['id'])){
+                return null;
+            }
+            return $this->model->getByStudentId($studentId, (int) $_SESSION['id']);
+        }
+
+        public function upsert($data){
+            if(!isset($_SESSION['id'])){
+                return ['success' => false, 'message' => 'Not authenticated.'];
+            }
+            $teacher_id = (int) $_SESSION['id'];
+            $data['recorded_by'] = $teacher_id;
+
+            $existing = $this->model->getByStudentId((int) ($data['student_id'] ?? 0), $teacher_id);
+            if($existing){
+                return $this->update($existing['id'], $data);
+            }
+            return $this->create($data);
+        }
+
         public function create($data){
             if(!isset($_SESSION['id'])){
                 return ['success' => false, 'message' => 'Not authenticated.'];
@@ -92,7 +117,6 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     null,
                     ($_SESSION['full_name'] ?? 'A teacher') . ' Added Health Profile for ' . $data['student_id']
                 );
-                FlashMessage::setFlash('success', $result['message']);
             }
             return $result;
         }
@@ -112,9 +136,9 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     'Updating Student Health',
                     'Student Health',
                     $id,
+                    null,
                     ($_SESSION['full_name'] ?? 'A teacher') . ' Updated a Health Profile record ' . $data['student_id']
                 );
-                FlashMessage::setFlash('success', $result['message']);
             }
             return $result;
         }
@@ -136,8 +160,59 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     $id,
                     ($_SESSION['full_name'] ?? 'A teacher') . ' Deleted Health Profile record '
                 );
-                FlashMessage::setFlash('success', $result['message']);
             }
             return $result;
         }
+    }
+
+    try{
+        $controller = new StudentHealthController($con);
+        $method = $_SERVER['REQUEST_METHOD'];
+        header('Content-Type: application/json');
+
+        switch($method){
+            case 'GET':
+                if(isset($_GET['student_id'])){
+                    $record = $controller->getByStudent((int) $_GET['student_id']);
+                    echo json_encode(['success' => true, 'data' => $record]);
+                }else{
+                    $student_id = isset($_GET['filter_student_id']) ? (int) $_GET['filter_student_id'] : null;
+                    $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+                    echo json_encode(['success' => true, 'data' => $controller->index($student_id, $page)['data']]);
+                }
+                break;
+
+            case 'POST':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                if(!is_array($data)){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
+                    break;
+                }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->upsert($data));
+                break;
+
+            case 'DELETE':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                $id = isset($data['id']) ? (int) $data['id'] : (isset($_GET['id']) ? (int) $_GET['id'] : null);
+                if(!$id){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Missing record id.']);
+                    break;
+                }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->delete($id));
+                break;
+
+            default:
+                http_response_code(405);
+                echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
+        }
+    }catch(Exception $e){
+        error_log("Error in StudentHealthController endpoint: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Something went wrong.']);
     }

@@ -47,7 +47,7 @@ $moduleIcons = [
     <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
-    <link rel="stylesheet" href="../../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/libs/apex-charts/apex-charts.css" />
     <script src="../../../public/assets/vendor/js/helpers.js"></script>
     <script src="../../../public/assets/js/config.js"></script>
@@ -83,7 +83,7 @@ $moduleIcons = [
         <div class="alert alert-warning">
             <?php echo count($stats['sections_without_adviser']); ?> section(s) have no adviser assigned:
             <?php echo htmlspecialchars(implode(', ', array_map(function($s){ return $s['section_name']; }, $stats['sections_without_adviser']))); ?>.
-            <a href="sections.php" class="alert-link">Assign now</a>.
+            <a href="grade-level.php" class="alert-link">Assign now</a>.
         </div>
     <?php endif; ?>
 
@@ -185,10 +185,7 @@ $moduleIcons = [
                         <i class="bx bx-calendar text-primary"></i> Manage School Year
                     </a>
                     <a href="grade-level.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-note text-primary"></i> Manage Grade Levels
-                    </a>
-                    <a href="sections.php" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
-                        <i class="bx bx-building text-primary"></i> Manage Sections
+                        <i class="bx bx-note text-primary"></i> Manage Grade Levels & Section
                     </a>
                 </div>
             </div>

@@ -33,6 +33,13 @@
   z-index: auto;
 }
 
+/* SweetAlert2 toasts/modals getting covered by the topbar: .layout-navbar
+   jumps to z-index 1080 below 1200px width (core.css), beating SweetAlert2's
+   default 1060, so a top-end toast renders behind it instead of on top. */
+.swal2-container {
+  z-index: 1100 !important;
+}
+
 /*
 * Content
 ******************************************************************************/
@@ -104,3 +111,254 @@
   text-align: center;
   margin-top: 1rem;
 }
+
+/*
+* Clickable stat cards (dashboard cards whose body is an <a> wrapper) — kept
+* selector-simple (no :has()) for older-browser compatibility.
+******************************************************************************/
+
+a.card-body {
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+a.card-body:hover {
+  background-color: rgba(var(--bs-primary-rgb), .04);
+}
+
+/* Colored left-border accent, one shade per stat card so they read as
+   distinct at a glance instead of plain white cards with a small icon. */
+.stat-card {
+  border-left-width: .25rem;
+  border-left-style: solid;
+}
+.stat-card-primary { border-left-color: var(--bs-primary); }
+.stat-card-info     { border-left-color: var(--bs-info); }
+.stat-card-warning  { border-left-color: var(--bs-warning); }
+.stat-card-success  { border-left-color: var(--bs-success); }
+
+/* ============================================================
+   Sidebar — navy + amber/gold skin
+   The school seal (logo.png) has a warm gold ring and an
+   orange-red flame against a white center; the old flat medium
+   blue sidebar (#1E5A9E-ish) was close enough to the seal's own
+   outer blue ring that the two fought for attention instead of
+   one framing the other. A deep, desaturated navy background
+   lets the gold/orange of the seal read as the obvious accent,
+   and that same amber is reused sparingly for the active-item
+   indicator so the tie-in reads as intentional, not incidental.
+   Self-contained (does not extend .bg-menu-theme or
+   .menu.bg-primary) so it can be retuned without fighting
+   vendor cascade rules from core.css/theme-default.css.
+   ============================================================ */
+:root {
+  --sidebar-bg: #14274a;
+  --sidebar-text: #e6eaf2;
+  --sidebar-text-muted: #8a97b0;
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active-bg: rgba(245, 166, 35, 0.12);
+  --sidebar-accent: #f5a623;
+  --sidebar-divider: rgba(255, 255, 255, 0.18);
+}
+
+.sidebar-navy {
+  background-color: var(--sidebar-bg) !important;
+  color: var(--sidebar-text);
+}
+
+/* Logo / brand area: stays navy (same as the rest of the sidebar), with a
+   divider under it. margin-top: 0 overrides the unrelated .menu .app-brand
+   .demo rule at the top of this file, whose margin-top: 12px otherwise
+   left a sliver of the aside's own navy background visible above this
+   box. */
+.sidebar-navy .app-brand.demo {
+  /* The vendor's .menu .app-brand.demo rule above fixes this box at a
+     flat 64px tall — too short once padding is added on top of a 55px
+     logo, which squeezed/pushed the logo up instead of centering it.
+     height: auto lets the box size itself to its own content again. */
+  height: auto;
+  box-sizing: border-box;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+.sidebar-navy .app-brand-text {
+  color: var(--sidebar-text);
+}
+/* .sidebar-navy .app-brand-text .brand-accent {
+  color: var(--sidebar-accent);
+} */
+.sidebar-navy .layout-menu-toggle i {
+  color: var(--sidebar-text-muted);
+}
+.sidebar-navy .app-brand .layout-menu-toggle {
+  background-color: var(--sidebar-accent);
+  border-color: var(--sidebar-bg);
+}
+.sidebar-navy .app-brand .layout-menu-toggle i {
+  color: var(--sidebar-bg);
+}
+
+/* Section labels (STUDENT RECORDS, ACADEMIC SETUP, STAFF, ...) — a short
+   tick mark sits in the left gutter before each label instead of a
+   full-width <hr> between groups (reuses the same mechanism Sneat's own
+   light skin uses for this, .bg-menu-theme .menu-header:before, just
+   recolored for navy). */
+.sidebar-navy .menu-header {
+  position: relative;
+  color: var(--sidebar-text-muted) !important;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+.sidebar-navy .menu-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.1875rem;
+  width: 1rem;
+  height: 1px;
+  background-color: var(--sidebar-text-muted);
+}
+.sidebar-navy .menu-header .menu-header-text {
+  color: inherit;
+}
+
+/* Default nav item — off-white text, icons dimmed until hovered/active. */
+.sidebar-navy .menu-item {
+  position: relative;
+}
+.sidebar-navy .menu-link,
+.sidebar-navy .menu-horizontal-prev,
+.sidebar-navy .menu-horizontal-next {
+  color: var(--sidebar-text);
+  border-radius: 0.375rem;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+}
+.sidebar-navy .menu-link .menu-icon {
+  opacity: 0.75;
+  transition: opacity 150ms ease-in-out, color 150ms ease-in-out;
+}
+
+/* Submenu items (under Records, Reports) have no icon of their own by
+   template convention — a small dot marker fills that slot instead so the
+   row doesn't read as empty next to its parent's icon. Active submenu item
+   gets a bigger amber dot with a ring that matches the sidebar background. */
+.sidebar-navy .menu-sub > .menu-item > .menu-link {
+  position: relative;
+}
+.sidebar-navy .menu-sub > .menu-item > .menu-link::before {
+  content: "";
+  position: absolute;
+  left: 1.4375rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background-color: var(--sidebar-text-muted);
+}
+.sidebar-navy .menu-sub > .menu-item.active > .menu-link:not(.menu-toggle)::before {
+  left: 1.1875rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  background-color: var(--sidebar-accent);
+  border: 3px solid var(--sidebar-bg);
+}
+
+/* Hover */
+.sidebar-navy .menu-link:hover,
+.sidebar-navy .menu-link:focus,
+.sidebar-navy .menu-horizontal-prev:hover,
+.sidebar-navy .menu-horizontal-next:hover {
+  background-color: var(--sidebar-hover);
+  color: #fff;
+}
+.sidebar-navy .menu-link:hover .menu-icon,
+.sidebar-navy .menu-link:focus .menu-icon {
+  opacity: 1;
+}
+
+/* Keyboard focus */
+.sidebar-navy .menu-link:focus-visible {
+  outline: 2px solid var(--sidebar-accent);
+  outline-offset: -2px;
+}
+
+/* Active item — thin amber left border + soft amber-tinted background,
+   not a heavy solid block. Icon turns amber, label goes bold white.
+   The bar is its own element anchored to the .menu-item's true left edge
+   (not the .menu-link, which sits inset by the vendor's own 1rem side
+   margin) so it reads as flush against the sidebar rail instead of
+   floating with a gap to its left. */
+.sidebar-navy .menu-item.open:not(.menu-item-closing) > .menu-toggle,
+.sidebar-navy .menu-item.active > .menu-link {
+  color: #fff;
+  font-weight: 600;
+}
+.sidebar-navy .menu-item.active > .menu-link:not(.menu-toggle) {
+  background-color: var(--sidebar-active-bg);
+}
+.sidebar-navy .menu-item.active > .menu-link .menu-icon {
+  color: var(--sidebar-accent);
+  opacity: 1;
+}
+.sidebar-navy .menu-inner > .menu-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.1875rem;
+  bottom: 0.1875rem;
+  width: 3px;
+  background-color: var(--sidebar-accent);
+  border-radius: 0 3px 3px 0;
+}
+
+/* Disabled items */
+.sidebar-navy .menu-item.disabled .menu-link {
+  color: rgba(230, 234, 242, 0.35) !important;
+}
+
+/* Dropdown chevrons (Records, Reports) — muted by default, amber + already
+   rotates on expand via the vendor's existing .menu-item.open transform. */
+.sidebar-navy .menu-toggle::after {
+  border-color: var(--sidebar-text-muted);
+}
+.sidebar-navy .menu-item.active .menu-toggle::after,
+.sidebar-navy .menu-item.open .menu-toggle::after {
+  border-color: var(--sidebar-accent);
+}
+
+.sidebar-navy hr {
+  /* Bootstrap's hr draws its line via background-color: currentColor with
+     border: 0 — setting border-color here (as before) did nothing visible.
+     Solid white (not the subtle --sidebar-divider used under the logo) so
+     the line between nav groups actually reads at a glance. */
+  color: #fff !important;
+  opacity: 0.45;
+}
+.sidebar-navy .menu-divider {
+  border-color: var(--sidebar-divider) !important;
+}
+
+/* Scroll-fade shadow at the top of the scrollable menu, recolored to
+   match the new background instead of the vendor's white-based fade. */
+.sidebar-navy .menu-inner-shadow {
+  background: linear-gradient(var(--sidebar-bg) 41%, rgba(20, 39, 74, 0.11) 95%, rgba(20, 39, 74, 0));
+}
+
+/* Thin, dark scrollbar for the sidebar only (perfect-scrollbar) */
+.sidebar-navy .ps__rail-y {
+  background-color: transparent !important;
+}
+.sidebar-navy .ps__rail-y > .ps__thumb-y {
+  width: 4px;
+  right: 2px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+.sidebar-navy .ps__rail-y:hover > .ps__thumb-y,
+.sidebar-navy .ps__rail-y.ps--clicking > .ps__thumb-y {
+  width: 5px;
+  background-color: rgba(255, 255, 255, 0.28);
+}
+.stat-card-danger   { border-left-color: var(--bs-danger); }

@@ -38,6 +38,16 @@ AuthRole::allowOnly(['teacher']);
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
+    <div class="d-flex justify-content-end mb-2">
+        <a
+            href="feeding-program-print.php?school_year_id=<?php echo urlencode((string) ($school_year_filter ?? '')); ?>&section_id=<?php echo urlencode((string) ($section_filter ?? '')); ?>"
+            target="_blank"
+            class="btn btn-outline-primary"
+        >
+            <i class="bx bx-printer"></i> Print
+        </a>
+    </div>
+
     <form action="feeding-program.php" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div>
             <label for="school_year_id" class="form-label mb-0">School Year</label>
@@ -51,27 +61,45 @@ AuthRole::allowOnly(['teacher']);
             </select>
         </div>
         <div>
-            <label for="section_id" class="form-label mb-0">Section</label>
-            <select class="form-select" id="section_id" name="section_id" onchange="this.form.submit()">
-                <option value="">-- All My Sections --</option>
-                <?php foreach(($sections ?? []) as $section): ?>
-                    <option value="<?php echo htmlspecialchars($section['id']); ?>" <?php echo ($section_filter !== null && (int) $section_filter === (int) $section['id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars(($section['grade_level_name'] ?? '') . ' - ' . $section['section_name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <label class="form-label mb-0">Section</label>
+            <?php if (count($sections ?? []) === 1): ?>
+                <?php $my_section = $sections[0]; ?>
+                <input class="form-control" type="text" value="<?php echo htmlspecialchars(($my_section['grade_level_name'] ?? '') . ' - ' . $my_section['section_name']); ?>" disabled>
+            <?php elseif (count($sections ?? []) > 1): ?>
+                <select class="form-select" id="section_id" name="section_id" onchange="this.form.submit()">
+                    <option value="">-- All My Sections --</option>
+                    <?php foreach($sections as $section): ?>
+                        <option value="<?php echo htmlspecialchars($section['id']); ?>" <?php echo ($section_filter !== null && (int) $section_filter === (int) $section['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars(($section['grade_level_name'] ?? '') . ' - ' . $section['section_name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php else: ?>
+                <input class="form-control" type="text" value="No section assigned to you yet" disabled>
+            <?php endif; ?>
         </div>
     </form>
 
     <div class="card mt-4">
-        <h5 class="card-header">My Feeding Program Priority List</h5>
+        <h5 class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span>My Feeding Program Priority List</span>
+            <div style="max-width: 280px; width: 100%;">
+                <input
+                    type="text"
+                    class="form-control"
+                    id="feeding_program_search"
+                    placeholder="Search by student name..."
+                    autocomplete="off"
+                >
+            </div>
+        </h5>
         <div class="card-body py-2">
             <p class="text-muted mb-0 small">
                 Flagged when a learner's Health Profile BMI classification is Severely Wasted or Wasted for the selected school year — the DepEd School-Based Feeding Program (SBFP) eligibility criteria. Record a learner's height/weight under Health Profile to have them appear here.
             </p>
         </div>
         <div class="table-responsive nowrap">
-            <table class="table">
+            <table class="table" id="feeding_program_table">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -80,14 +108,14 @@ AuthRole::allowOnly(['teacher']);
                         <th>Section</th>
                         <th>BMI</th>
                         <th>Status</th>
-                        <th>AI Insight</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach(($feedingProgramLearners ?? []) as $index => $learner): ?>
-                        <tr>
+                        <?php $rowStudentName = trim($learner['student_first_name'] . ' ' . ($learner['student_middle_name'] ?? '') . ' ' . $learner['student_last_name'] . ' ' . ($learner['student_suffix'] ?? '')); ?>
+                        <tr data-student-name="<?php echo htmlspecialchars(mb_strtolower($rowStudentName)); ?>">
                             <td><?php echo $index + 1; ?></td>
-                            <td><?php echo htmlspecialchars(trim($learner['student_first_name'] . ' ' . ($learner['student_middle_name'] ?? '') . ' ' . $learner['student_last_name'] . ' ' . ($learner['student_suffix'] ?? ''))); ?></td>
+                            <td><?php echo htmlspecialchars($rowStudentName); ?></td>
                             <td><?php echo htmlspecialchars($learner['school_year'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars(($learner['grade_name'] ?? '') . ' - ' . ($learner['section_name'] ?? '')); ?></td>
                             <td><?php echo htmlspecialchars($learner['bmi'] ?? ''); ?></td>
@@ -95,27 +123,17 @@ AuthRole::allowOnly(['teacher']);
                                 <?php $classBadge = ($learner['bmi_classification'] ?? '') === 'Severely Wasted' ? 'bg-label-danger' : 'bg-label-warning'; ?>
                                 <span class="badge <?php echo $classBadge; ?>"><?php echo htmlspecialchars($learner['bmi_classification'] ?? ''); ?></span>
                             </td>
-                            <td style="min-width: 260px;">
-                                <div class="insight-cell" data-student-id="<?php echo (int) $learner['student_id']; ?>" data-school-year-id="<?php echo (int) $learner['school_year_id']; ?>">
-                                    <p class="insight-text small mb-1"><?php echo $learner['insight_text'] ? nl2br(htmlspecialchars($learner['insight_text'])) : '<span class="text-muted">No insight generated yet.</span>'; ?></p>
-                                    <button type="button" class="btn btn-sm btn-outline-primary generate-insight-btn" onclick="generateInsight(this)">
-                                        <?php echo $learner['insight_text'] ? 'Regenerate' : 'Generate Insight'; ?>
-                                    </button>
-                                </div>
-                            </td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if(empty($feedingProgramLearners)): ?>
                         <tr>
-                            <td colspan="7" class="text-center text-muted">No students currently flagged for the selected filters.</td>
+                            <td colspan="6" class="text-center text-muted">No students currently flagged for the selected filters.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <?= Csrf::field() ?>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>
 
@@ -127,46 +145,6 @@ AuthRole::allowOnly(['teacher']);
   <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
   <script src="../../../public/assets/vendor/js/menu.js"></script>
   <script src="../../../public/assets/js/main.js"></script>
-  <script>
-    function generateInsight(button){
-        const cell = button.closest('.insight-cell');
-        const studentId = cell.dataset.studentId;
-        const schoolYearId = cell.dataset.schoolYearId;
-        const textEl = cell.querySelector('.insight-text');
-        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
-
-        button.disabled = true;
-        const originalLabel = button.textContent;
-        button.textContent = 'Generating...';
-
-        const params = new URLSearchParams();
-        params.set('student_id', studentId);
-        params.set('school_year_id', schoolYearId);
-        params.set('csrf_token', csrfToken);
-
-        fetch('../../../app/controllers/teacher/feedinginsightcontroller.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params.toString()
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success){
-                textEl.textContent = data.insight;
-                button.textContent = 'Regenerate';
-            }else{
-                alert(data.message || 'Failed to generate insight.');
-                button.textContent = originalLabel;
-            }
-        })
-        .catch(() => {
-            alert('Network error while generating insight.');
-            button.textContent = originalLabel;
-        })
-        .finally(() => {
-            button.disabled = false;
-        });
-    }
-  </script>
+  <script src="../../../public/js/teacher/feeding-program.js"></script>
 </body>
 </html>

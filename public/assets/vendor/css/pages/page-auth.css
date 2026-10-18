@@ -2,7 +2,7 @@
 
 /* ─── Body ──────────────────────────────────────────────────── */
 body {
-  background: #fff7ed;
+  background: #f4f7fa;
   min-height: 100vh;
   margin: 0;
 }
@@ -23,7 +23,7 @@ body {
   justify-content: center;
   gap: 2.5rem;
   padding: 3rem 2.5rem;
-  background: linear-gradient(150deg, #fb923c 0%, #f97316 45%, #ea580c 100%);
+  background: linear-gradient(150deg, #2a6cad 0%, #1b5e9e 45%, #14274a 100%);
   position: relative;
   overflow: hidden;
   text-align: center;
@@ -53,7 +53,7 @@ body {
   height: 168px;
   background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(154, 52, 18, 0.30);
+  box-shadow: 0 20px 40px rgba(20, 39, 74, 0.30);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,7 +116,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2.5rem;
-  background: #fafafa;
+  background: #f4f7fa;
 }
 
 .auth-card {
@@ -145,7 +145,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.18);
+  box-shadow: 0 8px 20px rgba(27, 94, 158, 0.18);
 }
 
 .brand-logo {
@@ -219,7 +219,7 @@ body {
 }
 
 .input-icon-right:hover {
-  color: #f97316;
+  color: #1b5e9e;
 }
 
 /* ─── Inputs ────────────────────────────────────────────────── */
@@ -238,8 +238,8 @@ body {
 }
 
 .auth-input.form-control:focus {
-  border-color: #f97316 !important;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+  border-color: #1b5e9e !important;
+  box-shadow: 0 0 0 3px rgba(27, 94, 158, 0.15) !important;
   outline: none;
 }
 
@@ -258,7 +258,7 @@ body {
 
 /* ─── Button ────────────────────────────────────────────────── */
 .auth-btn {
-  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%) !important;
+  background: linear-gradient(135deg, #2a6cad 0%, #1b5e9e 100%) !important;
   border: none !important;
   border-radius: 10px !important;
   color: #ffffff !important;
@@ -267,19 +267,19 @@ body {
   letter-spacing: 0.3px;
   padding: 12px !important;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.30);
+  box-shadow: 0 4px 16px rgba(27, 94, 158, 0.30);
 }
 
 .auth-btn:hover {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
-  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.40);
+  background: linear-gradient(135deg, #1b5e9e 0%, #154e85 100%) !important;
+  box-shadow: 0 6px 24px rgba(27, 94, 158, 0.40);
   transform: translateY(-2px);
 }
 
 .auth-btn:active {
   transform: translateY(0);
-  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important;
-  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25);
+  background: linear-gradient(135deg, #154e85 0%, #0f3a66 100%) !important;
+  box-shadow: 0 2px 8px rgba(27, 94, 158, 0.25);
 }
 
 /* ─── Footer ────────────────────────────────────────────────── */
@@ -315,7 +315,6 @@ body {
 
   .auth-right-panel {
     flex: 1 1 100%;
-    background: #fff7ed;
   }
 }
 

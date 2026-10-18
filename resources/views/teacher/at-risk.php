@@ -79,7 +79,6 @@ AuthRole::allowOnly(['teacher']);
                         <th>School Year</th>
                         <th>Section</th>
                         <th>Flags</th>
-                        <th>AI Insight</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,27 +93,17 @@ AuthRole::allowOnly(['teacher']);
                                     <span class="badge bg-label-danger">Failing (<?php echo (int) $learner['failing_count']; ?>)</span>
                                 <?php endif; ?>
                             </td>
-                            <td style="min-width: 260px;">
-                                <div class="insight-cell" data-student-id="<?php echo (int) $learner['student_id']; ?>" data-school-year-id="<?php echo (int) $learner['school_year_id']; ?>">
-                                    <p class="insight-text small mb-1"><?php echo $learner['insight_text'] ? nl2br(htmlspecialchars($learner['insight_text'])) : '<span class="text-muted">No insight generated yet.</span>'; ?></p>
-                                    <button type="button" class="btn btn-sm btn-outline-primary generate-insight-btn" onclick="generateInsight(this)">
-                                        <?php echo $learner['insight_text'] ? 'Regenerate' : 'Generate Insight'; ?>
-                                    </button>
-                                </div>
-                            </td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if(empty($atRiskLearners)): ?>
                         <tr>
-                            <td colspan="6" class="text-center text-muted">No students currently flagged for the selected filters.</td>
+                            <td colspan="5" class="text-center text-muted">No students currently flagged for the selected filters.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <?= Csrf::field() ?>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>
 
@@ -126,46 +115,5 @@ AuthRole::allowOnly(['teacher']);
   <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
   <script src="../../../public/assets/vendor/js/menu.js"></script>
   <script src="../../../public/assets/js/main.js"></script>
-  <script>
-    function generateInsight(button){
-        const cell = button.closest('.insight-cell');
-        const studentId = cell.dataset.studentId;
-        const schoolYearId = cell.dataset.schoolYearId;
-        const textEl = cell.querySelector('.insight-text');
-        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
-
-        button.disabled = true;
-        const originalLabel = button.textContent;
-        button.textContent = 'Generating...';
-
-        const params = new URLSearchParams();
-        params.set('student_id', studentId);
-        params.set('school_year_id', schoolYearId);
-        params.set('csrf_token', csrfToken);
-
-        fetch('../../../app/controllers/teacher/insightcontroller.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params.toString()
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success){
-                textEl.textContent = data.insight;
-                button.textContent = 'Regenerate';
-            }else{
-                alert(data.message || 'Failed to generate insight.');
-                button.textContent = originalLabel;
-            }
-        })
-        .catch(() => {
-            alert('Network error while generating insight.');
-            button.textContent = originalLabel;
-        })
-        .finally(() => {
-            button.disabled = false;
-        });
-    }
-  </script>
 </body>
 </html>

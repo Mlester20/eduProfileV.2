@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../middleware/Auth.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
-AuthRole::allowOnly(['admin']);
+AuthRole::allowOnly(['admin', 'administrative']);
 
     class AuditLogController{
         protected $auditLogs;

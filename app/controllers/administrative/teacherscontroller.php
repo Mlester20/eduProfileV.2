@@ -44,6 +44,10 @@ AuthRole::allowOnly(['administrative']);
                 $payload = [
                     'full_name' => $data['full_name'],
                     'email' => $data['email'],
+                    'contact_number' => $data['contact_number'] ?? null,
+                    'address' => $data['address'] ?? null,
+                    'birth_date' => $data['birth_date'] ?? null,
+                    'sex' => $data['sex'] ?? null,
                     'password' => $data['password'],
                     'role' => self::ROLE,
                 ];
@@ -76,6 +80,10 @@ AuthRole::allowOnly(['administrative']);
                 $payload = [
                     'full_name' => $data['full_name'],
                     'email' => $data['email'],
+                    'contact_number' => $data['contact_number'] ?? null,
+                    'address' => $data['address'] ?? null,
+                    'birth_date' => $data['birth_date'] ?? null,
+                    'sex' => $data['sex'] ?? null,
                     'role' => self::ROLE,
                 ];
                 if($this->model->update($id, $payload)){
@@ -184,6 +192,10 @@ AuthRole::allowOnly(['administrative']);
             $controller->create([
                 'full_name' => $_POST['full_name'],
                 'email' => $_POST['email'],
+                'contact_number' => $_POST['contact_number'] ?? null,
+                'address' => $_POST['address'] ?? null,
+                'birth_date' => $_POST['birth_date'] ?? null,
+                'sex' => $_POST['sex'] ?? null,
                 'password' => $_POST['password'],
             ]);
         }
@@ -191,6 +203,10 @@ AuthRole::allowOnly(['administrative']);
             $controller->update($_POST['id'], [
                 'full_name' => $_POST['full_name'],
                 'email' => $_POST['email'],
+                'contact_number' => $_POST['contact_number'] ?? null,
+                'address' => $_POST['address'] ?? null,
+                'birth_date' => $_POST['birth_date'] ?? null,
+                'sex' => $_POST['sex'] ?? null,
             ]);
         }
         if(isset($_POST['resetUserPassword'])){

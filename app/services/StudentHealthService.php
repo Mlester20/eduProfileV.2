@@ -70,6 +70,12 @@ class StudentHealthService extends Model {
     private function buildPayload($data) {
         $bmiResult = $this->computeBmi((float) $data['height_cm'], (float) $data['weight_kg']);
 
+        // "Yes" is the Health Profile form's actual Yes/No answer, not
+        // inferred from text — medical_conditions is just the optional
+        // "Specify" detail and is dropped whenever the answer is "No" so a
+        // stale note can't contradict it.
+        $hasCondition = (($data['has_medical_condition'] ?? 'No') === 'Yes') ? 'Yes' : 'No';
+
         return [
             'student_id' => (int) $data['student_id'],
             'school_year_id' => (int) $data['school_year_id'],
@@ -79,12 +85,30 @@ class StudentHealthService extends Model {
             'bmi_classification' => $bmiResult['bmi_classification'],
             'blood_type' => !empty($data['blood_type']) ? $data['blood_type'] : null,
             'allergies' => $data['allergies'] ?? null,
-            'medical_conditions' => $data['medical_conditions'] ?? null,
+            'has_medical_condition' => $hasCondition,
+            'medical_conditions' => ($hasCondition === 'Yes') ? ($data['medical_conditions'] ?? null) : null,
             'vision_screening_result' => $data['vision_screening_result'] ?? null,
             'hearing_screening_result' => $data['hearing_screening_result'] ?? null,
             'immunization_status' => $data['immunization_status'] ?? null,
             'recorded_by' => (int) $data['recorded_by']
         ];
+    }
+
+    /**
+     * Single entry point for the Health Profile modal tab, which only
+     * ever shows one form (not an add-vs-edit toggle) — creates the
+     * record if the student doesn't have one yet, otherwise updates
+     * their existing one. Reuses create()/update() as-is so validation
+     * stays single-sourced.
+     */
+
+    public function upsert($data, $teacher_id) {
+        $studentId = (int) ($data['student_id'] ?? 0);
+        $existing = $studentId > 0 ? $this->healthModel->getByStudentId($studentId, $teacher_id) : null;
+        if($existing){
+            return $this->update($existing['id'], $data, $teacher_id);
+        }
+        return $this->create($data, $teacher_id);
     }
 
     public function create($data, $teacher_id) {

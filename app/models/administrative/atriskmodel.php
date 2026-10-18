@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $sections = 'sections';
         protected $grade_levels = 'grade_levels';
         protected $school_year = 'school_year';
-        protected $section_teacher_assignments = 'section_teacher_assignments';
+        protected $section_teacher_assignments = 'latest_section_teacher_assignments';
         protected $users = 'users';
         protected $academic_profiles = 'academic_profiles';
 
@@ -23,7 +23,7 @@ require_once __DIR__ . '/../../core/Model.php';
          * record tables per student rather than listing individual records.
          */
 
-        private function buildQuery($schoolYearId, $sectionId, $selectExtra = '', $studentId = null, $teacherId = null){
+        private function buildQuery($schoolYearId, $sectionId, $selectExtra = '', $teacherId = null, $gradeLevelId = null){
             $types = "";
             $params = [];
 
@@ -70,36 +70,28 @@ require_once __DIR__ . '/../../core/Model.php';
                 $types .= "i";
                 $params[] = $sectionId;
             }
-            if($studentId !== null){
-                $query .= " AND s.id = ?";
-                $types .= "i";
-                $params[] = $studentId;
-            }
             if($teacherId !== null){
                 // Scopes to this teacher's own advisees (the same
                 // sections.adviser_id convention every other teacher-side
-                // model uses). Doubles as the security boundary for
-                // getMetricsForStudent(): a teacher can never fetch/generate
-                // an insight for a student who isn't theirs, since the row
-                // simply won't match this filter.
+                // model uses).
                 $query .= " AND sec.adviser_id = ?";
                 $types .= "i";
                 $params[] = $teacherId;
             }
-
-            // When looking up a specific known student (getMetricsForStudent),
-            // skip the threshold gate — we already know why they're flagged,
-            // we just want their numbers for the insight prompt.
-            if($studentId === null){
-                $query .= " AND COALESCE(fail.cnt, 0) >= 1";
+            if($gradeLevelId !== null){
+                $query .= " AND sec.grade_level_id = ?";
+                $types .= "i";
+                $params[] = $gradeLevelId;
             }
+
+            $query .= " AND COALESCE(fail.cnt, 0) >= 1";
 
             return [$query, $types, $params];
         }
 
-        public function getAtRiskLearners($schoolYearId = null, $sectionId = null, $teacherId = null){
+        public function getAtRiskLearners($schoolYearId = null, $sectionId = null, $teacherId = null, $gradeLevelId = null){
             try{
-                [$query, $types, $params] = $this->buildQuery($schoolYearId, $sectionId, '', null, $teacherId);
+                [$query, $types, $params] = $this->buildQuery($schoolYearId, $sectionId, '', $teacherId, $gradeLevelId);
                 $query .= " ORDER BY s.last_name ASC, s.first_name ASC";
 
                 $stmt = $this->con->prepare($query);
@@ -117,7 +109,7 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function countAtRisk($schoolYearId = null, $teacherId = null){
             try{
-                [$innerQuery, $types, $params] = $this->buildQuery($schoolYearId, null, '', null, $teacherId);
+                [$innerQuery, $types, $params] = $this->buildQuery($schoolYearId, null, '', $teacherId);
                 $query = "SELECT COUNT(*) AS total FROM ({$innerQuery}) AS at_risk";
 
                 $stmt = $this->con->prepare($query);
@@ -133,47 +125,4 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function getMetricsForStudent($studentId, $schoolYearId = null, $teacherId = null){
-            try{
-                [$query, $types, $params] = $this->buildQuery($schoolYearId, null, '', $studentId, $teacherId);
-                $stmt = $this->con->prepare($query);
-                if($types !== ""){
-                    $stmt->bind_param($types, ...$params);
-                }
-                $stmt->execute();
-                $result = $stmt->get_result();
-                return $result->fetch_assoc();
-            }catch(Exception $e){
-                error_log("Error fetching at-risk metrics for student: " . $e->getMessage());
-                return null;
-            }
-        }
-
-        public function getInsight($studentId, $schoolYearId){
-            try{
-                $query = "SELECT insight_text, generated_at FROM at_risk_insights WHERE student_id = ? AND school_year_id = ? LIMIT 1";
-                $stmt = $this->con->prepare($query);
-                $stmt->bind_param("ii", $studentId, $schoolYearId);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                return $result->fetch_assoc();
-            }catch(Exception $e){
-                error_log("Error fetching at-risk insight: " . $e->getMessage());
-                return null;
-            }
-        }
-
-        public function saveInsight($studentId, $schoolYearId, $text){
-            try{
-                $query = "INSERT INTO at_risk_insights (student_id, school_year_id, insight_text) VALUES (?, ?, ?)
-                    ON DUPLICATE KEY UPDATE insight_text = VALUES(insight_text), generated_at = CURRENT_TIMESTAMP";
-                $stmt = $this->con->prepare($query);
-                $stmt->bind_param("iis", $studentId, $schoolYearId, $text);
-                $stmt->execute();
-                return true;
-            }catch(Exception $e){
-                error_log("Error saving at-risk insight: " . $e->getMessage());
-                return false;
-            }
-        }
     }

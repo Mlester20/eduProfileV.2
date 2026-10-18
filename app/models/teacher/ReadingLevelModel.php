@@ -105,6 +105,25 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        public function belongsToAdviser($id, $teacher_id){
+            try{
+                $query = "SELECT rl.id
+                    FROM {$this->reading_levels} rl
+                    LEFT JOIN {$this->student} s ON rl.student_id = s.id
+                    LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
+                    WHERE rl.id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $id, $teacher_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                return $result->num_rows > 0;
+            }catch(Exception $e){
+                error_log("Error checking reading level ownership: " . $e->getMessage());
+                return false;
+            }
+        }
+
         public function create($data){
             try{
                 $insert = "INSERT INTO {$this->reading_levels}(student_id, school_year_id, reading_level, reading_language, assessment_date, remarks, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?)";

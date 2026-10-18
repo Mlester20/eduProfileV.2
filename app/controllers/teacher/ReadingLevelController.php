@@ -1,60 +1,41 @@
 <?php
-session_start();
+if(session_status() === PHP_SESSION_NONE){
+    session_start();
+}
 
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
-require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
 require_once __DIR__ . '/../../models/teacher/ReadingLevelModel.php';
-require_once __DIR__ . '/../../services/StudentService.php';
-require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
-require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class ReadingLevelController extends Controller{
         protected $auditLogs;
-        protected $sy;
         protected $students;
-        protected $studentService;
 
         public function __construct($con){
             parent::__construct(
                 new ReadingLevelModel($con)
             );
             $this->auditLogs = new AuditLogs($con);
-            $this->sy = new SchoolYearModel($con);
             $this->students = new StudentsModel($con);
-            $this->studentService = new StudentService($con);
         }
 
-        public function index($student_id = null, $page = 1){
-            $perPage = 10;
-            if(!isset($_SESSION['id'])){
-                return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
-            }
-            $teacherId = (int) $_SESSION['id'];
-            $offset = Paginator::offset($page, $perPage);
-            $rows = $this->model->getPage($teacherId, $perPage, $offset, $student_id);
-            $total = $this->model->countAll($teacherId, $student_id);
-            return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
-        }
-
-        public function getActiveSy(){
-            return $this->sy->getActiveSy();
-        }
-
-        public function getStudents(){
+        public function index($student_id = null){
             if(!isset($_SESSION['id'])){
                 return [];
             }
-            $activeSy = $this->getActiveSy();
-            $activeSchoolYearId = !empty($activeSy) ? $activeSy[0]['id'] : null;
-            return $this->studentService->getStudentsByAdviser((int) $_SESSION['id'], $activeSchoolYearId);
+            return $this->model->index((int) $_SESSION['id'], $student_id);
         }
 
         public function create($data){
             try{
+                $teacherId = (int) ($_SESSION['id'] ?? 0);
+                if(!$this->students->belongsToAdviser($data['student_id'], $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to add reading level records for this student.'];
+                }
+                $data['recorded_by'] = $teacherId;
                 if($this->model->create($data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
@@ -63,23 +44,27 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'Reading Level',
                         null,
                         null,
-                        $_SESSION['full_name'] . ' Added Reading Level for student ' . $data['student_id']
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' added a reading level record for student ' . $data['student_id']
                     );
-                    FlashMessage::setFlash("success", "Reading Level Added Successfully!");
-                    header("Location: ../../../resources/views/teacher/reading-level.php");
-                    exit();
-                }else{
-                    FlashMessage::setFlash("error", "Something went wrong try again!");
-                    header("Location: ../../../resources/views/teacher/reading-level.php");
-                    exit();
+                    return ['success' => true, 'message' => 'Reading level record added successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to add reading level record.'];
             }catch(Exception $e){
-                error_log("Error creating reading level " . $e->getMessage());
+                error_log("Error in ReadingLevelController::create: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong adding the reading level record.'];
             }
         }
 
         public function update($id, $data){
             try{
+                $teacherId = (int) ($_SESSION['id'] ?? 0);
+                if(!$this->model->belongsToAdviser($id, $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to update this reading level record.'];
+                }
+                if(!$this->students->belongsToAdviser($data['student_id'], $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to update reading level records for this student.'];
+                }
+                $data['recorded_by'] = $teacherId;
                 if($this->model->update($id, $data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
@@ -88,101 +73,98 @@ require_once __DIR__ . '/../../../database/config/config.php';
                         'Reading Level',
                         $id,
                         null,
-                        $_SESSION['full_name'] . ' Updated Reading Level for student ' . $data['student_id']
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' updated a reading level record with ID: ' . $id
                     );
-                    FlashMessage::setFlash("success", "Reading Level Updated Successfully!");
-                    header("Location: ../../../resources/views/teacher/reading-level.php");
-                    exit();
-                }else{
-                    FlashMessage::setFlash("error", "Something went wrong try again.");
-                    header("Location: ../../../resources/views/teacher/reading-level.php");
-                    exit();
+                    return ['success' => true, 'message' => 'Reading level record updated successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to update reading level record.'];
             }catch(Exception $e){
-                error_log("Error updating reading level " . $e->getMessage());
+                error_log("Error in ReadingLevelController::update: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong updating the reading level record.'];
             }
         }
 
         public function delete($id){
             try{
+                $teacherId = (int) ($_SESSION['id'] ?? 0);
+                if(!$this->model->belongsToAdviser($id, $teacherId)){
+                    return ['success' => false, 'message' => 'You are not authorized to delete this reading level record.'];
+                }
                 if($this->model->delete($id)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
                         $_SESSION['role'] ?? 'unknown',
                         'Deleting Reading Level',
                         'Reading Level',
-                        null,
                         $id,
-                        $_SESSION['full_name'] . ' Deleted a Reading Level record'
+                        null,
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' deleted a reading level record with ID: ' . $id
                     );
-                    FlashMessage::setFlash('success', 'Reading level record deleted successfully.');
-                    header('Location: ../../../resources/views/teacher/reading-level.php');
-                    exit();
-                }else{
-                    FlashMessage::setFlash('error', 'Failed to delete reading level record.');
-                    header('Location: ../../../resources/views/teacher/reading-level.php');
-                    exit();
+                    return ['success' => true, 'message' => 'Reading level record deleted successfully.'];
                 }
+                return ['success' => false, 'message' => 'Failed to delete reading level record.'];
             }catch(Exception $e){
-                error_log("Error deleting reading level record: " . $e->getMessage());
+                error_log("Error in ReadingLevelController::delete: " . $e->getMessage());
+                return ['success' => false, 'message' => 'Something went wrong deleting the reading level record.'];
             }
         }
     }
 
     try{
         $controller = new ReadingLevelController($con);
-        $filter_student_id = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-        $reading_levels = $controller->index($filter_student_id, $page);
-        $active_sy = $controller->getActiveSy();
-        $students = $controller->getStudents();
-        $filtered_student = null;
-        if($filter_student_id !== null){
-            foreach($students as $s){
-                if((int) $s['id'] === $filter_student_id){
-                    $filtered_student = $s;
+        $method = $_SERVER['REQUEST_METHOD'];
+        header('Content-Type: application/json');
+
+        switch($method){
+            case 'GET':
+                $studentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
+                echo json_encode(['success' => true, 'data' => $controller->index($studentId)]);
+                break;
+
+            case 'POST':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                if(!is_array($data)){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
                     break;
                 }
-            }
-        }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->create($data));
+                break;
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            Csrf::requireValidOnPost('../../../resources/views/teacher/reading-level.php');
-            if(isset($_POST['create_reading_level'])){
-                $controller->create(
-                    [
-                        'student_id' => $_POST['student_id'],
-                        'school_year_id' => $_POST['school_year_id'],
-                        'reading_level' => $_POST['reading_level'],
-                        'reading_language' => $_POST['reading_language'],
-                        'assessment_date' => $_POST['assessment_date'],
-                        'remarks' => $_POST['remarks'],
-                        'recorded_by' => $_SESSION['id']
-                    ]
-                );
-            }
+            case 'PUT':
+            case 'PATCH':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                if(!is_array($data) || !isset($data['id'])){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
+                    break;
+                }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->update((int) $data['id'], $data));
+                break;
 
-            if(isset($_POST['update_reading_level'])){
-                $reading_level_id = $_POST['id'];
-                $controller->update(
-                    $reading_level_id,
-                    [
-                        'student_id' => $_POST['student_id'],
-                        'school_year_id' => $_POST['school_year_id'],
-                        'reading_level' => $_POST['reading_level'],
-                        'reading_language' => $_POST['reading_language'],
-                        'assessment_date' => $_POST['assessment_date'],
-                        'remarks' => $_POST['remarks'],
-                        'recorded_by' => $_SESSION['id']
-                    ]
-                );
-            }
+            case 'DELETE':
+                $raw = file_get_contents('php://input');
+                $data = json_decode($raw, true);
+                $id = isset($data['id']) ? (int) $data['id'] : (isset($_GET['id']) ? (int) $_GET['id'] : null);
+                if(!$id){
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'message' => 'Missing record id.']);
+                    break;
+                }
+                Csrf::requireValidJson($data['csrf_token'] ?? null);
+                echo json_encode($controller->delete($id));
+                break;
 
-            if(isset($_POST['delete_reading_level'])){
-                $reading_level_id = $_POST['id'];
-                $controller->delete($reading_level_id);
-            }
+            default:
+                http_response_code(405);
+                echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
         }
     }catch(Exception $e){
-        error_log("Error in ReadingLevelController: " . $e->getMessage());
+        error_log("Error in ReadingLevelController endpoint: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Something went wrong.']);
     }
