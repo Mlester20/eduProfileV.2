@@ -28,6 +28,15 @@ require_once __DIR__ . '/../../../database/config/config.php';
             return $this->model->index((int) $_SESSION['id'], $student_id);
         }
 
+        /**
+         * Remarks is never taken from client input -- it's always derived
+         * from the grade, per Sir's standing rule: 75 and above is Passed,
+         * 74 and below is Failed.
+         */
+        private function computeRemarks($grade){
+            return ((float) $grade) >= 75 ? 'Passed' : 'Failed';
+        }
+
         public function create($data){
             try{
                 $teacherId = (int) ($_SESSION['id'] ?? 0);
@@ -35,6 +44,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     return ['success' => false, 'message' => 'You are not authorized to add academic records for this student.'];
                 }
                 $data['recorded_by'] = $teacherId;
+                $data['remarks'] = $this->computeRemarks($data['grade'] ?? 0);
                 if($this->model->create($data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
@@ -64,6 +74,7 @@ require_once __DIR__ . '/../../../database/config/config.php';
                     return ['success' => false, 'message' => 'You are not authorized to update academic records for this student.'];
                 }
                 $data['recorded_by'] = $teacherId;
+                $data['remarks'] = $this->computeRemarks($data['grade'] ?? 0);
                 if($this->model->update($id, $data)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,

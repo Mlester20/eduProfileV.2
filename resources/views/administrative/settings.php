@@ -15,6 +15,25 @@ $userProfile = $updateProfileModel->getUserById($_SESSION['id']);
 
 // Format the Member Since date
 $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? date('M d, Y', strtotime($userProfile['created_at'])) : 'Unknown';
+
+$roleBadgeClass = [
+    'admin' => 'bg-label-primary',
+    'administrative' => 'bg-label-warning',
+    'teacher' => 'bg-label-success',
+][$userProfile['role'] ?? ''] ?? 'bg-label-secondary';
+
+// Resolve the current profile picture to a displayable src, without
+// ever showing the raw storage path to the user.
+$profileAvatarSrc = $userProfile['profile_picture'] ?? null;
+$defaultAvatarSrc = '../../../public/assets/img/avatars/1.png';
+
+if ($profileAvatarSrc) {
+    $avatarRelPath = (strpos($profileAvatarSrc, '/') !== false) ? $profileAvatarSrc : ('storage/profiles/' . $profileAvatarSrc);
+    $avatarFullServerPath = __DIR__ . '/../../../' . $avatarRelPath;
+    $profileAvatarSrc = file_exists($avatarFullServerPath) ? ('../../../' . $avatarRelPath) : $defaultAvatarSrc;
+} else {
+    $profileAvatarSrc = $defaultAvatarSrc;
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,6 +61,7 @@ $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? 
     <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+    <link rel="stylesheet" href="../../../public/assets/css/profile-settings.css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/libs/apex-charts/apex-charts.css" />
     <script src="../../../public/assets/vendor/js/helpers.js"></script>
@@ -54,158 +74,109 @@ $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? 
 
     <!-- Main content -->
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="py-3 mb-4"><span class="text-muted fw-light">Account /</span> Profile Settings</h4>
+        <!-- <h4 class="py-3 mb-4"><span class="text-muted fw-light">Account /</span> Profile Settings</h4> -->
 
         <!-- Display flash messages -->
         <?php FlashMessage::showFlash(); ?>
 
+        <!-- Profile header card -->
+        <div class="card profile-header-card mb-4">
+            <div class="profile-banner"></div>
+            <div class="profile-header-body">
+                <div class="profile-avatar-wrap">
+                    <img id="profileAvatarImg" src="<?php echo htmlspecialchars($profileAvatarSrc); ?>" alt="Your profile photo" class="profile-avatar-img">
+                    <label for="profilePicInput" class="profile-avatar-edit-btn" title="Change photo">
+                        <i class='bx bx-camera'></i>
+                    </label>
+                    <span id="profileAvatarRemoveBtn" class="profile-avatar-remove-btn" style="display:none;" title="Cancel selection">
+                        <i class='bx bx-x'></i>
+                    </span>
+                </div>
+                <div class="profile-header-info">
+                    <h5 class="mb-0"><?php echo htmlspecialchars($userProfile['full_name'] ?? 'N/A'); ?></h5>
+                    <p class="text-muted mb-2"><?php echo htmlspecialchars($userProfile['email'] ?? 'N/A'); ?></p>
+                    <span class="badge profile-role-badge <?php echo $roleBadgeClass; ?>"><?php echo htmlspecialchars(ucfirst($userProfile['role'] ?? 'N/A')); ?></span>
+                    <span class="text-muted small ms-2"><i class='bx bx-calendar'></i> Member since <?php echo htmlspecialchars($memberSince); ?></span>
+                </div>
+            </div>
+            <div id="profileAvatarError" class="profile-avatar-error px-4 pb-3" style="display:none;"></div>
+        </div>
+
         <div class="row">
-            <!-- Profile Information Section -->
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-3">Profile Information</h5>
-                        
-                        <!-- Profile Picture -->
-                        <?php
-                        $profilePic = $userProfile['profile_picture'] ?? null;
-                        $defaultProfilePic = '../../../public/assets/img/avatars/1.png';
-                        
-                        if ($profilePic) {
-                            // Check if path is already full (contains /)
-                            if (strpos($profilePic, '/') !== false) {
-                                $fullPath = $profilePic;
-                            } else {
-                                // If just filename, assume it's in storage/profiles/
-                                $fullPath = 'storage/profiles/' . $profilePic;
-                            }
-                            
-                            // Check if the file exists
-                            $fullServerPath = __DIR__ . '/../../../' . $fullPath;
-                            if (file_exists($fullServerPath)) {
-                                $profilePic = '../../../' . $fullPath;
-                            } else {
-                                $profilePic = $defaultProfilePic;
-                            }
-                        } else {
-                            $profilePic = $defaultProfilePic;
-                        }
-                        ?>
-                        <img src="<?php echo htmlspecialchars($profilePic); ?>" alt="Profile Picture" 
-                             class="rounded-circle mb-3" width="100" height="100" style="object-fit: cover;">
-                        
-                        <!-- User Info -->
-                        <div class="text-start mt-4">
-                            <div class="mb-3">
-                                <label class="d-block text-muted small mb-1">Full Name</label>
-                                <p class="mb-0 fw-medium"><?php echo htmlspecialchars(is_array($userProfile) ? ($userProfile['full_name'] ?? 'N/A') : 'N/A'); ?></p>
-                            </div>
+            <!-- Personal Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <p class="settings-section-title">Personal Information</p>
+                        <p class="settings-section-help">Update your name, email, and profile photo.</p>
+
+                        <form action="../../../app/controllers/UpdateProfile.php" method="POST" enctype="multipart/form-data" data-loading-submit>
+                            <?= Csrf::field() ?>
+                            <input type="hidden" name="redirect_role" value="administrative">
+                            <input type="file" id="profilePicInput" name="profile_pic" accept=".jpg,.jpeg,.png,.gif" class="d-none">
 
                             <div class="mb-3">
-                                <label class="d-block text-muted small mb-1">Email Address</label>
-                                <p class="mb-0 fw-medium"><?php echo htmlspecialchars(is_array($userProfile) ? ($userProfile['email'] ?? 'N/A') : 'N/A'); ?></p>
+                                <label for="fullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullName" name="full_name" placeholder="e.g., Juan Dela Cruz"
+                                       value="<?php echo htmlspecialchars($userProfile['full_name'] ?? ''); ?>" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="d-block text-muted small mb-1">Account Role</label>
-                                <div>
-                                    <span class="badge bg-label-primary">
-                                        <?php echo ucfirst(htmlspecialchars(is_array($userProfile) ? ($userProfile['role'] ?? 'N/A') : 'N/A')); ?>
-                                    </span>
-                                </div>
+                            <div class="mb-4">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="<?php echo htmlspecialchars($userProfile['email'] ?? ''); ?>" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="d-block text-muted small mb-1">Member Since</label>
-                                <p class="mb-0 fw-medium"><?php echo htmlspecialchars($memberSince); ?></p>
-                            </div>
-                        </div>
+                            <button type="submit" name="update_personal_info" value="1" class="btn btn-primary">Save Personal Information</button>
+                        </form>
                     </div>
                 </div>
             </div>
 
-            <!-- Update Profile Section -->
-            <div class="col-md-8 mb-4">
-                <div class="card">
+            <!-- Security -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
                     <div class="card-body">
-                        <h5 class="card-title mb-4">Update Profile</h5>
+                        <p class="settings-section-title">Security</p>
+                        <p class="settings-section-help">Change your password. This requires your current password.</p>
 
-                        <form action="../../../app/controllers/UpdateProfile.php" method="POST" enctype="multipart/form-data">
+                        <form action="../../../app/controllers/UpdateProfile.php" method="POST" data-loading-submit>
                             <?= Csrf::field() ?>
-                            <!-- BASIC INFORMATION -->
-                            <div class="mb-4">
-                                <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.75rem; letter-spacing: 0.5px;">Basic Information</h6>
+                            <input type="hidden" name="redirect_role" value="administrative">
 
-                                <!-- Profile Picture Upload -->
-                                <div class="mb-3">
-                                    <label for="profilePic" class="form-label">Profile Picture</label>
-                                    <div class="mb-2">
-                                        <small class="text-muted d-block">
-                                            Current: <strong><?php echo htmlspecialchars($userProfile['profile_picture'] ?? 'Default Avatar'); ?></strong>
-                                        </small>
-                                    </div>
-                                    <div class="input-group">
-                                        <input type="file" class="form-control" id="profilePic" name="profile_pic" 
-                                               accept=".jpg,.jpeg,.png,.gif" onchange="previewImage(event)">
-                                        <label class="input-group-text">Choose File</label>
-                                    </div>
-                                    <small class="text-muted d-block mt-2">JPG, PNG, or GIF (Max 2MB)</small>
-                                    <div id="previewContainer" class="mt-2"></div>
-                                </div>
-
-                                <!-- Full Name -->
-                                <div class="mb-3">
-                                    <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName" name="full_name" 
-                                           value="<?php echo htmlspecialchars(is_array($userProfile) ? ($userProfile['full_name'] ?? '') : ''); ?>" required>
-                                </div>
-
-                                <!-- Email Address -->
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email" name="email" 
-                                           value="<?php echo htmlspecialchars(is_array($userProfile) ? ($userProfile['email'] ?? '') : ''); ?>" required>
-                                </div>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <!-- SECURITY SETTINGS -->
-                            <div class="mb-4">
-                                <h6 class="text-uppercase text-muted mb-3" style="font-size: 0.75rem; letter-spacing: 0.5px;">Security Settings</h6>
-
-                                <!-- Current Password -->
-                                <div class="mb-3">
-                                    <label for="currentPassword" class="form-label">
-                                        Current Password
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="password" class="form-control" id="currentPassword" name="current_password" 
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <div class="password-field-wrap">
+                                    <input type="password" class="form-control" id="currentPassword" name="current_password"
                                            placeholder="Enter your current password" required>
-                                    <small class="text-muted d-block mt-1">Required to confirm changes</small>
-                                </div>
-
-                                <!-- New Password -->
-                                <div class="mb-3">
-                                    <label for="newPassword" class="form-label">New Password</label>
-                                    <input type="password" class="form-control" id="newPassword" name="new_password" 
-                                           placeholder="Leave empty to keep current password">
-                                    <small class="text-muted d-block mt-1">Minimum 8 characters</small>
-                                </div>
-
-                                <!-- Confirm New Password -->
-                                <div class="mb-3">
-                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                    <input type="password" class="form-control" id="confirmPassword" name="confirm_password" 
-                                           placeholder="Re-enter new password">
+                                    <button type="button" class="password-toggle-btn" data-target="currentPassword"><i class='bx bx-hide'></i></button>
                                 </div>
                             </div>
 
-                            <!-- Submit Button -->
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
-                                <a href="home.php" class="btn btn-outline-secondary">Cancel</a>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <div class="password-field-wrap">
+                                    <input type="password" class="form-control" id="newPassword" name="new_password"
+                                           placeholder="At least 8 characters" minlength="8" required>
+                                    <button type="button" class="password-toggle-btn" data-target="newPassword"><i class='bx bx-hide'></i></button>
+                                </div>
+                                <div id="passwordStrengthWrap" class="password-strength-meter">
+                                    <div id="passwordStrengthFill" class="password-strength-fill"></div>
+                                </div>
+                                <small id="passwordStrengthLabel" class="password-strength-label"></small>
                             </div>
+
+                            <div class="mb-4">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <div class="password-field-wrap">
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                                           placeholder="Re-enter new password" minlength="8" required>
+                                    <button type="button" class="password-toggle-btn" data-target="confirmPassword"><i class='bx bx-hide'></i></button>
+                                </div>
+                                <small id="passwordMatchHint" class="password-match-hint"></small>
+                            </div>
+
+                            <button type="submit" name="update_security" value="1" class="btn btn-primary">Update Password</button>
                         </form>
                     </div>
                 </div>
@@ -214,7 +185,7 @@ $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? 
     </div>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>
-    
+
     <!-- ── Vendor scripts ── -->
     <script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
     <script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
@@ -224,30 +195,7 @@ $memberSince = (is_array($userProfile) && !empty($userProfile['created_at'])) ? 
     <script src="../../../public/assets/vendor/js/menu.js"></script>
     <script src="../../../public/assets/js/main.js"></script>
 
-    <!-- ── Chart.js ── -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-    <script src="../../../public/js/admin/dashboard.js"></script>
-
-    <!-- Profile Picture Preview Script -->
-    <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = '';
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '150px';
-                    img.style.maxHeight = '150px';
-                    img.classList.add('rounded');
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-    </script>
+    <!-- Profile Settings page script -->
+    <script src="../../../public/js/shared/profile-settings.js"></script>
 </body>
 </html>

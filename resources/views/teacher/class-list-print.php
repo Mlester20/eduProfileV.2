@@ -5,6 +5,10 @@ require_once __DIR__ . '/../../../app/helpers/SchoolSettings.php';
 
 $school = SchoolSettings::get($con);
 
+// Print always shows the full filtered roster, not just whatever page the
+// on-screen table happened to be on when the Print link was clicked.
+$classList = $controller->getAll($school_year_filter, $section_filter);
+
 /** Same classification/badge logic as class-list.php, kept in sync. */
 function classListBmiBadge($classification){
     switch($classification){

@@ -10,7 +10,7 @@ require_once __DIR__ . '/../core/Model.php';
          */
         public function getUserById($id) {
             try {
-                $sql = "SELECT id, full_name, email, role, profile_picture, created_at FROM {$this->users} WHERE id = ? LIMIT 1";
+                $sql = "SELECT id, full_name, email, role, position, profile_picture, created_at FROM {$this->users} WHERE id = ? LIMIT 1";
                 $stmt = $this->con->prepare($sql);
                 $stmt->bind_param("i", $id);
                 $stmt->execute();
@@ -88,6 +88,24 @@ require_once __DIR__ . '/../core/Model.php';
                 return $stmt->execute();
             } catch (Exception $e) {
                 error_log("Error updating profile: " . $e->getMessage());
+                return false;
+            }
+        }
+
+        /**
+         * Update only the password (Security card save, separate from the
+         * Personal Information save so a password change doesn't require
+         * re-submitting name/email, and vice versa).
+         */
+        public function updatePassword($id, $hashedPassword) {
+            try {
+                $sql = "UPDATE {$this->users} SET password = ?, updated_at = NOW() WHERE id = ?";
+                $stmt = $this->con->prepare($sql);
+                $stmt->bind_param("si", $hashedPassword, $id);
+
+                return $stmt->execute();
+            } catch (Exception $e) {
+                error_log("Error updating password: " . $e->getMessage());
                 return false;
             }
         }

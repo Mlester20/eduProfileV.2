@@ -1,0 +1,38 @@
+/* ============================================================
+   Learner Profile header -- deliberately distinct from the staff
+   Profile Settings header (no navy banner, no circular overlap
+   avatar): a plain accent-bordered card with a square ID-style
+   photo, read more like an academic record than an account page.
+   ============================================================ */
+
+.learner-header-card {
+  border-left: 4px solid var(--sidebar-accent, #f5a623);
+}
+
+.learner-header-body {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.learner-avatar-img {
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.learner-header-info h5 {
+  font-weight: 700;
+}
+
+@media (max-width: 575.98px) {
+  .learner-avatar-img {
+    width: 64px;
+    height: 64px;
+  }
+}

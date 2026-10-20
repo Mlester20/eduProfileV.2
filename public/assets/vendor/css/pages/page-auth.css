@@ -222,6 +222,16 @@ body {
   color: #1b5e9e;
 }
 
+.auth-forgot-link {
+  font-size: 0.8rem;
+  color: #1b5e9e;
+  text-decoration: none;
+}
+
+.auth-forgot-link:hover {
+  text-decoration: underline;
+}
+
 /* ─── Inputs ────────────────────────────────────────────────── */
 .auth-input.form-control {
   background: #fff !important;

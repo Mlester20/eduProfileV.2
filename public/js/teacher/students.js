@@ -13,6 +13,16 @@ document.addEventListener('DOMContentLoaded', function(){
     const searchInput = document.getElementById('student_table_search')
     if(!searchInput) return
 
+    // Every debounced search still reloads the page (it needs the server's
+    // pagination), which otherwise drops focus out of the search box and
+    // makes continuous typing feel broken -- put the cursor back at the end
+    // of what was typed so the next keystroke doesn't need a re-click.
+    if(new URL(window.location.href).searchParams.has('search')){
+        searchInput.focus()
+        const len = searchInput.value.length
+        searchInput.setSelectionRange(len, len)
+    }
+
     searchInput.addEventListener('input', debounce(function(){
         const term = searchInput.value.trim()
         const url = new URL(window.location.href)
@@ -87,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('student_picture_preview').src = '../../../public/assets/img/avatars/1.png'
         document.getElementById('religion_other_wrapper').classList.add('d-none')
         document.getElementById('religion_other').value = ''
-        resetAddressFields()
+        studentAddressPicker.reset()
     }
 
     function populateStudentInfoForm(student){
@@ -120,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('street').value = student.street || ''
         document.getElementById('sitio').value = student.sitio || ''
         document.getElementById('purok').value = student.purok || ''
-        populateAddressFields(student)
+        studentAddressPicker.populate(student.province, student.city_municipality, student.barangay)
         document.getElementById('learning_modality').value = student.learning_modality || ''
         document.getElementById('remarks').value = student.remarks || ''
 
@@ -165,8 +175,9 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     // ===== Cascading Province -> City/Municipality -> Barangay =====
-
-    let provincesLoaded = false
+    // One picker per person (student, father, mother, guardian) — same
+    // mechanism, just a different id prefix per instance, so all four stay
+    // independent while sharing the same province list fetched once.
 
     function populateSelectOptions(selectEl, items, placeholderText){
         selectEl.innerHTML = ''
@@ -187,42 +198,6 @@ document.addEventListener('DOMContentLoaded', function(){
         selectEl.appendChild(other)
     }
 
-    function loadProvinces(){
-        return fetch('../../../app/controllers/AddressLookupController.php?level=provinces')
-            .then(function(r){ return r.json() })
-            .then(function(res){
-                populateSelectOptions(document.getElementById('province'), res.data || [], 'Select Province')
-                provincesLoaded = true
-            })
-    }
-
-    function resetCitySelect(){
-        const citySelect = document.getElementById('city_municipality')
-        citySelect.innerHTML = '<option value="">Select province first</option>'
-        citySelect.setAttribute('disabled', 'disabled')
-        document.getElementById('city_municipality_other').classList.add('d-none')
-        document.getElementById('city_municipality_other').value = ''
-    }
-
-    function resetBarangaySelect(){
-        const brgySelect = document.getElementById('barangay')
-        brgySelect.innerHTML = '<option value="">Select city/municipality first</option>'
-        brgySelect.setAttribute('disabled', 'disabled')
-        document.getElementById('barangay_other').classList.add('d-none')
-        document.getElementById('barangay_other').value = ''
-    }
-
-    function resetAddressFields(){
-        const provinceSelect = document.getElementById('province')
-        if(provincesLoaded){
-            provinceSelect.value = ''
-        }
-        document.getElementById('province_other').classList.add('d-none')
-        document.getElementById('province_other').value = ''
-        resetCitySelect()
-        resetBarangaySelect()
-    }
-
     function loadCitiesForProvince(code){
         return fetch('../../../app/controllers/AddressLookupController.php?level=cities&province_code=' + encodeURIComponent(code))
             .then(function(r){ return r.json() })
@@ -234,53 +209,6 @@ document.addEventListener('DOMContentLoaded', function(){
             .then(function(r){ return r.json() })
             .then(function(res){ return res.data || [] })
     }
-
-    document.getElementById('province').addEventListener('change', function(){
-        resetCitySelect()
-        resetBarangaySelect()
-        const otherInput = document.getElementById('province_other')
-        if(this.value === '__other__'){
-            otherInput.classList.remove('d-none')
-            return
-        }
-        otherInput.classList.add('d-none')
-        otherInput.value = ''
-        if(!this.value) return
-        const code = this.options[this.selectedIndex].dataset.code
-        loadCitiesForProvince(code).then(function(cities){
-            const citySelect = document.getElementById('city_municipality')
-            populateSelectOptions(citySelect, cities, 'Select City/Municipality')
-            citySelect.removeAttribute('disabled')
-        })
-    })
-
-    document.getElementById('city_municipality').addEventListener('change', function(){
-        resetBarangaySelect()
-        const otherInput = document.getElementById('city_municipality_other')
-        if(this.value === '__other__'){
-            otherInput.classList.remove('d-none')
-            return
-        }
-        otherInput.classList.add('d-none')
-        otherInput.value = ''
-        if(!this.value) return
-        const code = this.options[this.selectedIndex].dataset.code
-        loadBarangaysForCity(code).then(function(barangays){
-            const brgySelect = document.getElementById('barangay')
-            populateSelectOptions(brgySelect, barangays, 'Select Barangay')
-            brgySelect.removeAttribute('disabled')
-        })
-    })
-
-    document.getElementById('barangay').addEventListener('change', function(){
-        const otherInput = document.getElementById('barangay_other')
-        if(this.value === '__other__'){
-            otherInput.classList.remove('d-none')
-        }else{
-            otherInput.classList.add('d-none')
-            otherInput.value = ''
-        }
-    })
 
     function selectOptionByName(selectEl, name){
         if(!name) return null
@@ -298,55 +226,181 @@ document.addEventListener('DOMContentLoaded', function(){
         otherInput.value = rawValue || ''
     }
 
-    /**
-     * Edit mode only has the student's saved address as plain text (no PSGC
-     * codes stored), so each level is matched by name against the loaded
-     * options. A level that doesn't match falls back to "Other" with the
-     * raw saved text — legacy/imported records won't always line up with
-     * the PSGC list, and this keeps their data visible instead of blanking
-     * it out. Everything below an unmatched level does the same, since
-     * without a matched parent code there's nothing to cascade-fetch from.
-     */
-    async function populateAddressFields(student){
-        resetAddressFields()
-        if(!student.province) return
+    const addressPickers = []
+    let provincesCache = null
+    let provincesLoaded = false
 
-        if(!provincesLoaded){
-            await loadProvinces()
-        }
-        const provinceSelect = document.getElementById('province')
-        const provinceMatch = selectOptionByName(provinceSelect, student.province)
-        if(!provinceMatch){
-            setAddressOther('province', 'province_other', student.province)
-            if(student.city_municipality) setAddressOther('city_municipality', 'city_municipality_other', student.city_municipality)
-            if(student.barangay) setAddressOther('barangay', 'barangay_other', student.barangay)
-            return
+    function createAddressPicker(prefix){
+        const ids = {
+            province: prefix + 'province',
+            provinceOther: prefix + 'province_other',
+            city: prefix + 'city_municipality',
+            cityOther: prefix + 'city_municipality_other',
+            barangay: prefix + 'barangay',
+            barangayOther: prefix + 'barangay_other'
         }
 
-        const citySelect = document.getElementById('city_municipality')
-        const cities = await loadCitiesForProvince(provinceMatch.dataset.code)
-        populateSelectOptions(citySelect, cities, 'Select City/Municipality')
-        citySelect.removeAttribute('disabled')
-
-        if(!student.city_municipality) return
-        const cityMatch = selectOptionByName(citySelect, student.city_municipality)
-        if(!cityMatch){
-            setAddressOther('city_municipality', 'city_municipality_other', student.city_municipality)
-            if(student.barangay) setAddressOther('barangay', 'barangay_other', student.barangay)
-            return
+        function resetCity(){
+            const citySelect = document.getElementById(ids.city)
+            citySelect.innerHTML = '<option value="">Select province first</option>'
+            citySelect.setAttribute('disabled', 'disabled')
+            document.getElementById(ids.cityOther).classList.add('d-none')
+            document.getElementById(ids.cityOther).value = ''
         }
 
-        const brgySelect = document.getElementById('barangay')
-        const barangays = await loadBarangaysForCity(cityMatch.dataset.code)
-        populateSelectOptions(brgySelect, barangays, 'Select Barangay')
-        brgySelect.removeAttribute('disabled')
-
-        if(!student.barangay) return
-        const brgyMatch = selectOptionByName(brgySelect, student.barangay)
-        if(!brgyMatch){
-            setAddressOther('barangay', 'barangay_other', student.barangay)
+        function resetBarangay(){
+            const brgySelect = document.getElementById(ids.barangay)
+            brgySelect.innerHTML = '<option value="">Select city/municipality first</option>'
+            brgySelect.setAttribute('disabled', 'disabled')
+            document.getElementById(ids.barangayOther).classList.add('d-none')
+            document.getElementById(ids.barangayOther).value = ''
         }
+
+        function reset(){
+            if(provincesLoaded){
+                document.getElementById(ids.province).value = ''
+            }
+            document.getElementById(ids.provinceOther).classList.add('d-none')
+            document.getElementById(ids.provinceOther).value = ''
+            resetCity()
+            resetBarangay()
+        }
+
+        function populateProvinces(){
+            populateSelectOptions(document.getElementById(ids.province), provincesCache || [], 'Select Province')
+        }
+
+        document.getElementById(ids.province).addEventListener('change', function(){
+            resetCity()
+            resetBarangay()
+            const otherInput = document.getElementById(ids.provinceOther)
+            if(this.value === '__other__'){
+                otherInput.classList.remove('d-none')
+                return
+            }
+            otherInput.classList.add('d-none')
+            otherInput.value = ''
+            if(!this.value) return
+            const code = this.options[this.selectedIndex].dataset.code
+            loadCitiesForProvince(code).then(function(cities){
+                const citySelect = document.getElementById(ids.city)
+                populateSelectOptions(citySelect, cities, 'Select City/Municipality')
+                citySelect.removeAttribute('disabled')
+            })
+        })
+
+        document.getElementById(ids.city).addEventListener('change', function(){
+            resetBarangay()
+            const otherInput = document.getElementById(ids.cityOther)
+            if(this.value === '__other__'){
+                otherInput.classList.remove('d-none')
+                return
+            }
+            otherInput.classList.add('d-none')
+            otherInput.value = ''
+            if(!this.value) return
+            const code = this.options[this.selectedIndex].dataset.code
+            loadBarangaysForCity(code).then(function(barangays){
+                const brgySelect = document.getElementById(ids.barangay)
+                populateSelectOptions(brgySelect, barangays, 'Select Barangay')
+                brgySelect.removeAttribute('disabled')
+            })
+        })
+
+        document.getElementById(ids.barangay).addEventListener('change', function(){
+            const otherInput = document.getElementById(ids.barangayOther)
+            if(this.value === '__other__'){
+                otherInput.classList.remove('d-none')
+            }else{
+                otherInput.classList.add('d-none')
+                otherInput.value = ''
+            }
+        })
+
+        /**
+         * Saved records only have the address as plain text (no PSGC codes
+         * stored), so each level is matched by name against the loaded
+         * options. A level that doesn't match falls back to "Other" with
+         * the raw saved text — legacy/imported records won't always line up
+         * with the PSGC list, and this keeps their data visible instead of
+         * blanking it out. Everything below an unmatched level does the
+         * same, since without a matched parent code there's nothing to
+         * cascade-fetch from. provinceVal/cityVal/barangayVal are plain
+         * strings, already pulled out of whatever record shape the caller has.
+         */
+        async function populate(provinceVal, cityVal, barangayVal){
+            reset()
+            if(!provinceVal) return
+
+            if(!provincesLoaded){
+                await loadProvinces()
+            }
+            const provinceSelect = document.getElementById(ids.province)
+            const provinceMatch = selectOptionByName(provinceSelect, provinceVal)
+            if(!provinceMatch){
+                setAddressOther(ids.province, ids.provinceOther, provinceVal)
+                if(cityVal) setAddressOther(ids.city, ids.cityOther, cityVal)
+                if(barangayVal) setAddressOther(ids.barangay, ids.barangayOther, barangayVal)
+                return
+            }
+
+            const citySelect = document.getElementById(ids.city)
+            const cities = await loadCitiesForProvince(provinceMatch.dataset.code)
+            populateSelectOptions(citySelect, cities, 'Select City/Municipality')
+            citySelect.removeAttribute('disabled')
+
+            if(!cityVal) return
+            const cityMatch = selectOptionByName(citySelect, cityVal)
+            if(!cityMatch){
+                setAddressOther(ids.city, ids.cityOther, cityVal)
+                if(barangayVal) setAddressOther(ids.barangay, ids.barangayOther, barangayVal)
+                return
+            }
+
+            const brgySelect = document.getElementById(ids.barangay)
+            const barangays = await loadBarangaysForCity(cityMatch.dataset.code)
+            populateSelectOptions(brgySelect, barangays, 'Select Barangay')
+            brgySelect.removeAttribute('disabled')
+
+            if(!barangayVal) return
+            const brgyMatch = selectOptionByName(brgySelect, barangayVal)
+            if(!brgyMatch){
+                setAddressOther(ids.barangay, ids.barangayOther, barangayVal)
+            }
+        }
+
+        function valueOrOther(selectId, otherId){
+            const select = document.getElementById(selectId)
+            return select.value === '__other__' ? document.getElementById(otherId).value : select.value
+        }
+
+        function getValues(){
+            return {
+                province: valueOrOther(ids.province, ids.provinceOther),
+                city_municipality: valueOrOther(ids.city, ids.cityOther),
+                barangay: valueOrOther(ids.barangay, ids.barangayOther)
+            }
+        }
+
+        const picker = { reset, populateProvinces, populate, getValues }
+        addressPickers.push(picker)
+        return picker
     }
+
+    function loadProvinces(){
+        return fetch('../../../app/controllers/AddressLookupController.php?level=provinces')
+            .then(function(r){ return r.json() })
+            .then(function(res){
+                provincesCache = res.data || []
+                provincesLoaded = true
+                addressPickers.forEach(function(picker){ picker.populateProvinces() })
+            })
+    }
+
+    const studentAddressPicker = createAddressPicker('')
+    const fatherAddressPicker = createAddressPicker('pg_father_')
+    const motherAddressPicker = createAddressPicker('pg_mother_')
+    const guardianAddressPicker = createAddressPicker('pg_guardian_')
 
     loadProvinces()
 
@@ -358,7 +412,11 @@ document.addEventListener('DOMContentLoaded', function(){
         clearParentGuardianForm()
         clearHealthProfileForm()
         document.getElementById('readingLevelList').innerHTML = '<tr><td colspan="5" class="text-center text-muted">No reading level records yet.</td></tr>'
-        document.getElementById('academicRecordList').innerHTML = '<tr><td colspan="5" class="text-center text-muted">No academic records yet.</td></tr>'
+        document.getElementById('academicRecordList').innerHTML = '<tr><td colspan="6" class="text-center text-muted">No academic records yet.</td></tr>'
+        academicRecordRows = []
+        if(document.getElementById('ap_period_filter')){
+            document.getElementById('ap_period_filter').value = ''
+        }
 
         if(id){
             document.getElementById('studentModalLabel').textContent = 'Edit Student'
@@ -441,10 +499,22 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // ===== Parent / Guardian (upsert) =====
 
+    // Each of Father/Mother/Guardian carries the same field set: name,
+    // occupation-or-relationship, age, contact, house#/street/sitio/purok,
+    // and its own province/city/barangay picker.
+    const PG_PERSON_FIELDS = {
+        father: ['pg_father_name', 'pg_father_occupation', 'pg_father_age', 'pg_father_contact', 'pg_father_house_number', 'pg_father_street', 'pg_father_sitio', 'pg_father_purok'],
+        mother: ['pg_mother_name', 'pg_mother_occupation', 'pg_mother_age', 'pg_mother_contact', 'pg_mother_house_number', 'pg_mother_street', 'pg_mother_sitio', 'pg_mother_purok'],
+        guardian: ['pg_guardian_name', 'pg_guardian_relationship', 'pg_guardian_age', 'pg_guardian_contact', 'pg_guardian_house_number', 'pg_guardian_street', 'pg_guardian_sitio', 'pg_guardian_purok']
+    }
+
     function clearParentGuardianForm(){
-        ['pg_father_name', 'pg_father_occupation', 'pg_father_contact', 'pg_mother_name', 'pg_mother_occupation', 'pg_mother_contact', 'pg_guardian_name', 'pg_guardian_relationship', 'pg_guardian_contact'].forEach(function(id){
+        Object.values(PG_PERSON_FIELDS).flat().forEach(function(id){
             document.getElementById(id).value = ''
         })
+        fatherAddressPicker.reset()
+        motherAddressPicker.reset()
+        guardianAddressPicker.reset()
     }
 
     function loadParentGuardian(){
@@ -455,32 +525,86 @@ document.addEventListener('DOMContentLoaded', function(){
             .then(function(res){
                 const pg = res.data
                 if(!pg) return
+
                 document.getElementById('pg_father_name').value = pg.father_name || ''
                 document.getElementById('pg_father_occupation').value = pg.father_occupation || ''
+                document.getElementById('pg_father_age').value = pg.fathers_age || ''
                 document.getElementById('pg_father_contact').value = pg.father_contact || ''
+                document.getElementById('pg_father_house_number').value = pg.father_house_number || ''
+                document.getElementById('pg_father_street').value = pg.father_street || ''
+                document.getElementById('pg_father_sitio').value = pg.father_sitio || ''
+                document.getElementById('pg_father_purok').value = pg.father_purok || ''
+                fatherAddressPicker.populate(pg.father_province, pg.father_city_municipality, pg.father_barangay)
+
                 document.getElementById('pg_mother_name').value = pg.mother_name || ''
                 document.getElementById('pg_mother_occupation').value = pg.mother_occupation || ''
+                document.getElementById('pg_mother_age').value = pg.mothers_age || ''
                 document.getElementById('pg_mother_contact').value = pg.mother_contact || ''
+                document.getElementById('pg_mother_house_number').value = pg.mother_house_number || ''
+                document.getElementById('pg_mother_street').value = pg.mother_street || ''
+                document.getElementById('pg_mother_sitio').value = pg.mother_sitio || ''
+                document.getElementById('pg_mother_purok').value = pg.mother_purok || ''
+                motherAddressPicker.populate(pg.mother_province, pg.mother_city_municipality, pg.mother_barangay)
+
                 document.getElementById('pg_guardian_name').value = pg.guardian_name || ''
                 document.getElementById('pg_guardian_relationship').value = pg.guardian_relationship || ''
+                document.getElementById('pg_guardian_age').value = pg.guardians_age || ''
                 document.getElementById('pg_guardian_contact').value = pg.guardian_contact || ''
+                document.getElementById('pg_guardian_house_number').value = pg.guardian_house_number || ''
+                document.getElementById('pg_guardian_street').value = pg.guardian_street || ''
+                document.getElementById('pg_guardian_sitio').value = pg.guardian_sitio || ''
+                document.getElementById('pg_guardian_purok').value = pg.guardian_purok || ''
+                guardianAddressPicker.populate(pg.guardian_province, pg.guardian_city_municipality, pg.guardian_barangay)
             })
     }
 
     document.getElementById('parentGuardianForm').addEventListener('submit', function(e){
         e.preventDefault()
         if(!currentStudentId) return
+
+        const fatherAddress = fatherAddressPicker.getValues()
+        const motherAddress = motherAddressPicker.getValues()
+        const guardianAddress = guardianAddressPicker.getValues()
+
         const payload = {
             student_id: currentStudentId,
+
             father_name: document.getElementById('pg_father_name').value,
             father_occupation: document.getElementById('pg_father_occupation').value,
+            fathers_age: document.getElementById('pg_father_age').value,
             father_contact: document.getElementById('pg_father_contact').value,
+            father_house_number: document.getElementById('pg_father_house_number').value,
+            father_street: document.getElementById('pg_father_street').value,
+            father_sitio: document.getElementById('pg_father_sitio').value,
+            father_purok: document.getElementById('pg_father_purok').value,
+            father_province: fatherAddress.province,
+            father_city_municipality: fatherAddress.city_municipality,
+            father_barangay: fatherAddress.barangay,
+
             mother_name: document.getElementById('pg_mother_name').value,
             mother_occupation: document.getElementById('pg_mother_occupation').value,
+            mothers_age: document.getElementById('pg_mother_age').value,
             mother_contact: document.getElementById('pg_mother_contact').value,
+            mother_house_number: document.getElementById('pg_mother_house_number').value,
+            mother_street: document.getElementById('pg_mother_street').value,
+            mother_sitio: document.getElementById('pg_mother_sitio').value,
+            mother_purok: document.getElementById('pg_mother_purok').value,
+            mother_province: motherAddress.province,
+            mother_city_municipality: motherAddress.city_municipality,
+            mother_barangay: motherAddress.barangay,
+
             guardian_name: document.getElementById('pg_guardian_name').value,
             guardian_relationship: document.getElementById('pg_guardian_relationship').value,
+            guardians_age: document.getElementById('pg_guardian_age').value,
             guardian_contact: document.getElementById('pg_guardian_contact').value,
+            guardian_house_number: document.getElementById('pg_guardian_house_number').value,
+            guardian_street: document.getElementById('pg_guardian_street').value,
+            guardian_sitio: document.getElementById('pg_guardian_sitio').value,
+            guardian_purok: document.getElementById('pg_guardian_purok').value,
+            guardian_province: guardianAddress.province,
+            guardian_city_municipality: guardianAddress.city_municipality,
+            guardian_barangay: guardianAddress.barangay,
+
             csrf_token: csrfToken()
         }
         fetch('../../../app/controllers/teacher/ParentGuardianController.php', {
@@ -748,26 +872,33 @@ document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('ap_cancel_btn').classList.add('d-none')
     }
 
+    let academicRecordRows = []
+
     function renderAcademicRecordList(rows){
         const tbody = document.getElementById('academicRecordList')
         tbody.innerHTML = ''
         if(!rows || rows.length === 0){
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No academic records yet.</td></tr>'
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No academic records yet.</td></tr>'
             return
         }
         rows.forEach(function(row){
+            const isPassed = row.remarks === 'Passed'
+            const remarksBadge = row.remarks
+                ? '<span class="badge ' + (isPassed ? 'bg-label-success' : 'bg-label-danger') + '">' + escapeHtml(row.remarks) + '</span>'
+                : ''
             const tr = document.createElement('tr')
             tr.innerHTML =
                 '<td>' + escapeHtml(row.subject_name) + '</td>' +
                 '<td>' + escapeHtml(row.grading_period) + '</td>' +
                 '<td>' + escapeHtml(row.grade) + '</td>' +
-                '<td>' + escapeHtml(row.remarks || '') + '</td>' +
+                '<td>' + remarksBadge + '</td>' +
+                '<td>' + escapeHtml(row.recorded_by_name || '') + '</td>' +
                 '<td>' +
                     '<button type="button" class="btn btn-sm btn-warning ap-edit-btn"><i class="bx bx-edit"></i></button> ' +
                     '<button type="button" class="btn btn-sm btn-danger ap-delete-btn"><i class="bx bx-trash"></i></button>' +
                 '</td>'
             tr.querySelector('.ap-edit-btn').addEventListener('click', function(){
-                editAcademicRecord(row.id, row.subject_name, row.grading_period, row.grade, row.remarks)
+                editAcademicRecord(row.id, row.subject_name, row.grading_period, row.grade)
             })
             tr.querySelector('.ap-delete-btn').addEventListener('click', function(){
                 deleteAcademicRecord(row.id)
@@ -776,19 +907,35 @@ document.addEventListener('DOMContentLoaded', function(){
         })
     }
 
+    function applyAcademicFilterAndRender(){
+        const filterEl = document.getElementById('ap_period_filter')
+        const period = filterEl ? filterEl.value : ''
+        const filtered = period
+            ? academicRecordRows.filter(function(row){ return row.grading_period === period })
+            : academicRecordRows
+        renderAcademicRecordList(filtered)
+    }
+
     function loadAcademicRecords(){
         if(!currentStudentId) return
         fetch('../../../app/controllers/teacher/AcademicProfileController.php?student_id=' + currentStudentId)
             .then(function(r){ return r.json() })
-            .then(function(res){ renderAcademicRecordList(res.data) })
+            .then(function(res){
+                academicRecordRows = res.data || []
+                applyAcademicFilterAndRender()
+            })
     }
 
-    function editAcademicRecord(id, subjectName, gradingPeriod, grade, remarks){
+    const apPeriodFilterEl = document.getElementById('ap_period_filter')
+    if(apPeriodFilterEl){
+        apPeriodFilterEl.addEventListener('change', applyAcademicFilterAndRender)
+    }
+
+    function editAcademicRecord(id, subjectName, gradingPeriod, grade){
         document.getElementById('ap_edit_id').value = id
         document.getElementById('ap_subject_name').value = subjectName
         document.getElementById('ap_grading_period').value = gradingPeriod
         document.getElementById('ap_grade').value = grade
-        document.getElementById('ap_remarks').value = remarks || ''
         document.getElementById('ap_submit_btn').textContent = 'Update'
         document.getElementById('ap_cancel_btn').classList.remove('d-none')
     }
@@ -828,7 +975,6 @@ document.addEventListener('DOMContentLoaded', function(){
             subject_name: document.getElementById('ap_subject_name').value,
             grading_period: document.getElementById('ap_grading_period').value,
             grade: document.getElementById('ap_grade').value,
-            remarks: document.getElementById('ap_remarks').value,
             csrf_token: csrfToken()
         }
         if(editId){

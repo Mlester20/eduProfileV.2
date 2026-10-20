@@ -409,44 +409,192 @@ $religionOptions = [
                         <!-- Parent/Guardian -->
                         <div class="tab-pane fade" id="tab-parent" role="tabpanel">
                             <form id="parentGuardianForm">
+
+                                <h6 class="fw-bold mb-2">Father</h6>
                                 <div class="row g-3">
                                     <div class="col-md-4 mb-3">
-                                        <label for="pg_father_name" class="form-label">Father's Name</label>
+                                        <label for="pg_father_name" class="form-label">Name</label>
                                         <input class="form-control" type="text" id="pg_father_name">
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="pg_father_occupation" class="form-label">Father's Occupation</label>
+                                        <label for="pg_father_occupation" class="form-label">Occupation</label>
                                         <input class="form-control" type="text" id="pg_father_occupation">
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="pg_father_contact" class="form-label">Father's Contact</label>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="pg_father_age" class="form-label">Age</label>
+                                        <input class="form-control" type="number" min="0" max="120" id="pg_father_age">
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="pg_father_contact" class="form-label">Contact</label>
                                         <input class="form-control" type="text" id="pg_father_contact">
                                     </div>
+                                </div>
+                                <div class="row g-3">
                                     <div class="col-md-4 mb-3">
-                                        <label for="pg_mother_name" class="form-label">Mother's Name</label>
+                                        <label for="pg_father_province" class="form-label">Province</label>
+                                        <select class="form-select" id="pg_father_province">
+                                            <option value="">Loading provinces...</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_father_province_other" placeholder="Enter province">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_father_city_municipality" class="form-label">City / Municipality</label>
+                                        <select class="form-select" id="pg_father_city_municipality" disabled>
+                                            <option value="">Select province first</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_father_city_municipality_other" placeholder="Enter city/municipality">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_father_barangay" class="form-label">Barangay</label>
+                                        <select class="form-select" id="pg_father_barangay" disabled>
+                                            <option value="">Select city/municipality first</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_father_barangay_other" placeholder="Enter barangay">
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_father_house_number" class="form-label">House #</label>
+                                        <input class="form-control" type="text" id="pg_father_house_number">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_father_street" class="form-label">Street</label>
+                                        <input class="form-control" type="text" id="pg_father_street">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_father_sitio" class="form-label">Sitio</label>
+                                        <input class="form-control" type="text" id="pg_father_sitio">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_father_purok" class="form-label">Purok</label>
+                                        <input class="form-control" type="text" id="pg_father_purok">
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h6 class="fw-bold mb-2">Mother</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_mother_name" class="form-label">Name</label>
                                         <input class="form-control" type="text" id="pg_mother_name">
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="pg_mother_occupation" class="form-label">Mother's Occupation</label>
+                                        <label for="pg_mother_occupation" class="form-label">Occupation</label>
                                         <input class="form-control" type="text" id="pg_mother_occupation">
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="pg_mother_contact" class="form-label">Mother's Contact</label>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="pg_mother_age" class="form-label">Age</label>
+                                        <input class="form-control" type="number" min="0" max="120" id="pg_mother_age">
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="pg_mother_contact" class="form-label">Contact</label>
                                         <input class="form-control" type="text" id="pg_mother_contact">
                                     </div>
+                                </div>
+                                <div class="row g-3">
                                     <div class="col-md-4 mb-3">
-                                        <label for="pg_guardian_name" class="form-label">Guardian's Name</label>
+                                        <label for="pg_mother_province" class="form-label">Province</label>
+                                        <select class="form-select" id="pg_mother_province">
+                                            <option value="">Loading provinces...</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_mother_province_other" placeholder="Enter province">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_mother_city_municipality" class="form-label">City / Municipality</label>
+                                        <select class="form-select" id="pg_mother_city_municipality" disabled>
+                                            <option value="">Select province first</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_mother_city_municipality_other" placeholder="Enter city/municipality">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_mother_barangay" class="form-label">Barangay</label>
+                                        <select class="form-select" id="pg_mother_barangay" disabled>
+                                            <option value="">Select city/municipality first</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_mother_barangay_other" placeholder="Enter barangay">
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_mother_house_number" class="form-label">House #</label>
+                                        <input class="form-control" type="text" id="pg_mother_house_number">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_mother_street" class="form-label">Street</label>
+                                        <input class="form-control" type="text" id="pg_mother_street">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_mother_sitio" class="form-label">Sitio</label>
+                                        <input class="form-control" type="text" id="pg_mother_sitio">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_mother_purok" class="form-label">Purok</label>
+                                        <input class="form-control" type="text" id="pg_mother_purok">
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h6 class="fw-bold mb-2">Guardian</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_guardian_name" class="form-label">Name</label>
                                         <input class="form-control" type="text" id="pg_guardian_name">
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="pg_guardian_relationship" class="form-label">Guardian Relationship</label>
+                                        <label for="pg_guardian_relationship" class="form-label">Relationship</label>
                                         <input class="form-control" type="text" id="pg_guardian_relationship">
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="pg_guardian_contact" class="form-label">Guardian's Contact</label>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="pg_guardian_age" class="form-label">Age</label>
+                                        <input class="form-control" type="number" min="0" max="120" id="pg_guardian_age">
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="pg_guardian_contact" class="form-label">Contact</label>
                                         <input class="form-control" type="text" id="pg_guardian_contact">
                                     </div>
                                 </div>
+                                <div class="row g-3">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_guardian_province" class="form-label">Province</label>
+                                        <select class="form-select" id="pg_guardian_province">
+                                            <option value="">Loading provinces...</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_guardian_province_other" placeholder="Enter province">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_guardian_city_municipality" class="form-label">City / Municipality</label>
+                                        <select class="form-select" id="pg_guardian_city_municipality" disabled>
+                                            <option value="">Select province first</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_guardian_city_municipality_other" placeholder="Enter city/municipality">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="pg_guardian_barangay" class="form-label">Barangay</label>
+                                        <select class="form-select" id="pg_guardian_barangay" disabled>
+                                            <option value="">Select city/municipality first</option>
+                                        </select>
+                                        <input class="form-control mt-1 d-none" type="text" id="pg_guardian_barangay_other" placeholder="Enter barangay">
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_guardian_house_number" class="form-label">House #</label>
+                                        <input class="form-control" type="text" id="pg_guardian_house_number">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_guardian_street" class="form-label">Street</label>
+                                        <input class="form-control" type="text" id="pg_guardian_street">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_guardian_sitio" class="form-label">Sitio</label>
+                                        <input class="form-control" type="text" id="pg_guardian_sitio">
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="pg_guardian_purok" class="form-label">Purok</label>
+                                        <input class="form-control" type="text" id="pg_guardian_purok">
+                                    </div>
+                                </div>
+
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">Save Parent/Guardian Info</button>
                                 </div>
@@ -608,12 +756,20 @@ $religionOptions = [
                                         <button type="submit" class="btn btn-primary flex-grow-1" id="ap_submit_btn">Add</button>
                                         <button type="button" class="btn btn-outline-secondary d-none" id="ap_cancel_btn">Cancel</button>
                                     </div>
-                                    <div class="col-12 mb-1">
-                                        <label for="ap_remarks" class="form-label">Remarks</label>
-                                        <textarea class="form-control" id="ap_remarks" rows="2"></textarea>
-                                    </div>
                                 </div>
+                                <small class="text-muted d-block mt-n2 mb-2">Remarks is set automatically from the grade -- 75 and above is Passed, 74 and below is Failed.</small>
                             </form>
+                            <div class="d-flex justify-content-end mb-2">
+                                <div style="max-width: 220px; width: 100%;">
+                                    <select class="form-select form-select-sm" id="ap_period_filter">
+                                        <option value="">All Grading Periods</option>
+                                        <option value="1st Quarter">1st Quarter</option>
+                                        <option value="2nd Quarter">2nd Quarter</option>
+                                        <option value="3rd Quarter">3rd Quarter</option>
+                                        <option value="4th Quarter">4th Quarter</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover">
                                     <thead>
@@ -622,11 +778,12 @@ $religionOptions = [
                                             <th>Grading Period</th>
                                             <th>Grade</th>
                                             <th>Remarks</th>
+                                            <th>Teacher</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="academicRecordList">
-                                        <tr><td colspan="5" class="text-center text-muted">No academic records yet.</td></tr>
+                                        <tr><td colspan="6" class="text-center text-muted">No academic records yet.</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -768,7 +925,7 @@ $religionOptions = [
     <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="../../../public/assets/vendor/js/menu.js"></script>
     <script src="../../../public/assets/js/main.js"></script>
-<script src="../../../public/js/teacher/home.js"></script>
-<script src="../../../public/js/teacher/students.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/teacher/students.js'); ?>"></script>
+    <script src="../../../public/js/teacher/home.js"></script>
+    <script src="../../../public/js/teacher/students.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/teacher/students.js'); ?>"></script>
 </body>
 </html>

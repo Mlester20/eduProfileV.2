@@ -1,6 +1,7 @@
 function editTeacher(data){
     document.getElementById('editTeacherId').value = data.id;
     document.getElementById('editFullName').value = data.fullName;
+    document.getElementById('editPosition').value = data.position || '';
     document.getElementById('editEmail').value = data.email;
     document.getElementById('editContactNumber').value = data.contactNumber || '';
     document.getElementById('editAddress').value = data.address || '';

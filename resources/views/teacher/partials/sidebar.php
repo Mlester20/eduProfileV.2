@@ -45,24 +45,25 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
-        <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">Alerts</span>
-        </li>
-
-        <!-- At-Risk Students -->
-        <li class="menu-item <?php echo ($currentPage === 'at-risk.php') ? 'active' : ''; ?>">
-          <a href="at-risk.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-error-circle"></i>
-            <div data-i18n="At-Risk Students">At-Risk Students</div>
+        <!-- Reports (dropdown: Overview, At-Risk Learners, Feeding Program, Class List) -->
+        <?php $reportsPages = ['at-risk.php', 'feeding-program.php']; ?>
+        <li class="menu-item <?php echo in_array($currentPage, $reportsPages, true) ? 'active' : ''; ?>">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
+            <div data-i18n="Reports">Reports</div>
           </a>
-        </li>
-
-        <!-- Feeding Program -->
-        <li class="menu-item <?php echo ($currentPage === 'feeding-program.php') ? 'active' : ''; ?>">
-          <a href="feeding-program.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-dish"></i>
-            <div data-i18n="Feeding Program">Feeding Program</div>
-          </a>
+          <ul class="menu-sub">
+            <li class="menu-item <?php echo ($currentPage === 'at-risk.php') ? 'active' : ''; ?>">
+              <a href="at-risk.php" class="menu-link">
+                <div data-i18n="At-Risk Learners">At-Risk Learners</div>
+              </a>
+            </li>
+            <li class="menu-item <?php echo ($currentPage === 'feeding-program.php') ? 'active' : ''; ?>">
+              <a href="feeding-program.php" class="menu-link">
+                <div data-i18n="Feeding Program">Feeding Program</div>
+              </a>
+            </li>
+          </ul>
         </li>
 
         <!-- Class List -->

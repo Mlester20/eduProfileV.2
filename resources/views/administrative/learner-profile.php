@@ -32,6 +32,8 @@ $school = SchoolSettings::get($con);
   <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
   <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/profile-settings.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/learner-profile.css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
   <script src="../../../public/assets/vendor/js/helpers.js"></script>
   <script src="../../../public/assets/js/config.js"></script>
@@ -87,6 +89,17 @@ $school = SchoolSettings::get($con);
     <?php else: ?>
         <?php $info = $profile['info']; ?>
         <?php $fullName = trim($info['first_name'] . ' ' . ($info['middle_name'] ?? '') . ' ' . $info['last_name'] . ' ' . ($info['suffix'] ?? '')); ?>
+        <?php
+            $learnerDefaultAvatar = '../../../public/assets/img/avatars/1.png';
+            $learnerAvatarSrc = $info['picture'] ?? null;
+            if($learnerAvatarSrc){
+                $learnerAvatarRelPath = (strpos($learnerAvatarSrc, '/') !== false) ? $learnerAvatarSrc : ('storage/students/' . $learnerAvatarSrc);
+                $learnerAvatarFullPath = __DIR__ . '/../../../' . $learnerAvatarRelPath;
+                $learnerAvatarSrc = file_exists($learnerAvatarFullPath) ? ('../../../' . $learnerAvatarRelPath) : $learnerDefaultAvatar;
+            }else{
+                $learnerAvatarSrc = $learnerDefaultAvatar;
+            }
+        ?>
 
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 no-print">
             <a href="learner-profile.php?status=<?php echo htmlspecialchars($status_filter); ?>&page=<?php echo (int) $page; ?>" class="btn btn-outline-secondary">
@@ -108,21 +121,25 @@ $school = SchoolSettings::get($con);
             </div>
         </div>
 
-        <div class="card mb-4">
+        <div class="card learner-header-card mb-4">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-                    <h4 class="mb-0"><?php echo htmlspecialchars($fullName); ?></h4>
-                    <span class="badge bg-label-<?php echo ($info['status'] === 'archived') ? 'secondary' : 'success'; ?>">
-                        <?php echo htmlspecialchars(ucfirst($info['status'])); ?>
-                    </span>
+                <div class="learner-header-body">
+                    <img src="<?php echo htmlspecialchars($learnerAvatarSrc); ?>" alt="Learner's photo" class="learner-avatar-img">
+                    <div class="learner-header-info">
+                        <h5 class="mb-0"><?php echo htmlspecialchars($fullName); ?></h5>
+                        <p class="text-muted mb-2"><?php echo htmlspecialchars(($info['grade_name'] ?? '') . ' - ' . ($info['section_name'] ?? '')); ?> &middot; LRN <?php echo htmlspecialchars($info['lrn'] ?? 'N/A'); ?></p>
+                        <span class="badge bg-label-<?php echo ($info['status'] === 'archived') ? 'secondary' : 'success'; ?>">
+                            <?php echo htmlspecialchars(ucfirst($info['status'])); ?>
+                        </span>
+                        <span class="text-muted small ms-2"><i class='bx bx-calendar'></i> <?php echo htmlspecialchars($info['school_year'] ?? ''); ?></span>
+                    </div>
                 </div>
+
+                <hr>
+                <p class="settings-section-title">Learner Information</p>
                 <div class="row">
                     <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">LRN</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['lrn'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Birthdate</label>
+                        <label class="form-label fw-bold mb-0"><i class='bx bx-calendar'></i> Birthdate</label>
                         <p class="mb-0"><?php echo !empty($info['birth_date']) ? htmlspecialchars((new DateTime($info['birth_date']))->format('F j, Y')) : ''; ?></p>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
@@ -130,25 +147,22 @@ $school = SchoolSettings::get($con);
                         <p class="mb-0"><?php echo htmlspecialchars(StudentsAge::calculateAge($info['birth_date'])); ?> &middot; <?php echo htmlspecialchars($info['gender']); ?></p>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Grade & Section</label>
-                        <p class="mb-0"><?php echo htmlspecialchars(($info['grade_name'] ?? '') . ' - ' . ($info['section_name'] ?? '')); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">School Year</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['school_year'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Address</label>
-                        <p class="mb-0"><?php echo htmlspecialchars(AddressService::formatFullAddress($info)); ?></p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Recorded By</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['recorded_by_name'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
                         <label class="form-label fw-bold mb-0">Age (as of June)</label>
                         <p class="mb-0"><?php echo htmlspecialchars($info['age_as_of_june'] ?? ''); ?></p>
                     </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <label class="form-label fw-bold mb-0">Recorded By</label>
+                        <p class="mb-0"><?php echo htmlspecialchars($info['recorded_by_name'] ?? ''); ?></p>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-bold mb-0"><i class='bx bx-map-pin'></i> Address</label>
+                        <p class="mb-0"><?php echo htmlspecialchars(AddressService::formatFullAddress($info)); ?></p>
+                    </div>
+                </div>
+
+                <hr>
+                <p class="settings-section-title">Background Information</p>
+                <div class="row">
                     <div class="col-md-3 col-sm-6 mb-3">
                         <label class="form-label fw-bold mb-0">Mother Tongue</label>
                         <p class="mb-0"><?php echo htmlspecialchars($info['mother_tongue'] ?? ''); ?></p>
@@ -165,33 +179,48 @@ $school = SchoolSettings::get($con);
                         <label class="form-label fw-bold mb-0">Learning Modality</label>
                         <p class="mb-0"><?php echo htmlspecialchars($info['learning_modality'] ?? ''); ?></p>
                     </div>
-                    <div class="col-md-9 mb-3">
+                    <div class="col-12 mb-3">
                         <label class="form-label fw-bold mb-0">Remarks</label>
                         <p class="mb-0"><?php echo htmlspecialchars($info['remarks'] ?? ''); ?></p>
                     </div>
                 </div>
 
-                <hr class="text-white">
-                <h6 class="fw-bold mb-3">Parent/Guardian Information</h6>
+                <hr>
+                <p class="settings-section-title">Parent/Guardian Information</p>
                 <?php $pg = $profile['parent_guardian']; ?>
                 <?php if(!$pg): ?>
                     <p class="text-muted">No parent/guardian record found for this learner.</p>
                 <?php else: ?>
+                    <?php
+                        $pgPersons = [
+                            ['label' => 'Father', 'prefix' => 'father_', 'nameKey' => 'father_name', 'ageKey' => 'fathers_age', 'roleLabel' => 'Occupation', 'roleKey' => 'father_occupation', 'contactKey' => 'father_contact'],
+                            ['label' => 'Mother', 'prefix' => 'mother_', 'nameKey' => 'mother_name', 'ageKey' => 'mothers_age', 'roleLabel' => 'Occupation', 'roleKey' => 'mother_occupation', 'contactKey' => 'mother_contact'],
+                            ['label' => 'Guardian', 'prefix' => 'guardian_', 'nameKey' => 'guardian_name', 'ageKey' => 'guardians_age', 'roleLabel' => 'Relationship', 'roleKey' => 'guardian_relationship', 'contactKey' => 'guardian_contact'],
+                        ];
+                    ?>
                     <div class="row">
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Father's Name</label><p class="mb-0"><?php echo htmlspecialchars($pg['father_name'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Father's Occupation</label><p class="mb-0"><?php echo htmlspecialchars($pg['father_occupation'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Father's Contact</label><p class="mb-0"><?php echo htmlspecialchars($pg['father_contact'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Mother's Name</label><p class="mb-0"><?php echo htmlspecialchars($pg['mother_name'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Mother's Occupation</label><p class="mb-0"><?php echo htmlspecialchars($pg['mother_occupation'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Mother's Contact</label><p class="mb-0"><?php echo htmlspecialchars($pg['mother_contact'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Guardian's Name</label><p class="mb-0"><?php echo htmlspecialchars($pg['guardian_name'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Guardian Relationship</label><p class="mb-0"><?php echo htmlspecialchars($pg['guardian_relationship'] ?? ''); ?></p></div>
-                        <div class="col-md-4 mb-3"><label class="form-label fw-bold mb-0">Guardian's Contact</label><p class="mb-0"><?php echo htmlspecialchars($pg['guardian_contact'] ?? ''); ?></p></div>
+                        <?php foreach($pgPersons as $person): ?>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3 h-100">
+                                    <p class="fw-bold mb-2"><i class='bx bx-user'></i> <?php echo htmlspecialchars($person['label']); ?></p>
+                                    <label class="form-label small text-muted mb-0">Name</label>
+                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['nameKey']] ?? '') ?: '—'; ?></p>
+                                    <label class="form-label small text-muted mb-0">Age</label>
+                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['ageKey']] ?? '') ?: '—'; ?></p>
+                                    <label class="form-label small text-muted mb-0"><?php echo htmlspecialchars($person['roleLabel']); ?></label>
+                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['roleKey']] ?? '') ?: '—'; ?></p>
+                                    <label class="form-label small text-muted mb-0"><i class='bx bx-phone'></i> Contact</label>
+                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['contactKey']] ?? '') ?: '—'; ?></p>
+                                    <label class="form-label small text-muted mb-0"><i class='bx bx-map-pin'></i> Address</label>
+                                    <p class="mb-0"><?php echo htmlspecialchars(AddressService::formatPersonAddress($pg, $person['prefix'])) ?: '—'; ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
 
                 <hr>
-                <h6 class="fw-bold mb-3">Height / Weight</h6>
+                <p class="settings-section-title">Height / Weight</p>
                 <?php $h = $profile['health']; ?>
                 <?php if(!$h): ?>
                     <p class="text-muted">No health profile recorded.</p>

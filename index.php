@@ -108,6 +108,9 @@ $school = SchoolSettings::get($con);
                   <i class='bx bx-hide' id="toggleIcon"></i>
                 </span>
               </div>
+              <div class="text-end mt-1">
+                <a href="<?= base_url('forgot-password.php') ?>" class="auth-forgot-link">Forgot Password?</a>
+              </div>
             </div>
 
             <div class="mb-3">

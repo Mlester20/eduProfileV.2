@@ -24,6 +24,13 @@ function classListBmiBadge($classification){
             return ['label' => 'Not yet recorded', 'class' => 'bg-label-secondary'];
     }
 }
+
+$classListQueryBase = http_build_query(array_filter([
+    'school_year_id' => $school_year_filter,
+    'section_id' => $section_filter,
+    'search' => $search_filter,
+    'per_page' => $per_page,
+]));
 ?>
 <!DOCTYPE html>
 <html
@@ -103,14 +110,21 @@ function classListBmiBadge($classification){
     <div class="card mt-4">
         <h5 class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <span>My Class List — Health & Needs Status</span>
-            <div style="max-width: 280px; width: 100%;">
-                <input
-                    type="text"
-                    class="form-control"
-                    id="class_list_search"
-                    placeholder="Search by student name..."
-                    autocomplete="off"
-                >
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <select class="form-select form-select-sm" id="class_list_per_page" style="width: auto;">
+                    <option value="10" <?php echo (int) $per_page === 10 ? 'selected' : ''; ?>>10 per page</option>
+                    <option value="20" <?php echo (int) $per_page === 20 ? 'selected' : ''; ?>>20 per page</option>
+                </select>
+                <div style="max-width: 280px; width: 100%;">
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="class_list_search"
+                        placeholder="Search by student name..."
+                        autocomplete="off"
+                        value="<?php echo htmlspecialchars($search_filter ?? ''); ?>"
+                    >
+                </div>
             </div>
         </h5>
         <div class="card-body py-2">
@@ -130,6 +144,7 @@ function classListBmiBadge($classification){
                     </tr>
                 </thead>
                 <tbody>
+                    <?php $rowOffset = ($classListResult['current_page'] - 1) * $classListResult['per_page']; ?>
                     <?php foreach(($classList ?? []) as $index => $learner): ?>
                         <?php
                             $rowStudentName = trim($learner['student_first_name'] . ' ' . ($learner['student_middle_name'] ?? '') . ' ' . $learner['student_last_name'] . ' ' . ($learner['student_suffix'] ?? ''));
@@ -137,8 +152,8 @@ function classListBmiBadge($classification){
                             $hasCondition = ($learner['has_medical_condition'] ?? 'No') === 'Yes';
                             $conditionText = trim($learner['medical_conditions'] ?? '');
                         ?>
-                        <tr data-student-name="<?php echo htmlspecialchars(mb_strtolower($rowStudentName)); ?>">
-                            <td><?php echo $index + 1; ?></td>
+                        <tr>
+                            <td><?php echo $rowOffset + $index + 1; ?></td>
                             <td><?php echo htmlspecialchars($rowStudentName); ?></td>
                             <td><?php echo htmlspecialchars(($learner['grade_name'] ?? '') . ' - ' . ($learner['section_name'] ?? '')); ?></td>
                             <td><span class="badge <?php echo $bmiBadge['class']; ?>"><?php echo htmlspecialchars($bmiBadge['label']); ?></span></td>
@@ -159,6 +174,31 @@ function classListBmiBadge($classification){
                 </tbody>
             </table>
         </div>
+
+        <?php if(!empty($classList)): ?>
+            <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span class="text-muted small">
+                    Showing <?php echo $rowOffset + 1; ?>–<?php echo $rowOffset + count($classList); ?> of <?php echo (int) $classListResult['total']; ?> learners
+                </span>
+                <?php if($classListResult['total_pages'] > 1): ?>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item <?php echo $classListResult['current_page'] <= 1 ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?<?php echo htmlspecialchars($classListQueryBase); ?>&page=<?php echo $classListResult['current_page'] - 1; ?>">&laquo;</a>
+                        </li>
+                        <?php for($p = 1; $p <= $classListResult['total_pages']; $p++): ?>
+                            <li class="page-item <?php echo $p === $classListResult['current_page'] ? 'active' : ''; ?>">
+                                <a class="page-link" href="?<?php echo htmlspecialchars($classListQueryBase); ?>&page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                            </li>
+                        <?php endfor; ?>
+                        <li class="page-item <?php echo $classListResult['current_page'] >= $classListResult['total_pages'] ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?<?php echo htmlspecialchars($classListQueryBase); ?>&page=<?php echo $classListResult['current_page'] + 1; ?>">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>

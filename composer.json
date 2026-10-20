@@ -3,6 +3,8 @@
     "description": "EduProfile student profiling system",
     "type": "project",
     "require": {
-        "phpoffice/phpspreadsheet": "^5.9"
+        "phpoffice/phpspreadsheet": "^5.9",
+        "resend/resend-php": "^1.16",
+        "vlucas/phpdotenv": "^5.7"
     }
 }

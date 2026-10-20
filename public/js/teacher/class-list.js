@@ -1,15 +1,38 @@
+function debounce(fn, delay){
+    let timer
+    return function(...args){
+        clearTimeout(timer)
+        const context = this
+        timer = setTimeout(function(){
+            fn.apply(context, args)
+        }, delay)
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('class_list_search')
-    const table = document.getElementById('class_list_table')
-    if (!searchInput || !table) return
+    const perPageSelect = document.getElementById('class_list_per_page')
 
-    const rows = Array.from(table.querySelectorAll('tbody tr[data-student-name]'))
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(function () {
+            const term = searchInput.value.trim()
+            const url = new URL(window.location.href)
+            if (term === '') {
+                url.searchParams.delete('search')
+            } else {
+                url.searchParams.set('search', term)
+            }
+            url.searchParams.set('page', '1')
+            window.location.href = url.toString()
+        }, 400))
+    }
 
-    searchInput.addEventListener('input', function () {
-        const term = searchInput.value.trim().toLowerCase()
-        rows.forEach(function (row) {
-            const matches = row.getAttribute('data-student-name').includes(term)
-            row.style.display = matches ? '' : 'none'
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function () {
+            const url = new URL(window.location.href)
+            url.searchParams.set('per_page', perPageSelect.value)
+            url.searchParams.set('page', '1')
+            window.location.href = url.toString()
         })
-    })
+    }
 })

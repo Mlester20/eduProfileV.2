@@ -16,11 +16,13 @@ require_once __DIR__ . '/../../core/Model.php';
                     s.middle_name AS student_middle_name,
                     s.last_name AS student_last_name,
                     s.suffix AS student_suffix,
-                    sy.school_year AS school_year
+                    sy.school_year AS school_year,
+                    u.full_name AS recorded_by_name
                     FROM {$this->academic_profiles} ap
                     LEFT JOIN {$this->student} s ON ap.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->sy} sy ON ap.school_year_id = sy.id
+                    LEFT JOIN {$this->users} u ON ap.recorded_by = u.id
                     WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
                 if($student_id !== null){
@@ -49,11 +51,13 @@ require_once __DIR__ . '/../../core/Model.php';
                     s.middle_name AS student_middle_name,
                     s.last_name AS student_last_name,
                     s.suffix AS student_suffix,
-                    sy.school_year AS school_year
+                    sy.school_year AS school_year,
+                    u.full_name AS recorded_by_name
                     FROM {$this->academic_profiles} ap
                     LEFT JOIN {$this->student} s ON ap.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->sy} sy ON ap.school_year_id = sy.id
+                    LEFT JOIN {$this->users} u ON ap.recorded_by = u.id
                     WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
                 if($student_id !== null){
@@ -150,11 +154,13 @@ require_once __DIR__ . '/../../core/Model.php';
                     s.middle_name AS student_middle_name,
                     s.last_name AS student_last_name,
                     s.suffix AS student_suffix,
-                    sy.school_year AS school_year
+                    sy.school_year AS school_year,
+                    u.full_name AS recorded_by_name
                     FROM {$this->academic_profiles} ap
                     LEFT JOIN {$this->student} s ON ap.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->sy} sy ON ap.school_year_id = sy.id
+                    LEFT JOIN {$this->users} u ON ap.recorded_by = u.id
                     WHERE sec.adviser_id = ? AND s.status = 'active'
                 ";
                 if($student_id !== null){

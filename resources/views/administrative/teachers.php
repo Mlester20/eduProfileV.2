@@ -67,6 +67,10 @@ AuthRole::allowOnly(['administrative']);
                             <input type="text" class="form-control" id="fullName" name="full_name" placeholder="e.g., Juan Dela Cruz" required>
                         </div>
                         <div class="mb-3">
+                            <label for="position" class="form-label">Position</label>
+                            <input type="text" class="form-control" id="position" name="position" placeholder="e.g., Teacher I">
+                        </div>
+                        <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" placeholder="e.g., juan.delacruz@school.edu.ph" required>
                         </div>
@@ -121,6 +125,10 @@ AuthRole::allowOnly(['administrative']);
                         <div class="mb-3">
                             <label for="editFullName" class="form-label">Full Name</label>
                             <input type="text" class="form-control" id="editFullName" name="full_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPosition" class="form-label">Position</label>
+                            <input type="text" class="form-control" id="editPosition" name="position" placeholder="e.g., Teacher I">
                         </div>
                         <div class="mb-3">
                             <label for="editEmail" class="form-label">Email</label>
@@ -190,13 +198,20 @@ AuthRole::allowOnly(['administrative']);
     </div>
 
     <div class="card mt-4">
-        <h5 class="card-header">Manage Teachers</h5>
+        <h5 class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span>Manage Teachers</span>
+            <div class="btn-group" role="group">
+                <a href="teachers.php?status=active" class="btn btn-sm <?= $status_filter === 'active' ? 'btn-primary' : 'btn-outline-primary' ?>">Active</a>
+                <a href="teachers.php?status=archived" class="btn btn-sm <?= $status_filter === 'archived' ? 'btn-primary' : 'btn-outline-primary' ?>">Archived</a>
+            </div>
+        </h5>
         <div class="table-responsive nowrap">
             <table class="table">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Full Name</th>
+                        <th>Position</th>
                         <th>Email</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -205,65 +220,104 @@ AuthRole::allowOnly(['administrative']);
                 <tbody>
                     <?php if(!empty($teachers)): ?>
                         <?php foreach($teachers as $index => $teacher): ?>
-                            <?php $isActive = ($teacher['status'] ?? 'active') === 'active'; ?>
+                            <?php
+                                $teacherStatus = $teacher['status'] ?? 'active';
+                                $isActive = $teacherStatus === 'active';
+                                $isArchived = $teacherStatus === 'archived';
+                                $statusBadge = $isArchived ? 'danger' : ($isActive ? 'success' : 'secondary');
+                            ?>
                             <tr>
                                 <td><?= $index + 1 ?></td>
-                                <td><?= htmlspecialchars($teacher['full_name']) ?></td>
+                                <td><a href="teacher-profile.php?id=<?= (int) $teacher['id'] ?>"><?= htmlspecialchars($teacher['full_name']) ?></a></td>
+                                <td><?= htmlspecialchars($teacher['position'] ?? '') ?: '<span class="text-muted">—</span>' ?></td>
                                 <td><?= htmlspecialchars($teacher['email']) ?></td>
                                 <td>
-                                    <span class="badge bg-label-<?= $isActive ? 'success' : 'secondary' ?>">
-                                        <?= $isActive ? 'Active' : 'Inactive' ?>
+                                    <span class="badge bg-label-<?= $statusBadge ?>">
+                                        <?= htmlspecialchars(ucfirst($teacherStatus)) ?>
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editTeacherModal"
-                                        data-id="<?= htmlspecialchars($teacher['id']) ?>"
-                                        data-full-name="<?= htmlspecialchars($teacher['full_name']) ?>"
-                                        data-email="<?= htmlspecialchars($teacher['email']) ?>"
-                                        data-contact-number="<?= htmlspecialchars($teacher['contact_number'] ?? '') ?>"
-                                        data-address="<?= htmlspecialchars($teacher['address'] ?? '') ?>"
-                                        data-birth-date="<?= htmlspecialchars($teacher['birth_date'] ?? '') ?>"
-                                        data-sex="<?= htmlspecialchars($teacher['sex'] ?? '') ?>"
-                                        onclick="editTeacher(this.dataset)"
-                                        title="Edit"
-                                        >
-                                        <i class="bx bx-edit"></i>
-                                    </button>
-
-                                    <button class="btn btn-sm btn-secondary"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#resetTeacherPasswordModal"
-                                        onclick="resetTeacherPassword(
-                                            '<?= htmlspecialchars($teacher['id']) ?>',
-                                            '<?= htmlspecialchars($teacher['full_name']) ?>'
-                                        )"
-                                        title="Reset Password"
-                                        >
-                                        <i class="bx bx-key"></i>
-                                    </button>
-
-                                    <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST" style="display: inline;">
-                                        <?= Csrf::field() ?>
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
-                                        <input type="hidden" name="status" value="<?= $isActive ? 'inactive' : 'active' ?>">
-                                        <button
-                                            type="submit"
-                                            class="btn btn-sm <?= $isActive ? 'btn-danger' : 'btn-success' ?>"
-                                            name="toggleUserStatus"
-                                            title="<?= $isActive ? 'Deactivate' : 'Activate' ?>"
-                                            onclick="return confirm('Are you sure you want to <?= $isActive ? 'deactivate' : 'activate' ?> this teacher?')"
+                                    <?php if($isArchived): ?>
+                                        <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST" style="display: inline;">
+                                            <?= Csrf::field() ?>
+                                            <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
+                                            <input type="hidden" name="status" value="active">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-success"
+                                                name="toggleUserStatus"
+                                                title="Unarchive"
+                                                onclick="return confirm('Restore this teacher from the archive? They will be marked Active again.')"
+                                                >
+                                                <i class="bx bx-undo"></i> Unarchive
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <button class="btn btn-sm btn-warning"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editTeacherModal"
+                                            data-id="<?= htmlspecialchars($teacher['id']) ?>"
+                                            data-full-name="<?= htmlspecialchars($teacher['full_name']) ?>"
+                                            data-position="<?= htmlspecialchars($teacher['position'] ?? '') ?>"
+                                            data-email="<?= htmlspecialchars($teacher['email']) ?>"
+                                            data-contact-number="<?= htmlspecialchars($teacher['contact_number'] ?? '') ?>"
+                                            data-address="<?= htmlspecialchars($teacher['address'] ?? '') ?>"
+                                            data-birth-date="<?= htmlspecialchars($teacher['birth_date'] ?? '') ?>"
+                                            data-sex="<?= htmlspecialchars($teacher['sex'] ?? '') ?>"
+                                            onclick="editTeacher(this.dataset)"
+                                            title="Edit"
                                             >
-                                            <i class="bx <?= $isActive ? 'bx-block' : 'bx-check-circle' ?>"></i>
+                                            <i class="bx bx-edit"></i>
                                         </button>
-                                    </form>
+
+                                        <button class="btn btn-sm btn-secondary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#resetTeacherPasswordModal"
+                                            onclick="resetTeacherPassword(
+                                                '<?= htmlspecialchars($teacher['id']) ?>',
+                                                '<?= htmlspecialchars($teacher['full_name']) ?>'
+                                            )"
+                                            title="Reset Password"
+                                            >
+                                            <i class="bx bx-key"></i>
+                                        </button>
+
+                                        <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST" style="display: inline;">
+                                            <?= Csrf::field() ?>
+                                            <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
+                                            <input type="hidden" name="status" value="<?= $isActive ? 'inactive' : 'active' ?>">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm <?= $isActive ? 'btn-danger' : 'btn-success' ?>"
+                                                name="toggleUserStatus"
+                                                title="<?= $isActive ? 'Deactivate' : 'Activate' ?>"
+                                                onclick="return confirm('Are you sure you want to <?= $isActive ? 'deactivate' : 'activate' ?> this teacher?')"
+                                                >
+                                                <i class="bx <?= $isActive ? 'bx-block' : 'bx-check-circle' ?>"></i>
+                                            </button>
+                                        </form>
+
+                                        <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST" style="display: inline;">
+                                            <?= Csrf::field() ?>
+                                            <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
+                                            <input type="hidden" name="status" value="archived">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-outline-dark"
+                                                name="toggleUserStatus"
+                                                title="Archive"
+                                                onclick="return confirm('Archive this teacher? They will be hidden from the main Manage Teachers list until unarchived.')"
+                                                >
+                                                <i class="bx bx-archive-in"></i>
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5" class="text-center">No teacher accounts found.</td>
+                            <td colspan="6" class="text-center">No <?= $status_filter === 'archived' ? 'archived' : '' ?> teacher accounts found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

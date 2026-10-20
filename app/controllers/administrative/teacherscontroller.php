@@ -35,8 +35,12 @@ AuthRole::allowOnly(['administrative']);
             $this->sectionsModel = new SectionsModel($con);
         }
 
-        public function index(){
-            return $this->model->indexByRole(self::ROLE);
+        public function index($statusFilter = null){
+            return $this->model->indexByRole(self::ROLE, $statusFilter);
+        }
+
+        public function show($id){
+            return $this->model->getById($id, self::ROLE);
         }
 
         public function create($data){
@@ -50,6 +54,7 @@ AuthRole::allowOnly(['administrative']);
                     'sex' => $data['sex'] ?? null,
                     'password' => $data['password'],
                     'role' => self::ROLE,
+                    'position' => $data['position'] ?? null,
                 ];
                 if($this->model->create($payload)){
                     $this->auditLogs->log(
@@ -85,6 +90,7 @@ AuthRole::allowOnly(['administrative']);
                     'birth_date' => $data['birth_date'] ?? null,
                     'sex' => $data['sex'] ?? null,
                     'role' => self::ROLE,
+                    'position' => $data['position'] ?? null,
                 ];
                 if($this->model->update($id, $payload)){
                     $this->auditLogs->log(
@@ -143,26 +149,38 @@ AuthRole::allowOnly(['administrative']);
 
         public function setStatus($id, $status){
             try{
-                if($status === 'inactive'){
+                // Both deactivating and archiving take a teacher out of
+                // active duty, so either one is blocked while they're still
+                // an assigned section adviser -- reassign the section(s) first.
+                if(in_array($status, ['inactive', 'archived'], true)){
                     $assignedSections = $this->sectionsModel->findByAdviser($id);
                     if(!empty($assignedSections)){
                         $sectionNames = array_map(function($s){
                             return trim(($s['grade_level_name'] ?? '') . ' - ' . $s['section_name']);
                         }, $assignedSections);
-                        FlashMessage::setFlash('warning', 'Cannot deactivate: this teacher is still the adviser of ' . implode(', ', $sectionNames) . '. Reassign the section(s) first.');
+                        $verb = $status === 'archived' ? 'archive' : 'deactivate';
+                        FlashMessage::setFlash('warning', "Cannot {$verb}: this teacher is still the adviser of " . implode(', ', $sectionNames) . '. Reassign the section(s) first.');
                         header('Location: ../../../resources/views/administrative/teachers.php');
                         exit();
                     }
                 }
+
+                $actionLabels = [
+                    'active' => ['Activated user', 'activated'],
+                    'inactive' => ['Deactivated user', 'deactivated'],
+                    'archived' => ['Archived user', 'archived'],
+                ];
+                [$actionLabel, $actionVerb] = $actionLabels[$status] ?? ['Updated user status', 'updated the status of'];
+
                 if($this->model->setStatus($id, $status)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
                         $_SESSION['role'] ?? 'unknown',
-                        $status === 'active' ? 'Activated user' : 'Deactivated user',
+                        $actionLabel,
                         'Users',
                         $id,
                         null,
-                        ($_SESSION['full_name'] ?? 'Administrative') . ' ' . ($status === 'active' ? 'activated' : 'deactivated') . ' teacher ID: ' . $id
+                        ($_SESSION['full_name'] ?? 'Administrative') . ' ' . $actionVerb . ' teacher ID: ' . $id
                     );
                     FlashMessage::setFlash('success', 'Teacher status updated successfully.');
                 }else{
@@ -180,10 +198,12 @@ AuthRole::allowOnly(['administrative']);
 
     try{
         $controller = new TeachersController($con);
-        $teachers = $controller->index();
+        $status_filter = ($_GET['status'] ?? '') === 'archived' ? 'archived' : 'active';
+        $teachers = $controller->index($status_filter);
     }catch(Exception $e){
         error_log("Error in TeachersController: " . $e->getMessage());
         $teachers = [];
+        $status_filter = 'active';
     }
 
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -197,6 +217,7 @@ AuthRole::allowOnly(['administrative']);
                 'birth_date' => $_POST['birth_date'] ?? null,
                 'sex' => $_POST['sex'] ?? null,
                 'password' => $_POST['password'],
+                'position' => $_POST['position'] ?? null,
             ]);
         }
         if(isset($_POST['updateUser'])){
@@ -207,6 +228,7 @@ AuthRole::allowOnly(['administrative']);
                 'address' => $_POST['address'] ?? null,
                 'birth_date' => $_POST['birth_date'] ?? null,
                 'sex' => $_POST['sex'] ?? null,
+                'position' => $_POST['position'] ?? null,
             ]);
         }
         if(isset($_POST['resetUserPassword'])){

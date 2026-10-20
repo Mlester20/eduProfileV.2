@@ -146,24 +146,76 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
+        /**
+         * Column => bind-type map, driving both create() and update() so
+         * the 35-column insert/update doesn't need to be hand-maintained
+         * twice. Each of Father/Mother/Guardian carries the same
+         * name/occupation-or-relationship/age/contact + House #/Street/
+         * Sitio/Purok/Barangay/City-Municipality/Province breakdown as the
+         * student's own address on the `students` table.
+         */
+
+        private function fields(){
+            return [
+                'student_id' => 'i',
+                'recorded_by' => 'i',
+
+                'father_name' => 's',
+                'father_occupation' => 's',
+                'fathers_age' => 'i',
+                'father_contact' => 's',
+                'father_house_number' => 's',
+                'father_street' => 's',
+                'father_sitio' => 's',
+                'father_purok' => 's',
+                'father_barangay' => 's',
+                'father_city_municipality' => 's',
+                'father_province' => 's',
+
+                'mother_name' => 's',
+                'mother_occupation' => 's',
+                'mothers_age' => 'i',
+                'mother_contact' => 's',
+                'mother_house_number' => 's',
+                'mother_street' => 's',
+                'mother_sitio' => 's',
+                'mother_purok' => 's',
+                'mother_barangay' => 's',
+                'mother_city_municipality' => 's',
+                'mother_province' => 's',
+
+                'guardian_name' => 's',
+                'guardian_relationship' => 's',
+                'guardians_age' => 'i',
+                'guardian_contact' => 's',
+                'guardian_house_number' => 's',
+                'guardian_street' => 's',
+                'guardian_sitio' => 's',
+                'guardian_purok' => 's',
+                'guardian_barangay' => 's',
+                'guardian_city_municipality' => 's',
+                'guardian_province' => 's',
+            ];
+        }
+
+        /** Missing/blank values go in as NULL rather than an empty string or a coerced 0. */
+        private function paramsFor($columns, $data){
+            return array_map(function($col) use ($data){
+                $value = $data[$col] ?? null;
+                return ($value === '' || $value === null) ? null : $value;
+            }, $columns);
+        }
+
         public function create($data){
             try{
-                $insert = "INSERT INTO {$this->parent_guardian}(student_id, recorded_by, father_name, father_occupation, father_contact, mother_name, mother_occupation, mother_contact, guardian_name, guardian_relationship, guardian_contact) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $fields = $this->fields();
+                $columns = array_keys($fields);
+                $types = implode('', array_values($fields));
+                $placeholders = implode(',', array_fill(0, count($columns), '?'));
+
+                $insert = "INSERT INTO {$this->parent_guardian}(" . implode(',', $columns) . ") VALUES ({$placeholders})";
                 $stmt = $this->con->prepare($insert);
-                $stmt->bind_param(
-                    "iisssssssss",
-                    $data['student_id'],
-                    $data['recorded_by'],
-                    $data['father_name'],
-                    $data['father_occupation'],
-                    $data['father_contact'],
-                    $data['mother_name'],
-                    $data['mother_occupation'],
-                    $data['mother_contact'],
-                    $data['guardian_name'],
-                    $data['guardian_relationship'],
-                    $data['guardian_contact']
-                );
+                $stmt->bind_param($types, ...$this->paramsFor($columns, $data));
                 $stmt->execute();
                 return true;
             }catch(Exception $e){
@@ -174,23 +226,18 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function update($id, $data){
             try{
-                $update = "UPDATE {$this->parent_guardian} SET student_id = ?, recorded_by = ?, father_name = ?, father_occupation = ?, father_contact = ?, mother_name = ?, mother_occupation = ?, mother_contact = ?, guardian_name = ?, guardian_relationship = ?, guardian_contact = ? WHERE id = ?";
+                $fields = $this->fields();
+                $columns = array_keys($fields);
+                $types = implode('', array_values($fields)) . 'i';
+
+                $setClause = implode(', ', array_map(function($col){ return "{$col} = ?"; }, $columns));
+                $update = "UPDATE {$this->parent_guardian} SET {$setClause} WHERE id = ?";
+
+                $params = $this->paramsFor($columns, $data);
+                $params[] = $id;
+
                 $stmt = $this->con->prepare($update);
-                $stmt->bind_param(
-                    "iisssssssssi",
-                    $data['student_id'],
-                    $data['recorded_by'],
-                    $data['father_name'],
-                    $data['father_occupation'],
-                    $data['father_contact'],
-                    $data['mother_name'],
-                    $data['mother_occupation'],
-                    $data['mother_contact'],
-                    $data['guardian_name'],
-                    $data['guardian_relationship'],
-                    $data['guardian_contact'],
-                    $id
-                );
+                $stmt->bind_param($types, ...$params);
                 $stmt->execute();
                 return true;
             }catch(Exception $e){

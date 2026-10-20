@@ -77,10 +77,10 @@ $moduleIcons = [
     <?php endif; ?>
 
     <!-- Stat cards -->
-    <div class="row">
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body d-flex justify-content-between align-items-start">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4 mb-1">
+        <div class="col">
+            <div class="card h-100 stat-card stat-card-primary">
+                <a href="students.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                     <div>
                         <span class="text-muted d-block mb-1">My Students</span>
                         <h3 class="mb-0"><?php echo (int) $stats['total_students']; ?></h3>
@@ -88,12 +88,12 @@ $moduleIcons = [
                     <div class="avatar">
                         <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-user fs-4"></i></span>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body d-flex justify-content-between align-items-start">
+        <div class="col">
+            <div class="card h-100 stat-card stat-card-danger">
+                <a href="students.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                     <div>
                         <span class="text-muted d-block mb-1">Health Profiles</span>
                         <h3 class="mb-0"><?php echo (int) $stats['health_coverage']['covered']; ?> / <?php echo (int) $stats['health_coverage']['total']; ?></h3>
@@ -102,12 +102,12 @@ $moduleIcons = [
                     <div class="avatar">
                         <span class="avatar-initial rounded bg-label-danger"><i class="bx bx-band-aid fs-4"></i></span>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
-        <div class="col-md-4 col-sm-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body d-flex justify-content-between align-items-start">
+        <div class="col">
+            <div class="card h-100 stat-card stat-card-warning">
+                <a href="students.php" class="card-body d-flex justify-content-between align-items-start text-reset text-decoration-none">
                     <div>
                         <span class="text-muted d-block mb-1">Academic Records</span>
                         <h3 class="mb-0"><?php echo (int) $stats['academic_count']; ?></h3>
@@ -115,7 +115,7 @@ $moduleIcons = [
                     <div class="avatar">
                         <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-book fs-4"></i></span>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>

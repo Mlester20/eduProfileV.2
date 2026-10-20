@@ -1,0 +1,179 @@
+/* ============================================================
+   Profile Settings page
+   Reuses the --sidebar-* brand tokens defined in demo.css so the
+   banner/accent colors stay tied to the rest of the app's theme.
+   ============================================================ */
+
+.profile-header-card {
+  overflow: hidden;
+}
+
+.profile-banner {
+  height: 110px;
+  background: linear-gradient(135deg, var(--sidebar-bg) 0%, #1b3763 60%, var(--sidebar-accent) 160%);
+}
+
+.profile-header-body {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.profile-avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  background-color: #fff;
+}
+
+.profile-avatar-edit-btn {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--sidebar-bg);
+  color: #fff;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.15s ease;
+}
+
+.profile-avatar-edit-btn:hover {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-bg);
+}
+
+.profile-avatar-remove-btn {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #dc3545;
+  color: #fff;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.profile-avatar-error {
+  font-size: 0.8125rem;
+  color: #dc3545;
+  margin-top: 0.5rem;
+}
+
+.profile-role-badge {
+  font-size: 0.75rem;
+  text-transform: capitalize;
+}
+
+/* ─── Section helper text ─────────────────────────────────── */
+.settings-section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.settings-section-help {
+  font-size: 0.8125rem;
+  color: #8592a3;
+  margin-bottom: 1.25rem;
+}
+
+/* ─── Password field with show/hide toggle ────────────────── */
+.password-field-wrap {
+  position: relative;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #8592a3;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.password-toggle-btn:hover {
+  color: var(--sidebar-bg);
+}
+
+/* ─── Password strength meter ─────────────────────────────── */
+.password-strength-meter {
+  height: 5px;
+  border-radius: 3px;
+  background-color: #e9ecef;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.password-strength-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.password-strength-label {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.strength-weak .password-strength-fill { background-color: #dc3545; }
+.strength-fair .password-strength-fill { background-color: #ffab00; }
+.strength-strong .password-strength-fill { background-color: #71dd37; }
+
+.strength-weak .password-strength-label { color: #dc3545; }
+.strength-fair .password-strength-label { color: #ffab00; }
+.strength-strong .password-strength-label { color: #71dd37; }
+
+.password-match-hint {
+  font-size: 0.8125rem;
+  margin-top: 0.35rem;
+  display: none;
+}
+
+.password-match-hint.is-match {
+  display: block;
+  color: #71dd37;
+}
+
+.password-match-hint.is-mismatch {
+  display: block;
+  color: #dc3545;
+}
+
+@media (max-width: 575.98px) {
+  .profile-avatar-wrap,
+  .profile-avatar-img {
+    width: 64px;
+    height: 64px;
+  }
+}
