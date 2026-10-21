@@ -5,26 +5,6 @@ require_once __DIR__ . '/../../../app/helpers/csrf.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['teacher']);
 
-/**
- * Nutritional status badge from bmi_classification. "Not yet recorded"
- * covers students with no height/weight logged under Health Profile yet.
- */
-function classListBmiBadge($classification){
-    switch($classification){
-        case 'Severely Wasted':
-        case 'Wasted':
-            return ['label' => $classification, 'class' => 'bg-label-danger'];
-        case 'Obese':
-            return ['label' => 'Obese', 'class' => 'bg-label-danger'];
-        case 'Overweight':
-            return ['label' => 'Overweight', 'class' => 'bg-label-warning'];
-        case 'Normal':
-            return ['label' => 'Normal', 'class' => 'bg-label-success'];
-        default:
-            return ['label' => 'Not yet recorded', 'class' => 'bg-label-secondary'];
-    }
-}
-
 $classListQueryBase = http_build_query(array_filter([
     'school_year_id' => $school_year_filter,
     'section_id' => $section_filter,
@@ -129,7 +109,7 @@ $classListQueryBase = http_build_query(array_filter([
         </h5>
         <div class="card-body py-2">
             <p class="text-muted mb-0 small">
-                Nutritional status comes from each learner's Health Profile BMI classification. "Condition Noted" reflects the Health Profile's Medical Conditions Yes/No answer — it is not an official PWD/SPED determination; verify with the school's SPED coordinator before reporting a learner as PWD or with special needs.
+                "Condition Noted" and "Special Needs" reflect the Health Profile's own Yes/No answers as recorded by the teacher — neither is an official PWD/SPED determination; verify with the school's SPED coordinator before reporting a learner as PWD or with special needs.
             </p>
         </div>
         <div class="table-responsive nowrap">
@@ -139,8 +119,8 @@ $classListQueryBase = http_build_query(array_filter([
                         <th>#</th>
                         <th>Student Name</th>
                         <th>Grade & Section</th>
-                        <th>Nutritional Status</th>
                         <th>Condition Noted</th>
+                        <th>Special Needs</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,18 +128,25 @@ $classListQueryBase = http_build_query(array_filter([
                     <?php foreach(($classList ?? []) as $index => $learner): ?>
                         <?php
                             $rowStudentName = trim($learner['student_first_name'] . ' ' . ($learner['student_middle_name'] ?? '') . ' ' . $learner['student_last_name'] . ' ' . ($learner['student_suffix'] ?? ''));
-                            $bmiBadge = classListBmiBadge($learner['bmi_classification'] ?? null);
                             $hasCondition = ($learner['has_medical_condition'] ?? 'No') === 'Yes';
                             $conditionText = trim($learner['medical_conditions'] ?? '');
+                            $hasSpecialNeeds = ($learner['has_special_needs'] ?? 'No') === 'Yes';
+                            $specialNeedsText = trim($learner['special_needs_details'] ?? '');
                         ?>
                         <tr>
                             <td><?php echo $rowOffset + $index + 1; ?></td>
                             <td><?php echo htmlspecialchars($rowStudentName); ?></td>
                             <td><?php echo htmlspecialchars(($learner['grade_name'] ?? '') . ' - ' . ($learner['section_name'] ?? '')); ?></td>
-                            <td><span class="badge <?php echo $bmiBadge['class']; ?>"><?php echo htmlspecialchars($bmiBadge['label']); ?></span></td>
                             <td>
                                 <?php if($hasCondition): ?>
                                     <span class="badge bg-label-warning" title="<?php echo htmlspecialchars($conditionText); ?>">Yes</span>
+                                <?php else: ?>
+                                    <span class="badge bg-label-secondary">No</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if($hasSpecialNeeds): ?>
+                                    <span class="badge bg-label-info" title="<?php echo htmlspecialchars($specialNeedsText); ?>">Yes</span>
                                 <?php else: ?>
                                     <span class="badge bg-label-secondary">No</span>
                                 <?php endif; ?>

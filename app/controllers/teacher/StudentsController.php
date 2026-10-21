@@ -12,6 +12,7 @@ require_once __DIR__ . '/../../models/teacher/ParentGuardianModel.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
+require_once __DIR__ . '/../../helpers/StudentsAge.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
     class StudentsController extends Controller{
@@ -136,6 +137,9 @@ require_once __DIR__ . '/../../../database/config/config.php';
                 if($this->model->isLrnExists($data['lrn'], $data['school_year_id'])){
                     return ['success' => false, 'message' => 'LRN already exists for that school year.'];
                 }
+                if(!empty($data['birth_date']) && StudentsAge::calculateAge($data['birth_date']) > 21){
+                    return ['success' => false, 'message' => 'This student is over 21 years old and cannot be recorded.'];
+                }
 
                 $upload = $this->uploadPicture();
                 if(!$upload['success']){
@@ -175,6 +179,9 @@ require_once __DIR__ . '/../../../database/config/config.php';
                 }
                 if($this->model->isLrnExists($data['lrn'], $data['school_year_id'], $id)){
                     return ['success' => false, 'message' => 'LRN already exists for that school year.'];
+                }
+                if(!empty($data['birth_date']) && StudentsAge::calculateAge($data['birth_date']) > 21){
+                    return ['success' => false, 'message' => 'This student is over 21 years old and cannot be recorded.'];
                 }
 
                 $upload = $this->uploadPicture();

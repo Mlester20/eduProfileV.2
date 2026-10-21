@@ -155,10 +155,10 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function create($data){
             try{
-                $insert = "INSERT INTO {$this->health_profiles}(student_id, school_year_id, height_cm, weight_kg, bmi, bmi_classification, blood_type, allergies, has_medical_condition, medical_conditions, vision_screening_result, hearing_screening_result, immunization_status, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $insert = "INSERT INTO {$this->health_profiles}(student_id, school_year_id, height_cm, weight_kg, bmi, bmi_classification, blood_type, allergies, has_medical_condition, medical_conditions, has_special_needs, special_needs_details, vision_screening_result, hearing_screening_result, immunization_status, recorded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $this->con->prepare($insert);
                 $stmt->bind_param(
-                    "iidddssssssssi",
+                    "iidddssssssssssi",
                     $data['student_id'],
                     $data['school_year_id'],
                     $data['height_cm'],
@@ -169,6 +169,8 @@ require_once __DIR__ . '/../../core/Model.php';
                     $data['allergies'],
                     $data['has_medical_condition'],
                     $data['medical_conditions'],
+                    $data['has_special_needs'],
+                    $data['special_needs_details'],
                     $data['vision_screening_result'],
                     $data['hearing_screening_result'],
                     $data['immunization_status'],
@@ -183,10 +185,10 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function update($id, $data){
             try{
-                $update = "UPDATE {$this->health_profiles} SET student_id = ?, school_year_id = ?, height_cm = ?, weight_kg = ?, bmi = ?, bmi_classification = ?, blood_type = ?, allergies = ?, has_medical_condition = ?, medical_conditions = ?, vision_screening_result = ?, hearing_screening_result = ?, immunization_status = ?, recorded_by = ? WHERE id = ?";
+                $update = "UPDATE {$this->health_profiles} SET student_id = ?, school_year_id = ?, height_cm = ?, weight_kg = ?, bmi = ?, bmi_classification = ?, blood_type = ?, allergies = ?, has_medical_condition = ?, medical_conditions = ?, has_special_needs = ?, special_needs_details = ?, vision_screening_result = ?, hearing_screening_result = ?, immunization_status = ?, recorded_by = ? WHERE id = ?";
                 $stmt = $this->con->prepare($update);
                 $stmt->bind_param(
-                    "iidddssssssssii",
+                    "iidddssssssssssii",
                     $data['student_id'],
                     $data['school_year_id'],
                     $data['height_cm'],
@@ -197,6 +199,8 @@ require_once __DIR__ . '/../../core/Model.php';
                     $data['allergies'],
                     $data['has_medical_condition'],
                     $data['medical_conditions'],
+                    $data['has_special_needs'],
+                    $data['special_needs_details'],
                     $data['vision_screening_result'],
                     $data['hearing_screening_result'],
                     $data['immunization_status'],

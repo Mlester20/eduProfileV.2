@@ -45,11 +45,30 @@ AuthRole::allowOnly(['administrative']);
 
         public function create($data){
             try{
+                if(strlen($data['password'] ?? '') < 8){
+                    FlashMessage::setFlash('error', 'Password must be at least 8 characters.');
+                    header('Location: ../../../resources/views/administrative/teachers.php');
+                    exit();
+                }
+                if(($data['password'] ?? '') !== ($data['confirm_password'] ?? '')){
+                    FlashMessage::setFlash('error', 'Passwords do not match.');
+                    header('Location: ../../../resources/views/administrative/teachers.php');
+                    exit();
+                }
+                if(!empty($data['contact_number']) && !preg_match('/^\d{11}$/', $data['contact_number'])){
+                    FlashMessage::setFlash('error', 'Contact number must be exactly 11 digits.');
+                    header('Location: ../../../resources/views/administrative/teachers.php');
+                    exit();
+                }
+
                 $payload = [
                     'full_name' => $data['full_name'],
                     'email' => $data['email'],
                     'contact_number' => $data['contact_number'] ?? null,
                     'address' => $data['address'] ?? null,
+                    'province' => $data['province'] ?? null,
+                    'city_municipality' => $data['city_municipality'] ?? null,
+                    'barangay' => $data['barangay'] ?? null,
                     'birth_date' => $data['birth_date'] ?? null,
                     'sex' => $data['sex'] ?? null,
                     'password' => $data['password'],
@@ -82,11 +101,27 @@ AuthRole::allowOnly(['administrative']);
 
         public function update($id, $data){
             try{
+                if(!empty($data['contact_number']) && !preg_match('/^\d{11}$/', $data['contact_number'])){
+                    FlashMessage::setFlash('error', 'Contact number must be exactly 11 digits.');
+                    header('Location: ../../../resources/views/administrative/teachers.php');
+                    exit();
+                }
+
+                // The legacy free-text `address` field isn't collected by
+                // this form anymore (replaced by province/city/barangay) --
+                // preserve whatever's already on the record instead of
+                // wiping it with null on every edit.
+                $existing = $this->model->getById($id, self::ROLE);
+                $data['address'] = $existing['address'] ?? null;
+
                 $payload = [
                     'full_name' => $data['full_name'],
                     'email' => $data['email'],
                     'contact_number' => $data['contact_number'] ?? null,
                     'address' => $data['address'] ?? null,
+                    'province' => $data['province'] ?? null,
+                    'city_municipality' => $data['city_municipality'] ?? null,
+                    'barangay' => $data['barangay'] ?? null,
                     'birth_date' => $data['birth_date'] ?? null,
                     'sex' => $data['sex'] ?? null,
                     'role' => self::ROLE,
@@ -213,10 +248,13 @@ AuthRole::allowOnly(['administrative']);
                 'full_name' => $_POST['full_name'],
                 'email' => $_POST['email'],
                 'contact_number' => $_POST['contact_number'] ?? null,
-                'address' => $_POST['address'] ?? null,
+                'province' => $_POST['province'] ?? null,
+                'city_municipality' => $_POST['city_municipality'] ?? null,
+                'barangay' => $_POST['barangay'] ?? null,
                 'birth_date' => $_POST['birth_date'] ?? null,
                 'sex' => $_POST['sex'] ?? null,
                 'password' => $_POST['password'],
+                'confirm_password' => $_POST['confirm_password'] ?? '',
                 'position' => $_POST['position'] ?? null,
             ]);
         }
@@ -225,7 +263,9 @@ AuthRole::allowOnly(['administrative']);
                 'full_name' => $_POST['full_name'],
                 'email' => $_POST['email'],
                 'contact_number' => $_POST['contact_number'] ?? null,
-                'address' => $_POST['address'] ?? null,
+                'province' => $_POST['province'] ?? null,
+                'city_municipality' => $_POST['city_municipality'] ?? null,
+                'barangay' => $_POST['barangay'] ?? null,
                 'birth_date' => $_POST['birth_date'] ?? null,
                 'sex' => $_POST['sex'] ?? null,
                 'position' => $_POST['position'] ?? null,

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/administrative/teacherscontroller.php';
 require_once __DIR__ . '/../../../app/helpers/flashMessage.php';
+require_once __DIR__ . '/../../../app/services/AddressService.php';
 require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
 
@@ -116,7 +117,7 @@ if($profileAvatarSrc){
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="d-block text-muted small mb-1">Address</label>
-                        <p class="mb-0 fw-medium"><?php echo htmlspecialchars($teacher['address'] ?: 'N/A'); ?></p>
+                        <p class="mb-0 fw-medium"><?php echo htmlspecialchars(AddressService::formatFullAddress($teacher)) ?: 'N/A'; ?></p>
                     </div>
                 </div>
             </div>

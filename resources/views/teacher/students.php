@@ -211,7 +211,7 @@ $religionOptions = [
                             <form id="studentInfoForm" enctype="multipart/form-data">
                                 <input type="hidden" name="id" id="student_id_field">
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3 d-flex flex-column align-items-start">
+                                    <div class="col-6 col-md-3 mb-3 d-flex flex-column align-items-start">
                                         <label class="form-label">Picture</label>
                                         <img id="student_picture_preview" src="../../../public/assets/img/avatars/1.png" alt="Picture preview" class="mb-2">
                                         <input class="form-control form-control-sm" type="file" name="picture" id="picture" accept="image/jpeg,image/png,image/gif">
@@ -244,49 +244,64 @@ $religionOptions = [
                                 </div>
 
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="first_name" class="form-label">First Name</label>
                                         <input class="form-control" type="text" name="first_name" id="first_name" placeholder="e.g., Juan" required>
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="middle_name" class="form-label">Middle Name</label>
                                         <input class="form-control" type="text" name="middle_name" id="middle_name" placeholder="e.g., Liwaliw">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="last_name" class="form-label">Last Name</label>
                                         <input class="form-control" type="text" name="last_name" id="last_name" placeholder="e.g., Dela Cruz" required>
                                     </div>
-                                    <div class="col-md-1 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="suffix" class="form-label">Suffix</label>
-                                        <input class="form-control" type="text" name="suffix" id="suffix" placeholder="Jr.">
+                                        <select class="form-select" name="suffix" id="suffix">
+                                            <option value="">None</option>
+                                            <option value="Jr.">Jr.</option>
+                                            <option value="Sr.">Sr.</option>
+                                            <option value="II">II</option>
+                                            <option value="III">III</option>
+                                            <option value="IV">IV</option>
+                                            <option value="V">V</option>
+                                            <option value="__other__">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-6 col-md-4 mb-3 d-none" id="suffix_other_wrapper">
+                                        <label for="suffix_other" class="form-label">Specify Suffix</label>
+                                        <input class="form-control" type="text" id="suffix_other" placeholder="Enter suffix">
                                     </div>
                                 </div>
 
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3">
-                                        <label for="gender" class="form-label">Gender</label>
+                                    <div class="col-6 col-md-3 mb-3">
+                                        <label for="gender" class="form-label">Sex</label>
                                         <select class="form-select" name="gender" id="gender">
-                                            <option value="">Select Gender</option>
+                                            <option value="">Select Sex</option>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="age_as_of_june" class="form-label">Age (as of June)</label>
                                         <input class="form-control" type="number" min="0" max="99" name="age_as_of_june" id="age_as_of_june" placeholder="e.g., 7">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="mother_tongue" class="form-label">Mother Tongue</label>
                                         <input class="form-control" type="text" name="mother_tongue" id="mother_tongue" placeholder="e.g., Tagalog">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="ip_ethnic_group" class="form-label">IP / Ethnic Group</label>
                                         <input class="form-control" type="text" name="ip_ethnic_group" id="ip_ethnic_group" placeholder="e.g., Ilocano">
                                     </div>
                                 </div>
 
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="religion" class="form-label">Religion</label>
                                         <select class="form-select" name="religion" id="religion">
                                             <option value="">Select Religion</option>
@@ -296,11 +311,11 @@ $religionOptions = [
                                             <option value="__other__">Other</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-4 mb-3 d-none" id="religion_other_wrapper">
+                                    <div class="col-6 col-md-4 mb-3 d-none" id="religion_other_wrapper">
                                         <label for="religion_other" class="form-label">Specify Religion</label>
                                         <input class="form-control" type="text" id="religion_other" placeholder="Enter religion">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="learning_modality" class="form-label">Learning Modality</label>
                                         <select class="form-select" name="learning_modality" id="learning_modality">
                                             <option value="">Select learning modality</option>
@@ -314,21 +329,21 @@ $religionOptions = [
                                 </div>
 
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="province" class="form-label">Province</label>
                                         <select class="form-select" name="province" id="province">
                                             <option value="">Loading provinces...</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="province_other" placeholder="Enter province">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="city_municipality" class="form-label">City / Municipality</label>
                                         <select class="form-select" name="city_municipality" id="city_municipality" disabled>
                                             <option value="">Select province first</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="city_municipality_other" placeholder="Enter city/municipality">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="barangay" class="form-label">Barangay</label>
                                         <select class="form-select" name="barangay" id="barangay" disabled>
                                             <option value="">Select city/municipality first</option>
@@ -337,19 +352,19 @@ $religionOptions = [
                                     </div>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="house_number" class="form-label">House #</label>
                                         <input class="form-control" type="text" name="house_number" id="house_number">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="street" class="form-label">Street</label>
                                         <input class="form-control" type="text" name="street" id="street">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="sitio" class="form-label">Sitio</label>
                                         <input class="form-control" type="text" name="sitio" id="sitio">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="purok" class="form-label">Purok</label>
                                         <input class="form-control" type="text" name="purok" id="purok">
                                     </div>
@@ -412,39 +427,39 @@ $religionOptions = [
 
                                 <h6 class="fw-bold mb-2">Father</h6>
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_father_name" class="form-label">Name</label>
                                         <input class="form-control" type="text" id="pg_father_name">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_father_occupation" class="form-label">Occupation</label>
                                         <input class="form-control" type="text" id="pg_father_occupation">
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="pg_father_age" class="form-label">Age</label>
                                         <input class="form-control" type="number" min="0" max="120" id="pg_father_age">
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="pg_father_contact" class="form-label">Contact</label>
-                                        <input class="form-control" type="text" id="pg_father_contact">
+                                        <input class="form-control" type="text" inputmode="numeric" maxlength="11" pattern="\d{11}" title="Contact number must be exactly 11 digits, numbers only" id="pg_father_contact">
                                     </div>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_father_province" class="form-label">Province</label>
                                         <select class="form-select" id="pg_father_province">
                                             <option value="">Loading provinces...</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="pg_father_province_other" placeholder="Enter province">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_father_city_municipality" class="form-label">City / Municipality</label>
                                         <select class="form-select" id="pg_father_city_municipality" disabled>
                                             <option value="">Select province first</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="pg_father_city_municipality_other" placeholder="Enter city/municipality">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_father_barangay" class="form-label">Barangay</label>
                                         <select class="form-select" id="pg_father_barangay" disabled>
                                             <option value="">Select city/municipality first</option>
@@ -453,19 +468,19 @@ $religionOptions = [
                                     </div>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_father_house_number" class="form-label">House #</label>
                                         <input class="form-control" type="text" id="pg_father_house_number">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_father_street" class="form-label">Street</label>
                                         <input class="form-control" type="text" id="pg_father_street">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_father_sitio" class="form-label">Sitio</label>
                                         <input class="form-control" type="text" id="pg_father_sitio">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_father_purok" class="form-label">Purok</label>
                                         <input class="form-control" type="text" id="pg_father_purok">
                                     </div>
@@ -474,39 +489,39 @@ $religionOptions = [
                                 <hr>
                                 <h6 class="fw-bold mb-2">Mother</h6>
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_mother_name" class="form-label">Name</label>
                                         <input class="form-control" type="text" id="pg_mother_name">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_mother_occupation" class="form-label">Occupation</label>
                                         <input class="form-control" type="text" id="pg_mother_occupation">
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="pg_mother_age" class="form-label">Age</label>
                                         <input class="form-control" type="number" min="0" max="120" id="pg_mother_age">
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="pg_mother_contact" class="form-label">Contact</label>
-                                        <input class="form-control" type="text" id="pg_mother_contact">
+                                        <input class="form-control" type="text" inputmode="numeric" pattern="\d{11}" maxlength="11" title="Contact number must be exactly 11 digits, numbers only" id="pg_mother_contact">
                                     </div>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_mother_province" class="form-label">Province</label>
                                         <select class="form-select" id="pg_mother_province">
                                             <option value="">Loading provinces...</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="pg_mother_province_other" placeholder="Enter province">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_mother_city_municipality" class="form-label">City / Municipality</label>
                                         <select class="form-select" id="pg_mother_city_municipality" disabled>
                                             <option value="">Select province first</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="pg_mother_city_municipality_other" placeholder="Enter city/municipality">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_mother_barangay" class="form-label">Barangay</label>
                                         <select class="form-select" id="pg_mother_barangay" disabled>
                                             <option value="">Select city/municipality first</option>
@@ -515,19 +530,19 @@ $religionOptions = [
                                     </div>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_mother_house_number" class="form-label">House #</label>
                                         <input class="form-control" type="text" id="pg_mother_house_number">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_mother_street" class="form-label">Street</label>
                                         <input class="form-control" type="text" id="pg_mother_street">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_mother_sitio" class="form-label">Sitio</label>
                                         <input class="form-control" type="text" id="pg_mother_sitio">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_mother_purok" class="form-label">Purok</label>
                                         <input class="form-control" type="text" id="pg_mother_purok">
                                     </div>
@@ -536,39 +551,39 @@ $religionOptions = [
                                 <hr>
                                 <h6 class="fw-bold mb-2">Guardian</h6>
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_guardian_name" class="form-label">Name</label>
                                         <input class="form-control" type="text" id="pg_guardian_name">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_guardian_relationship" class="form-label">Relationship</label>
                                         <input class="form-control" type="text" id="pg_guardian_relationship">
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="pg_guardian_age" class="form-label">Age</label>
                                         <input class="form-control" type="number" min="0" max="120" id="pg_guardian_age">
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="pg_guardian_contact" class="form-label">Contact</label>
-                                        <input class="form-control" type="text" id="pg_guardian_contact">
+                                        <input class="form-control" type="text" inputmode="numeric" pattern="\d{11}" maxlength="11" title="Contact number must be exactly 11 digits, numbers only" id="pg_guardian_contact">
                                     </div>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_guardian_province" class="form-label">Province</label>
                                         <select class="form-select" id="pg_guardian_province">
                                             <option value="">Loading provinces...</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="pg_guardian_province_other" placeholder="Enter province">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_guardian_city_municipality" class="form-label">City / Municipality</label>
                                         <select class="form-select" id="pg_guardian_city_municipality" disabled>
                                             <option value="">Select province first</option>
                                         </select>
                                         <input class="form-control mt-1 d-none" type="text" id="pg_guardian_city_municipality_other" placeholder="Enter city/municipality">
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="pg_guardian_barangay" class="form-label">Barangay</label>
                                         <select class="form-select" id="pg_guardian_barangay" disabled>
                                             <option value="">Select city/municipality first</option>
@@ -577,19 +592,19 @@ $religionOptions = [
                                     </div>
                                 </div>
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_guardian_house_number" class="form-label">House #</label>
                                         <input class="form-control" type="text" id="pg_guardian_house_number">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_guardian_street" class="form-label">Street</label>
                                         <input class="form-control" type="text" id="pg_guardian_street">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_guardian_sitio" class="form-label">Sitio</label>
                                         <input class="form-control" type="text" id="pg_guardian_sitio">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="pg_guardian_purok" class="form-label">Purok</label>
                                         <input class="form-control" type="text" id="pg_guardian_purok">
                                     </div>
@@ -605,19 +620,19 @@ $religionOptions = [
                         <div class="tab-pane fade" id="tab-health" role="tabpanel">
                             <form id="healthProfileForm">
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="hp_height_cm" class="form-label">Height (cm)</label>
                                         <input type="number" step="0.01" min="0" class="form-control" id="hp_height_cm">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="hp_weight_kg" class="form-label">Weight (kg)</label>
                                         <input type="number" step="0.01" min="0" class="form-control" id="hp_weight_kg">
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="hp_bmi" class="form-label">BMI</label>
                                         <input type="text" class="form-control" id="hp_bmi" readonly>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label class="form-label d-block">Classification</label>
                                         <span class="bmi-badge" id="hp_bmi_classification_badge">&mdash;</span>
                                         <input type="hidden" id="hp_bmi_classification">
@@ -651,7 +666,7 @@ $religionOptions = [
                                         <label for="hp_allergies" class="form-label">Allergies</label>
                                         <textarea class="form-control" id="hp_allergies" rows="2"></textarea>
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="hp_has_medical_condition" class="form-label">Medical Conditions</label>
                                         <select class="form-select" id="hp_has_medical_condition">
                                             <option value="No">No</option>
@@ -661,6 +676,17 @@ $religionOptions = [
                                     <div class="col-md-8 mb-3 d-none" id="hp_medical_conditions_wrapper">
                                         <label for="hp_medical_conditions" class="form-label">Specify</label>
                                         <textarea class="form-control" id="hp_medical_conditions" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-6 col-md-4 mb-3">
+                                        <label for="hp_has_special_needs" class="form-label">Special Needs</label>
+                                        <select class="form-select" id="hp_has_special_needs">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-8 mb-3 d-none" id="hp_special_needs_wrapper">
+                                        <label for="hp_special_needs_details" class="form-label">Specify</label>
+                                        <textarea class="form-control" id="hp_special_needs_details" rows="2"></textarea>
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label for="hp_immunization_status" class="form-label">Immunization Status</label>
@@ -678,11 +704,11 @@ $religionOptions = [
                             <form id="readingLevelForm" class="border rounded p-3 mb-3 bg-light">
                                 <input type="hidden" id="rl_edit_id">
                                 <div class="row g-3">
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="rl_assessment_date" class="form-label">Assessment Date</label>
                                         <input type="date" class="form-control" id="rl_assessment_date" required>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="rl_reading_level" class="form-label">Reading Level</label>
                                         <select class="form-select" id="rl_reading_level" required>
                                             <option value="" selected disabled>Select reading level</option>
@@ -692,7 +718,7 @@ $religionOptions = [
                                             <option value="Independent">Independent</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="rl_reading_language" class="form-label">Reading Language</label>
                                         <select class="form-select" id="rl_reading_language" required>
                                             <option value="" selected disabled>Select reading language</option>
@@ -701,7 +727,7 @@ $religionOptions = [
                                             <option value="MTB">MTB</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                    <div class="col-6 col-md-3 mb-3 d-flex align-items-end gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1" id="rl_submit_btn">Add</button>
                                         <button type="button" class="btn btn-outline-secondary d-none" id="rl_cancel_btn">Cancel</button>
                                     </div>
@@ -734,11 +760,11 @@ $religionOptions = [
                             <form id="academicRecordForm" class="border rounded p-3 mb-3 bg-light">
                                 <input type="hidden" id="ap_edit_id">
                                 <div class="row g-3">
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-6 col-md-4 mb-3">
                                         <label for="ap_subject_name" class="form-label">Subject Name</label>
                                         <input class="form-control" type="text" id="ap_subject_name" required>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-6 col-md-3 mb-3">
                                         <label for="ap_grading_period" class="form-label">Grading Period</label>
                                         <select class="form-select" id="ap_grading_period" required>
                                             <option value="" selected disabled>-- Choose --</option>
@@ -748,11 +774,11 @@ $religionOptions = [
                                             <option value="4th Quarter">4th Quarter</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-2 mb-3">
+                                    <div class="col-6 col-md-2 mb-3">
                                         <label for="ap_grade" class="form-label">Grade</label>
                                         <input class="form-control" type="number" step="0.01" min="0" max="100" id="ap_grade" required>
                                     </div>
-                                    <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                    <div class="col-6 col-md-3 mb-3 d-flex align-items-end gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1" id="ap_submit_btn">Add</button>
                                         <button type="button" class="btn btn-outline-secondary d-none" id="ap_cancel_btn">Cancel</button>
                                     </div>

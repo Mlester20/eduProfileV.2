@@ -45,6 +45,16 @@ AuthRole::allowOnly(['administrative']);
     <?php require_once __DIR__ . '/partials/sidebar.php'; ?>
     <?php require_once __DIR__ . '/partials/topbar.php'; ?>
 
+    <div class="d-flex justify-content-end mb-2">
+        <a
+            href="health-profile-print.php?school_year_id=<?php echo urlencode((string) ($school_year_filter ?? '')); ?>&grade_level_id=<?php echo urlencode((string) ($grade_level_filter ?? '')); ?>&section_id=<?php echo urlencode((string) ($section_filter ?? '')); ?>"
+            target="_blank"
+            class="btn btn-outline-primary"
+        >
+            <i class="bx bx-printer"></i> Print
+        </a>
+    </div>
+
     <form action="health-profile.php" method="get" class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div>
             <label for="school_year_id" class="form-label mb-0">School Year</label>

@@ -53,7 +53,7 @@ AuthRole::allowOnly(['administrative']);
 
     <!-- Add Teacher -->
     <div class="modal fade" id="createTeacherModal" tabindex="-1" aria-labelledby="createTeacherModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createTeacherModalLabel">Add Teacher</h5>
@@ -62,43 +62,92 @@ AuthRole::allowOnly(['administrative']);
                 <div class="modal-body">
                     <form id="teacherForm" method="POST" action="../../../app/controllers/administrative/teacherscontroller.php">
                         <?= Csrf::field() ?>
-                        <div class="mb-3">
-                            <label for="fullName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="fullName" name="full_name" placeholder="e.g., Juan Dela Cruz" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="position" class="form-label">Position</label>
-                            <input type="text" class="form-control" id="position" name="position" placeholder="e.g., Teacher I">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="e.g., juan.delacruz@school.edu.ph" required>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="fullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullName" name="full_name" placeholder="e.g., Juan Dela Cruz" title="Letters, spaces, and hyphens only." pattern="[A-Za-z]+([ -][A-Za-z]+)*" required>
+                            </div>
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="position" class="form-label">Position</label>
+                                <select class="form-select" id="position">
+                                    <option value="">Select Position</option>
+                                    <option value="Teacher I">Teacher I</option>
+                                    <option value="Teacher II">Teacher II</option>
+                                    <option value="Teacher III">Teacher III</option>
+                                    <option value="Master Teacher I">Master Teacher I</option>
+                                    <option value="Master Teacher II">Master Teacher II</option>
+                                    <option value="Master Teacher III">Master Teacher III</option>
+                                    <option value="Master Teacher IV">Master Teacher IV</option>
+                                    <option value="Head Teacher I">Head Teacher I</option>
+                                    <option value="Head Teacher II">Head Teacher II</option>
+                                    <option value="Head Teacher III">Head Teacher III</option>
+                                    <option value="Head Teacher IV">Head Teacher IV</option>
+                                    <option value="Head Teacher V">Head Teacher V</option>
+                                    <option value="__other__">Other</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="position_other" placeholder="Enter position">
+                                <input type="hidden" id="position_value" name="position">
+                            </div>
                         </div>
                         <div class="row g-3">
-                            <div class="col-md-6 mb-3">
-                                <label for="contact_number" class="form-label">Contact Number</label>
-                                <input type="text" class="form-control" id="contact_number" name="contact_number" placeholder="e.g., 09171234567">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="e.g., juan.delacruz@school.edu.ph" required>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="sex" class="form-label">Sex</label>
+                                <select class="form-select" id="sex" name="sex">
+                                    <option value="">Select Sex</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="contact_number" class="form-label">Contact Number</label>
+                                <input type="number" class="form-control" id="contact_number" name="contact_number" placeholder="e.g., 09171234567" inputmode="numeric" pattern="\d{11}" maxlength="11" title="Contact number must be exactly 11 digits, numbers only">
+                            </div>
+                            <div class="col-6 col-md-6 mb-3">
                                 <label for="birth_date" class="form-label">Birth Date</label>
                                 <input type="date" class="form-control" id="birth_date" name="birth_date">
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="sex" class="form-label">Sex</label>
-                            <select class="form-select" id="sex" name="sex">
-                                <option value="">Select Sex</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-4 mb-3">
+                                <label for="province" class="form-label">Province</label>
+                                <select class="form-select" id="province">
+                                    <option value="">Loading provinces...</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="province_other" placeholder="Enter province">
+                            </div>
+                            <div class="col-6 col-md-4 mb-3">
+                                <label for="city_municipality" class="form-label">City / Municipality</label>
+                                <select class="form-select" id="city_municipality" disabled>
+                                    <option value="">Select province first</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="city_municipality_other" placeholder="Enter city/municipality">
+                            </div>
+                            <div class="col-6 col-md-4 mb-3">
+                                <label for="barangay" class="form-label">Barangay</label>
+                                <select class="form-select" id="barangay" disabled>
+                                    <option value="">Select city/municipality first</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="barangay_other" placeholder="Enter barangay">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <input type="text" class="form-control" id="address" name="address" placeholder="e.g., San Jose Sur, Mallig, Isabela">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter a strong password" minlength="8" required>
+                        <input type="hidden" id="province_value" name="province">
+                        <input type="hidden" id="city_municipality_value" name="city_municipality">
+                        <input type="hidden" id="barangay_value" name="barangay">
+                        <div class="row g-3">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter a strong password" minlength="8" required>
+                            </div>
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Re-enter the password" minlength="8" required>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -112,7 +161,7 @@ AuthRole::allowOnly(['administrative']);
 
     <!-- Edit Teacher -->
     <div class="modal fade" id="editTeacherModal" tabindex="-1" aria-labelledby="editTeacherModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editTeacherModalLabel">Edit Teacher</h5>
@@ -122,40 +171,83 @@ AuthRole::allowOnly(['administrative']);
                     <form id="editTeacherForm" method="POST" action="../../../app/controllers/administrative/teacherscontroller.php">
                         <?= Csrf::field() ?>
                         <input type="hidden" id="editTeacherId" name="id">
-                        <div class="mb-3">
-                            <label for="editFullName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="editFullName" name="full_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editPosition" class="form-label">Position</label>
-                            <input type="text" class="form-control" id="editPosition" name="position" placeholder="e.g., Teacher I">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="editFullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="editFullName" name="full_name" title="Letters, spaces, and hyphens only." pattern="[A-Za-z]+([ -][A-Za-z]+)*" required>
+                            </div>
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="editPosition" class="form-label">Position</label>
+                                <select class="form-select" id="editPosition">
+                                    <option value="">Select Position</option>
+                                    <option value="Teacher I">Teacher I</option>
+                                    <option value="Teacher II">Teacher II</option>
+                                    <option value="Teacher III">Teacher III</option>
+                                    <option value="Master Teacher I">Master Teacher I</option>
+                                    <option value="Master Teacher II">Master Teacher II</option>
+                                    <option value="Master Teacher III">Master Teacher III</option>
+                                    <option value="Master Teacher IV">Master Teacher IV</option>
+                                    <option value="Head Teacher I">Head Teacher I</option>
+                                    <option value="Head Teacher II">Head Teacher II</option>
+                                    <option value="Head Teacher III">Head Teacher III</option>
+                                    <option value="Head Teacher IV">Head Teacher IV</option>
+                                    <option value="Head Teacher V">Head Teacher V</option>
+                                    <option value="__other__">Other</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="editPosition_other" placeholder="Enter position">
+                                <input type="hidden" id="editPosition_value" name="position">
+                            </div>
                         </div>
                         <div class="row g-3">
-                            <div class="col-md-6 mb-3">
-                                <label for="editContactNumber" class="form-label">Contact Number</label>
-                                <input type="text" class="form-control" id="editContactNumber" name="contact_number" placeholder="e.g., 09171234567">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="editEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmail" name="email" required>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="editSex" class="form-label">Sex</label>
+                                <select class="form-select" id="editSex" name="sex">
+                                    <option value="">Select Sex</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-6 mb-3">
+                                <label for="editContactNumber" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="editContactNumber" name="contact_number" placeholder="e.g., 09171234567" inputmode="numeric" pattern="\d{11}" maxlength="11" title="Contact number must be exactly 11 digits, numbers only">
+                            </div>
+                            <div class="col-6 col-md-6 mb-3">
                                 <label for="editBirthDate" class="form-label">Birth Date</label>
                                 <input type="date" class="form-control" id="editBirthDate" name="birth_date">
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="editSex" class="form-label">Sex</label>
-                            <select class="form-select" id="editSex" name="sex">
-                                <option value="">Select Sex</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
+                        <div class="row g-3">
+                            <div class="col-6 col-md-4 mb-3">
+                                <label for="editProvince" class="form-label">Province</label>
+                                <select class="form-select" id="editProvince">
+                                    <option value="">Loading provinces...</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="editProvince_other" placeholder="Enter province">
+                            </div>
+                            <div class="col-6 col-md-4 mb-3">
+                                <label for="editCityMunicipality" class="form-label">City / Municipality</label>
+                                <select class="form-select" id="editCityMunicipality" disabled>
+                                    <option value="">Select province first</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="editCityMunicipality_other" placeholder="Enter city/municipality">
+                            </div>
+                            <div class="col-6 col-md-4 mb-3">
+                                <label for="editBarangay" class="form-label">Barangay</label>
+                                <select class="form-select" id="editBarangay" disabled>
+                                    <option value="">Select city/municipality first</option>
+                                </select>
+                                <input class="form-control mt-1 d-none" type="text" id="editBarangay_other" placeholder="Enter barangay">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="editAddress" class="form-label">Address</label>
-                            <input type="text" class="form-control" id="editAddress" name="address" placeholder="e.g., San Jose Sur, Mallig, Isabela">
-                        </div>
+                        <input type="hidden" id="editProvince_value" name="province">
+                        <input type="hidden" id="editCityMunicipality_value" name="city_municipality">
+                        <input type="hidden" id="editBarangay_value" name="barangay">
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" name="updateUser">Update Teacher</button>
@@ -261,7 +353,9 @@ AuthRole::allowOnly(['administrative']);
                                             data-position="<?= htmlspecialchars($teacher['position'] ?? '') ?>"
                                             data-email="<?= htmlspecialchars($teacher['email']) ?>"
                                             data-contact-number="<?= htmlspecialchars($teacher['contact_number'] ?? '') ?>"
-                                            data-address="<?= htmlspecialchars($teacher['address'] ?? '') ?>"
+                                            data-province="<?= htmlspecialchars($teacher['province'] ?? '') ?>"
+                                            data-city-municipality="<?= htmlspecialchars($teacher['city_municipality'] ?? '') ?>"
+                                            data-barangay="<?= htmlspecialchars($teacher['barangay'] ?? '') ?>"
                                             data-birth-date="<?= htmlspecialchars($teacher['birth_date'] ?? '') ?>"
                                             data-sex="<?= htmlspecialchars($teacher['sex'] ?? '') ?>"
                                             onclick="editTeacher(this.dataset)"

@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function(){
  */
 (function(){
     const RELIGION_PRESETS = Array.from(document.querySelectorAll('#religion option')).map(function(o){ return o.value }).filter(Boolean)
+    const SUFFIX_PRESETS = Array.from(document.querySelectorAll('#suffix option')).map(function(o){ return o.value }).filter(Boolean)
 
     let currentStudentId = null
     let needsReload = false
@@ -97,6 +98,8 @@ document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('student_picture_preview').src = '../../../public/assets/img/avatars/1.png'
         document.getElementById('religion_other_wrapper').classList.add('d-none')
         document.getElementById('religion_other').value = ''
+        document.getElementById('suffix_other_wrapper').classList.add('d-none')
+        document.getElementById('suffix_other').value = ''
         studentAddressPicker.reset()
     }
 
@@ -107,7 +110,20 @@ document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('first_name').value = student.first_name || ''
         document.getElementById('middle_name').value = student.middle_name || ''
         document.getElementById('last_name').value = student.last_name || ''
-        document.getElementById('suffix').value = student.suffix || ''
+
+        const suffixSelect = document.getElementById('suffix')
+        const suffixOtherWrapper = document.getElementById('suffix_other_wrapper')
+        const suffixOther = document.getElementById('suffix_other')
+        if(student.suffix && !SUFFIX_PRESETS.includes(student.suffix)){
+            suffixSelect.value = '__other__'
+            suffixOtherWrapper.classList.remove('d-none')
+            suffixOther.value = student.suffix
+        }else{
+            suffixSelect.value = student.suffix || ''
+            suffixOtherWrapper.classList.add('d-none')
+            suffixOther.value = ''
+        }
+
         document.getElementById('gender').value = student.gender || ''
         document.getElementById('age_as_of_june').value = student.age_as_of_june || ''
         document.getElementById('mother_tongue').value = student.mother_tongue || ''
@@ -154,6 +170,16 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     })
 
+    document.getElementById('suffix').addEventListener('change', function(){
+        const wrapper = document.getElementById('suffix_other_wrapper')
+        if(this.value === '__other__'){
+            wrapper.classList.remove('d-none')
+        }else{
+            wrapper.classList.add('d-none')
+            document.getElementById('suffix_other').value = ''
+        }
+    })
+
     document.getElementById('picture').addEventListener('change', function(){
         if(this.files && this.files[0]){
             document.getElementById('student_picture_preview').src = URL.createObjectURL(this.files[0])
@@ -172,6 +198,47 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function isValidLrn(value){
         return /^\d{12}$/.test(value)
+    }
+
+    // Parent/Guardian contact numbers: digits only, capped at 11 -- same
+    // approach as LRN above. This form posts via fetch (not a native
+    // submit), so the pattern/maxlength attributes alone never actually
+    // get enforced by the browser; this is what really limits it.
+    ;['pg_father_contact', 'pg_mother_contact', 'pg_guardian_contact'].forEach(function(id){
+        const input = document.getElementById(id)
+        if(!input) return
+        input.addEventListener('input', function(){
+            const digitsOnly = this.value.replace(/\D/g, '').slice(0, 11)
+            if(digitsOnly !== this.value) this.value = digitsOnly
+        })
+    })
+
+    // Name/word-only fields shouldn't accept digits -- strip any as typed.
+    // Left out on purpose: house_number/street/sitio/purok and the
+    // province/city/barangay "Other" inputs (Philippine address components
+    // routinely include numbers, e.g. "Purok 3", "Barangay 176"), remarks
+    // (free text), and anything that's already a number/date/select input.
+    ;['first_name', 'middle_name', 'last_name', 'mother_tongue', 'ip_ethnic_group',
+      'pg_father_name', 'pg_mother_name', 'pg_guardian_name',
+      'pg_father_occupation', 'pg_mother_occupation', 'pg_guardian_relationship'].forEach(function(id){
+        const el = document.getElementById(id)
+        if(!el) return
+        el.addEventListener('input', function(){
+            const noDigits = this.value.replace(/[0-9]/g, '')
+            if(noDigits !== this.value) this.value = noDigits
+        })
+    })
+
+    function calculateAgeFromDate(dateString){
+        if(!dateString) return null
+        const birthDate = new Date(dateString)
+        if(isNaN(birthDate.getTime())) return null
+        const today = new Date()
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const hasHadBirthdayThisYear = (today.getMonth() > birthDate.getMonth()) ||
+            (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate())
+        if(!hasHadBirthdayThisYear) age--
+        return age
     }
 
     // ===== Cascading Province -> City/Municipality -> Barangay =====
@@ -453,11 +520,26 @@ document.addEventListener('DOMContentLoaded', function(){
             return
         }
 
+        const birthDateInput = document.getElementById('birth_date')
+        const age = calculateAgeFromDate(birthDateInput.value)
+        if(age !== null && age > 21){
+            birthDateInput.classList.add('is-invalid')
+            birthDateInput.focus()
+            notifyError('This student is over 21 years old and cannot be recorded.')
+            return
+        }
+        birthDateInput.classList.remove('is-invalid')
+
         const formData = new FormData(form)
 
         const religionValue = document.getElementById('religion').value
         if(religionValue === '__other__'){
             formData.set('religion', document.getElementById('religion_other').value)
+        }
+
+        const suffixValue = document.getElementById('suffix').value
+        if(suffixValue === '__other__'){
+            formData.set('suffix', document.getElementById('suffix_other').value)
         }
 
         ;[['province', 'province_other'], ['city_municipality', 'city_municipality_other'], ['barangay', 'barangay_other']].forEach(function(pair){
@@ -679,13 +761,22 @@ document.addEventListener('DOMContentLoaded', function(){
 
     document.getElementById('hp_has_medical_condition').addEventListener('change', toggleMedicalConditionDetail)
 
+    function toggleSpecialNeedsDetail(){
+        const hasSpecialNeeds = document.getElementById('hp_has_special_needs').value === 'Yes'
+        document.getElementById('hp_special_needs_wrapper').classList.toggle('d-none', !hasSpecialNeeds)
+    }
+
+    document.getElementById('hp_has_special_needs').addEventListener('change', toggleSpecialNeedsDetail)
+
     function clearHealthProfileForm(){
-        ['hp_height_cm', 'hp_weight_kg', 'hp_bmi', 'hp_vision_screening_result', 'hp_hearing_screening_result', 'hp_allergies', 'hp_medical_conditions', 'hp_immunization_status'].forEach(function(id){
+        ['hp_height_cm', 'hp_weight_kg', 'hp_bmi', 'hp_vision_screening_result', 'hp_hearing_screening_result', 'hp_allergies', 'hp_medical_conditions', 'hp_special_needs_details', 'hp_immunization_status'].forEach(function(id){
             document.getElementById(id).value = ''
         })
         document.getElementById('hp_blood_type').value = ''
         document.getElementById('hp_has_medical_condition').value = 'No'
+        document.getElementById('hp_has_special_needs').value = 'No'
         toggleMedicalConditionDetail()
+        toggleSpecialNeedsDetail()
         recalcBmi()
     }
 
@@ -706,6 +797,9 @@ document.addEventListener('DOMContentLoaded', function(){
                 document.getElementById('hp_has_medical_condition').value = hp.has_medical_condition === 'Yes' ? 'Yes' : 'No'
                 document.getElementById('hp_medical_conditions').value = hp.medical_conditions || ''
                 toggleMedicalConditionDetail()
+                document.getElementById('hp_has_special_needs').value = hp.has_special_needs === 'Yes' ? 'Yes' : 'No'
+                document.getElementById('hp_special_needs_details').value = hp.special_needs_details || ''
+                toggleSpecialNeedsDetail()
                 document.getElementById('hp_immunization_status').value = hp.immunization_status || ''
                 recalcBmi()
             })
@@ -725,6 +819,8 @@ document.addEventListener('DOMContentLoaded', function(){
             allergies: document.getElementById('hp_allergies').value,
             has_medical_condition: document.getElementById('hp_has_medical_condition').value,
             medical_conditions: document.getElementById('hp_medical_conditions').value,
+            has_special_needs: document.getElementById('hp_has_special_needs').value,
+            special_needs_details: document.getElementById('hp_special_needs_details').value,
             immunization_status: document.getElementById('hp_immunization_status').value,
             csrf_token: csrfToken()
         }

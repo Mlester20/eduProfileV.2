@@ -14,13 +14,6 @@ foreach(($school_years ?? []) as $sy){
         break;
     }
 }
-$gradeLevelLabel = 'All Grade Levels';
-foreach(($grade_levels ?? []) as $gl){
-    if($grade_level_filter !== null && (int) $gl['id'] === (int) $grade_level_filter){
-        $gradeLevelLabel = $gl['grade_name'];
-        break;
-    }
-}
 $sectionLabel = 'All Sections';
 foreach(($sections ?? []) as $sec){
     if($section_filter !== null && (int) $sec['id'] === (int) $section_filter){
@@ -97,14 +90,6 @@ $categoryFieldLabels = [
                     </option>
                 <?php endforeach; ?>
             </select>
-            <select class="form-select" name="grade_level_id" onchange="this.form.submit()">
-                <option value="">-- All Grade Levels --</option>
-                <?php foreach(($grade_levels ?? []) as $gl): ?>
-                    <option value="<?php echo htmlspecialchars($gl['id']); ?>" <?php echo ($grade_level_filter !== null && (int) $grade_level_filter === (int) $gl['id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($gl['grade_name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
             <select class="form-select" name="section_id" onchange="this.form.submit()">
                 <option value="">-- All Sections --</option>
                 <?php foreach(($sections ?? []) as $sec): ?>
@@ -128,7 +113,7 @@ $categoryFieldLabels = [
     </div>
     <h4 class="text-center mb-0">Compiled Records Report &mdash; <?php echo htmlspecialchars($category); ?></h4>
     <p class="text-center text-muted small mb-3">
-        School Year: <?php echo htmlspecialchars($schoolYearLabel); ?> &nbsp;•&nbsp; Grade Level: <?php echo htmlspecialchars($gradeLevelLabel); ?> &nbsp;•&nbsp; Section: <?php echo htmlspecialchars($sectionLabel); ?>
+        School Year: <?php echo htmlspecialchars($schoolYearLabel); ?> &nbsp;•&nbsp; Section: <?php echo htmlspecialchars($sectionLabel); ?>
     </p>
 
     <div class="table-responsive">

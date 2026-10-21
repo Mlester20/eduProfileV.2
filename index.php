@@ -61,7 +61,7 @@ $school = SchoolSettings::get($con);
 
         <div>
           <p class="auth-left-title">EduProfile</p>
-          <p class="auth-left-tagline">An Innovative Student Profiling System for Learners of San Jose Sur Elementary School</p>
+          <p class="auth-left-tagline">An Innovative Profiling System for Student Learners of San Jose Sur Elementary School</p>
           <p class="auth-left-subtext"><?php echo htmlspecialchars($school['school_name']); ?> &nbsp;•&nbsp; <?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></p>
         </div>
       </div>

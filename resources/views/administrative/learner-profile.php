@@ -143,7 +143,7 @@ $school = SchoolSettings::get($con);
                         <p class="mb-0"><?php echo !empty($info['birth_date']) ? htmlspecialchars((new DateTime($info['birth_date']))->format('F j, Y')) : ''; ?></p>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Age / Gender</label>
+                        <label class="form-label fw-bold mb-0">Age / Sex</label>
                         <p class="mb-0"><?php echo htmlspecialchars(StudentsAge::calculateAge($info['birth_date'])); ?> &middot; <?php echo htmlspecialchars($info['gender']); ?></p>
                     </div>
                     <div class="col-md-3 col-sm-6 mb-3">
@@ -340,9 +340,6 @@ $school = SchoolSettings::get($con);
         if($school_year_filter !== null){
             $masterListQueryBase .= '&school_year_id=' . (int) $school_year_filter;
         }
-        if($grade_level_filter !== null){
-            $masterListQueryBase .= '&grade_level_id=' . (int) $grade_level_filter;
-        }
         if($gender_filter !== null){
             $masterListQueryBase .= '&gender=' . urlencode($gender_filter);
         }
@@ -361,20 +358,9 @@ $school = SchoolSettings::get($con);
             </select>
         </div>
         <div>
-            <label for="filter_grade_level_id" class="form-label mb-0">Grade Level</label>
-            <select class="form-select" id="filter_grade_level_id" name="grade_level_id" onchange="this.form.submit()">
-                <option value="">-- All Grade Levels --</option>
-                <?php foreach(($grade_levels ?? []) as $gl_opt): ?>
-                    <option value="<?php echo htmlspecialchars($gl_opt['id']); ?>" <?php echo ($grade_level_filter !== null && (int) $grade_level_filter === (int) $gl_opt['id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($gl_opt['grade_name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div>
             <label for="filter_section_id" class="form-label mb-0">Section</label>
             <select class="form-select" id="filter_section_id" name="section_id" onchange="this.form.submit()">
-                <option value="">-- All Sections<?php echo ($grade_level_filter !== null) ? ' in this Grade' : ''; ?> --</option>
+                <option value="">-- All Sections --</option>
                 <?php foreach(($sections ?? []) as $sec_opt): ?>
                     <option value="<?php echo htmlspecialchars($sec_opt['id']); ?>" <?php echo ($section_filter !== null && (int) $section_filter === (int) $sec_opt['id']) ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars(($sec_opt['grade_level_name'] ?? '') . ' - ' . $sec_opt['section_name']); ?>
@@ -383,14 +369,14 @@ $school = SchoolSettings::get($con);
             </select>
         </div>
         <div>
-            <label for="filter_gender" class="form-label mb-0">Gender</label>
+            <label for="filter_gender" class="form-label mb-0">Sex</label>
             <select class="form-select" id="filter_gender" name="gender" onchange="this.form.submit()">
                 <option value="">-- All --</option>
                 <option value="Male" <?php echo ($gender_filter === 'Male') ? 'selected' : ''; ?>>Male</option>
                 <option value="Female" <?php echo ($gender_filter === 'Female') ? 'selected' : ''; ?>>Female</option>
             </select>
         </div>
-        <?php if($section_filter !== null || $school_year_filter !== null || $grade_level_filter !== null || $gender_filter !== null): ?>
+        <?php if($section_filter !== null || $school_year_filter !== null || $gender_filter !== null): ?>
             <div>
                 <a href="learner-profile.php?status=<?php echo htmlspecialchars($status_filter); ?>" class="btn btn-outline-secondary">Clear filters</a>
             </div>
@@ -475,11 +461,15 @@ $school = SchoolSettings::get($con);
               <li class="page-item <?php echo $masterPage <= 1 ? 'disabled' : ''; ?>">
                 <a class="page-link" href="?<?php echo htmlspecialchars($masterListQueryBase); ?>&page=<?php echo $masterPage - 1; ?>">&laquo;</a>
               </li>
-              <?php for ($p = 1; $p <= $masterPages; $p++): ?>
-                <li class="page-item <?php echo $p === $masterPage ? 'active' : ''; ?>">
-                  <a class="page-link" href="?<?php echo htmlspecialchars($masterListQueryBase); ?>&page=<?php echo $p; ?>"><?php echo $p; ?></a>
-                </li>
-              <?php endfor; ?>
+              <?php foreach (Paginator::pageWindow($masterPage, $masterPages) as $p): ?>
+                <?php if ($p === null): ?>
+                  <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                <?php else: ?>
+                  <li class="page-item <?php echo $p === $masterPage ? 'active' : ''; ?>">
+                    <a class="page-link" href="?<?php echo htmlspecialchars($masterListQueryBase); ?>&page=<?php echo $p; ?>"><?php echo $p; ?></a>
+                  </li>
+                <?php endif; ?>
+              <?php endforeach; ?>
               <li class="page-item <?php echo $masterPage >= $masterPages ? 'disabled' : ''; ?>">
                 <a class="page-link" href="?<?php echo htmlspecialchars($masterListQueryBase); ?>&page=<?php echo $masterPage + 1; ?>">&raquo;</a>
               </li>

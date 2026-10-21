@@ -3,7 +3,6 @@ session_start();
 require_once __DIR__ . '/../../models/administrative/learnerprofilemodel.php';
 require_once __DIR__ . '/../../models/admin/SectionsModel.php';
 require_once __DIR__ . '/../../models/admin/SchoolYearModel.php';
-require_once __DIR__ . '/../../models/admin/GradeLevelsModel.php';
 require_once __DIR__ . '/../../helpers/flashMessage.php';
 require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../middleware/Auth.php';
@@ -15,24 +14,22 @@ AuthRole::allowOnly(['administrative']);
         protected $model;
         protected $sectionsModel;
         protected $schoolYearModel;
-        protected $gradeLevelsModel;
 
         public function __construct($con){
             $this->model = new LearnerProfileModel($con);
             $this->sectionsModel = new SectionsModel($con);
             $this->schoolYearModel = new SchoolYearModel($con);
-            $this->gradeLevelsModel = new GradeLevelsModel($con);
         }
 
         public function getAllStudents(){
             return $this->model->getAllStudentsForSearch();
         }
 
-        public function getMasterList($page = 1, $status = 'active', $sectionId = null, $schoolYearId = null, $gender = null, $gradeLevelId = null){
+        public function getMasterList($page = 1, $status = 'active', $sectionId = null, $schoolYearId = null, $gender = null){
             $perPage = 10;
             $offset = Paginator::offset($page, $perPage);
-            $rows = $this->model->getPage($perPage, $offset, $status, $sectionId, $schoolYearId, $gender, $gradeLevelId);
-            $total = $this->model->countAll($status, $sectionId, $schoolYearId, $gender, $gradeLevelId);
+            $rows = $this->model->getPage($perPage, $offset, $status, $sectionId, $schoolYearId, $gender);
+            $total = $this->model->countAll($status, $sectionId, $schoolYearId, $gender);
             return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
         }
 
@@ -51,15 +48,11 @@ AuthRole::allowOnly(['administrative']);
             return $this->schoolYearModel->index();
         }
 
-        public function getGradeLevels(){
-            return $this->gradeLevelsModel->index();
-        }
-
-        public function getSections($schoolYearId = null, $gradeLevelId = null){
+        public function getSections($schoolYearId = null){
             if($schoolYearId === null){
-                return $this->sectionsModel->index($gradeLevelId);
+                return $this->sectionsModel->index();
             }
-            return $this->sectionsModel->findBySchoolYear($schoolYearId, $gradeLevelId);
+            return $this->sectionsModel->findBySchoolYear($schoolYearId);
         }
 
         /**
@@ -97,13 +90,11 @@ AuthRole::allowOnly(['administrative']);
         $status_filter = in_array($_GET['status'] ?? '', ['active', 'archived'], true) ? $_GET['status'] : 'active';
         $section_filter = isset($_GET['section_id']) && $_GET['section_id'] !== '' ? (int) $_GET['section_id'] : null;
         $school_year_filter = isset($_GET['school_year_id']) && $_GET['school_year_id'] !== '' ? (int) $_GET['school_year_id'] : null;
-        $grade_level_filter = isset($_GET['grade_level_id']) && $_GET['grade_level_id'] !== '' ? (int) $_GET['grade_level_id'] : null;
         $gender_filter = in_array($_GET['gender'] ?? '', ['Male', 'Female'], true) ? $_GET['gender'] : null;
         $section_filter_label = $controller->getSectionLabel($section_filter);
-        $masterList = $controller->getMasterList($page, $status_filter, $section_filter, $school_year_filter, $gender_filter, $grade_level_filter);
+        $masterList = $controller->getMasterList($page, $status_filter, $section_filter, $school_year_filter, $gender_filter);
         $school_years = $controller->getSchoolYears();
-        $grade_levels = $controller->getGradeLevels();
-        $sections = $controller->getSections($school_year_filter, $grade_level_filter);
+        $sections = $controller->getSections($school_year_filter);
     }catch(Exception $e){
         error_log("Error in LearnerProfileController: " . $e->getMessage());
         $students = [];
@@ -111,11 +102,9 @@ AuthRole::allowOnly(['administrative']);
         $status_filter = 'active';
         $section_filter = null;
         $school_year_filter = null;
-        $grade_level_filter = null;
         $gender_filter = null;
         $section_filter_label = null;
         $masterList = ['data' => [], 'total' => 0, 'per_page' => 10, 'current_page' => 1, 'total_pages' => 1];
         $school_years = [];
-        $grade_levels = [];
         $sections = [];
     }

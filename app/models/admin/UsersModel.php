@@ -28,7 +28,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function indexByRole($role, $statusFilter = null){
             try{
-                $query = "SELECT id, full_name, email, contact_number, address, birth_date, sex, role, status, position FROM {$this->users} WHERE role = ?";
+                $query = "SELECT id, full_name, email, contact_number, address, province, city_municipality, barangay, birth_date, sex, role, status, position FROM {$this->users} WHERE role = ?";
                 $types = "s";
                 $params = [$role];
                 if($statusFilter === 'archived'){
@@ -50,7 +50,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function getById($id, $role = null){
             try{
-                $query = "SELECT id, full_name, email, contact_number, address, birth_date, sex, role, status, position, profile_picture, created_at FROM {$this->users} WHERE id = ?";
+                $query = "SELECT id, full_name, email, contact_number, address, province, city_municipality, barangay, birth_date, sex, role, status, position, profile_picture, created_at FROM {$this->users} WHERE id = ?";
                 $types = "i";
                 $params = [$id];
                 if($role !== null){
@@ -84,7 +84,7 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function create($data){
             try{
-                $query = "INSERT INTO {$this->users} (full_name, email, contact_number, address, birth_date, sex, password, role, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $query = "INSERT INTO {$this->users} (full_name, email, contact_number, address, province, city_municipality, barangay, birth_date, sex, password, role, position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $this->con->prepare($query);
                 $hashedPassword = HashPassword::passwordHash($data['password']);
                 if(!$stmt){
@@ -92,15 +92,21 @@ require_once __DIR__ . '/../../helpers/password.php';
                 }
                 $contactNumber = $data['contact_number'] ?? null;
                 $address = $data['address'] ?? null;
+                $province = $data['province'] ?? null;
+                $cityMunicipality = $data['city_municipality'] ?? null;
+                $barangay = $data['barangay'] ?? null;
                 $birthDate = !empty($data['birth_date']) ? $data['birth_date'] : null;
                 $sex = $data['sex'] ?? null;
                 $position = $data['position'] ?? null;
                 $stmt->bind_param(
-                    "sssssssss",
+                    "ssssssssssss",
                     $data['full_name'],
                     $data['email'],
                     $contactNumber,
                     $address,
+                    $province,
+                    $cityMunicipality,
+                    $barangay,
                     $birthDate,
                     $sex,
                     $hashedPassword,
@@ -117,22 +123,28 @@ require_once __DIR__ . '/../../helpers/password.php';
 
         public function update($id, $data){
             try{
-                $query = "UPDATE {$this->users} SET full_name = ?, email = ?, contact_number = ?, address = ?, birth_date = ?, sex = ?, role = ?, position = ? WHERE id = ?";
+                $query = "UPDATE {$this->users} SET full_name = ?, email = ?, contact_number = ?, address = ?, province = ?, city_municipality = ?, barangay = ?, birth_date = ?, sex = ?, role = ?, position = ? WHERE id = ?";
                 $stmt = $this->con->prepare($query);
                 if(!$stmt){
                     throw new Exception("Error preparing statement");
                 }
                 $contactNumber = $data['contact_number'] ?? null;
                 $address = $data['address'] ?? null;
+                $province = $data['province'] ?? null;
+                $cityMunicipality = $data['city_municipality'] ?? null;
+                $barangay = $data['barangay'] ?? null;
                 $birthDate = !empty($data['birth_date']) ? $data['birth_date'] : null;
                 $sex = $data['sex'] ?? null;
                 $position = $data['position'] ?? null;
                 $stmt->bind_param(
-                    "ssssssssi",
+                    "sssssssssssi",
                     $data['full_name'],
                     $data['email'],
                     $contactNumber,
                     $address,
+                    $province,
+                    $cityMunicipality,
+                    $barangay,
                     $birthDate,
                     $sex,
                     $data['role'],

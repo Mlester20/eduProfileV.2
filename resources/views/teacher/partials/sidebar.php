@@ -63,15 +63,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <div data-i18n="Feeding Program">Feeding Program</div>
               </a>
             </li>
+            <!-- Class List -->
+            <li class="menu-item <?php echo ($currentPage === 'class-list.php') ? 'active' : ''; ?>">
+              <a href="class-list.php" class="menu-link">
+                <div data-i18n="Class List">Class List</div>
+              </a>
+            </li>
           </ul>
-        </li>
-
-        <!-- Class List -->
-        <li class="menu-item <?php echo ($currentPage === 'class-list.php') ? 'active' : ''; ?>">
-          <a href="class-list.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-clipboard"></i>
-            <div data-i18n="Class List">Class List</div>
-          </a>
         </li>
 
         <li class="menu-header small text-uppercase">

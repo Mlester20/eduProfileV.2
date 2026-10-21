@@ -141,7 +141,9 @@ require_once __DIR__ . '/../../core/Model.php';
                     hp.bmi AS bmi,
                     hp.bmi_classification AS bmi_classification,
                     hp.has_medical_condition AS has_medical_condition,
-                    hp.medical_conditions AS medical_conditions
+                    hp.medical_conditions AS medical_conditions,
+                    hp.has_special_needs AS has_special_needs,
+                    hp.special_needs_details AS special_needs_details
                 FROM {$this->students} s
                 LEFT JOIN {$this->health_profiles} hp ON hp.student_id = s.id
                 LEFT JOIN {$this->sections} sec ON s.section_id = sec.id

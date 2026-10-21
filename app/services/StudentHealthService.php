@@ -76,6 +76,12 @@ class StudentHealthService extends Model {
         // stale note can't contradict it.
         $hasCondition = (($data['has_medical_condition'] ?? 'No') === 'Yes') ? 'Yes' : 'No';
 
+        // Same dropped-stale-note rule as medical_conditions, and kept as
+        // its own field rather than folded into has_medical_condition --
+        // "Condition Noted" elsewhere in the app already flags that medical
+        // conditions alone isn't an official PWD/SPED determination.
+        $hasSpecialNeeds = (($data['has_special_needs'] ?? 'No') === 'Yes') ? 'Yes' : 'No';
+
         return [
             'student_id' => (int) $data['student_id'],
             'school_year_id' => (int) $data['school_year_id'],
@@ -87,6 +93,8 @@ class StudentHealthService extends Model {
             'allergies' => $data['allergies'] ?? null,
             'has_medical_condition' => $hasCondition,
             'medical_conditions' => ($hasCondition === 'Yes') ? ($data['medical_conditions'] ?? null) : null,
+            'has_special_needs' => $hasSpecialNeeds,
+            'special_needs_details' => ($hasSpecialNeeds === 'Yes') ? ($data['special_needs_details'] ?? null) : null,
             'vision_screening_result' => $data['vision_screening_result'] ?? null,
             'hearing_screening_result' => $data['hearing_screening_result'] ?? null,
             'immunization_status' => $data['immunization_status'] ?? null,

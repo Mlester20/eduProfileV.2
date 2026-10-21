@@ -104,7 +104,7 @@ $fullName = trim($info['first_name'] . ' ' . ($info['middle_name'] ?? '') . ' ' 
                     <p class="mb-0"><?php echo htmlspecialchars($info['lrn'] ?? ''); ?></p>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
-                    <label class="form-label fw-bold mb-0">Age / Gender</label>
+                    <label class="form-label fw-bold mb-0">Age / Sex</label>
                     <p class="mb-0"><?php echo htmlspecialchars(StudentsAge::calculateAge($info['birth_date'])); ?> &middot; <?php echo htmlspecialchars($info['gender']); ?></p>
                 </div>
                 <div class="col-md-3 col-sm-6 mb-3">
