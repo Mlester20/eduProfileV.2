@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class AtRiskModel extends Model{
         protected $students = 'students';
@@ -53,7 +54,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 LEFT JOIN {$this->users} tu ON sta.teacher_id = tu.id
                 LEFT JOIN {$this->users} adv ON sec.adviser_id = adv.id
                 LEFT JOIN (SELECT student_id, COUNT(*) AS cnt FROM {$this->academic_profiles} WHERE {$failWhere} GROUP BY student_id) fail ON fail.student_id = s.id
-                WHERE s.status = 'active'";
+                WHERE " . StudentScope::ACTIVE . "";
 
             if($schoolYearId !== null){
                 $types .= "i";

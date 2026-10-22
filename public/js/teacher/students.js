@@ -28,6 +28,35 @@ document.addEventListener('keydown', function(e){
 })
 
 document.addEventListener('DOMContentLoaded', function(){
+    const importForm = document.getElementById('importStudentsForm')
+    if(importForm){
+        importForm.addEventListener('submit', function(){
+            setButtonLoading(document.getElementById('importStudentsSubmitBtn'), true, 'Importing...')
+        })
+    }
+})
+
+// Student delete -- was a native confirm() popup, now matches the same
+// SweetAlert2 pattern used for Reading Level/Academic Record deletes.
+document.addEventListener('submit', function(e){
+    const form = e.target
+    if(!form.classList || !form.classList.contains('delete-student-form')) return
+    e.preventDefault()
+    const studentName = form.dataset.studentName || 'this student'
+    Swal.fire({
+        icon: 'warning',
+        title: 'Move this student to Trash?',
+        text: studentName + ' will be moved to Trash and can be restored within 30 days, after which it is permanently deleted.',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--danger-strong)',
+        cancelButtonColor: 'var(--primary)',
+        confirmButtonText: 'Move to Trash'
+    }).then(function(result){
+        if(result.isConfirmed) form.submit()
+    })
+})
+
+document.addEventListener('DOMContentLoaded', function(){
     const previewImg = document.getElementById('student_picture_preview')
     if(!previewImg) return
     // Scaling the thumbnail in place (rather than reusing the centered
@@ -86,6 +115,14 @@ document.addEventListener('DOMContentLoaded', function(){
     let currentStudentId = null
     let needsReload = false
 
+    // Discards prompt if the user tries to close a modal mid-edit via ESC
+    // or backdrop click -- not triggered by programmatic .hide() calls
+    // after a successful save (those happen after markClean() runs).
+    const studentModalGuard = watchUnsavedChanges(document.getElementById('studentModal'), [
+        '#studentInfoForm', '#parentGuardianForm', '#healthProfileForm', '#readingLevelForm'
+    ])
+    const importModalGuard = watchUnsavedChanges(document.getElementById('importStudentsModal'), ['form'])
+
     function csrfToken(){
         const meta = document.querySelector('meta[name="csrf-token"]')
         return meta ? meta.getAttribute('content') : ''
@@ -104,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function notifyError(message){
-        Swal.fire({ icon: 'error', title: 'Error', text: message || 'Something went wrong.', confirmButtonColor: '#696cff' })
+        Swal.fire({ icon: 'error', title: 'Error', text: message || 'Something went wrong.', confirmButtonColor: 'var(--primary)' })
     }
 
     function setTabsEnabled(enabled){
@@ -595,7 +632,8 @@ document.addEventListener('DOMContentLoaded', function(){
         formData.set('action', currentStudentId ? 'update' : 'create')
 
         const btn = document.getElementById('studentInfoSaveBtn')
-        btn.disabled = true
+        setButtonLoading(btn, true)
+        studentModalGuard.setSubmitting(true)
 
         fetch('../../../app/controllers/teacher/StudentsController.php', {
             method: 'POST',
@@ -603,21 +641,52 @@ document.addEventListener('DOMContentLoaded', function(){
         })
             .then(function(r){ return r.json() })
             .then(function(res){
-                btn.disabled = false
+                setButtonLoading(btn, false)
+                studentModalGuard.setSubmitting(false)
                 if(res.success){
                     needsReload = true
+                    studentModalGuard.markClean()
                     notifySuccess(res.message || 'Saved.')
                     if(!currentStudentId && res.student_id){
                         currentStudentId = res.student_id
                         document.getElementById('student_id_field').value = res.student_id
                         setTabsEnabled(true)
                     }
+                }else if(res.trashed_conflict){
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Student is in Trash',
+                        text: res.message,
+                        showCancelButton: true,
+                        confirmButtonText: 'Restore instead',
+                        confirmButtonColor: 'var(--primary)',
+                        cancelButtonText: 'Cancel'
+                    }).then(function(result){
+                        if(!result.isConfirmed) return
+                        fetch('../../../app/controllers/teacher/TrashController.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'restore', id: res.trashed_student_id, csrf_token: csrfToken() })
+                        })
+                            .then(function(r){ return r.json() })
+                            .then(function(restoreRes){
+                                if(restoreRes.success){
+                                    notifySuccess(restoreRes.message || 'Restored.')
+                                    bootstrap.Modal.getInstance(document.getElementById('studentModal')).hide()
+                                    window.location.reload()
+                                }else{
+                                    notifyError(restoreRes.message)
+                                }
+                            })
+                            .catch(function(err){ notifyError(err.message) })
+                    })
                 }else{
                     notifyError(res.message)
                 }
             })
             .catch(function(err){
-                btn.disabled = false
+                setButtonLoading(btn, false)
+                studentModalGuard.setSubmitting(false)
                 notifyError(err.message)
             })
     })
@@ -732,6 +801,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
             csrf_token: csrfToken()
         }
+        const pgBtn = document.getElementById('pgSaveBtn')
+        setButtonLoading(pgBtn, true)
+        studentModalGuard.setSubmitting(true)
         fetch('../../../app/controllers/teacher/ParentGuardianController.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -739,13 +811,20 @@ document.addEventListener('DOMContentLoaded', function(){
         })
             .then(function(r){ return r.json() })
             .then(function(res){
+                setButtonLoading(pgBtn, false)
+                studentModalGuard.setSubmitting(false)
                 if(res.success){
+                    studentModalGuard.markClean()
                     notifySuccess(res.message || 'Saved.')
                 }else{
                     notifyError(res.message)
                 }
             })
-            .catch(function(err){ notifyError(err.message) })
+            .catch(function(err){
+                setButtonLoading(pgBtn, false)
+                studentModalGuard.setSubmitting(false)
+                notifyError(err.message)
+            })
     })
 
     // ===== Health Profile (upsert, with live BMI) =====
@@ -867,6 +946,9 @@ document.addEventListener('DOMContentLoaded', function(){
             immunization_status: document.getElementById('hp_immunization_status').value,
             csrf_token: csrfToken()
         }
+        const hpBtn = document.getElementById('hpSaveBtn')
+        setButtonLoading(hpBtn, true)
+        studentModalGuard.setSubmitting(true)
         fetch('../../../app/controllers/teacher/StudentHealthController.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -874,13 +956,20 @@ document.addEventListener('DOMContentLoaded', function(){
         })
             .then(function(r){ return r.json() })
             .then(function(res){
+                setButtonLoading(hpBtn, false)
+                studentModalGuard.setSubmitting(false)
                 if(res.success){
+                    studentModalGuard.markClean()
                     notifySuccess(res.message || 'Saved.')
                 }else{
                     notifyError(res.message)
                 }
             })
-            .catch(function(err){ notifyError(err.message) })
+            .catch(function(err){
+                setButtonLoading(hpBtn, false)
+                studentModalGuard.setSubmitting(false)
+                notifyError(err.message)
+            })
     })
 
     // ===== Reading Level (mini add-form + list) =====
@@ -907,8 +996,8 @@ document.addEventListener('DOMContentLoaded', function(){
                 '<td>' + escapeHtml(row.reading_language) + '</td>' +
                 '<td>' + escapeHtml(row.remarks || '') + '</td>' +
                 '<td>' +
-                    '<button type="button" class="btn btn-sm btn-warning rl-edit-btn"><i class="bx bx-edit"></i></button> ' +
-                    '<button type="button" class="btn btn-sm btn-danger rl-delete-btn"><i class="bx bx-trash"></i></button>' +
+                    '<button type="button" class="btn btn-sm btn-warning rl-edit-btn" title="Edit" data-bs-toggle="tooltip"><i class="bx bx-edit"></i></button> ' +
+                    '<button type="button" class="btn btn-sm btn-danger rl-delete-btn" title="Delete" data-bs-toggle="tooltip"><i class="bx bx-trash"></i></button>' +
                 '</td>'
             tr.querySelector('.rl-edit-btn').addEventListener('click', function(){
                 editReadingLevel(row.id, row.assessment_date, row.reading_level, row.reading_language, row.remarks)
@@ -918,6 +1007,7 @@ document.addEventListener('DOMContentLoaded', function(){
             })
             tbody.appendChild(tr)
         })
+        initTeacherTooltips(tbody)
     }
 
     function escapeHtml(value){
@@ -948,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', function(){
     function deleteReadingLevel(id){
         Swal.fire({
             icon: 'warning', title: 'Delete this record?', text: 'This action cannot be undone.',
-            showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'Delete'
+            showCancelButton: true, confirmButtonColor: 'var(--danger-strong)', cancelButtonColor: 'var(--primary)', confirmButtonText: 'Delete'
         }).then(function(result){
             if(!result.isConfirmed) return
             fetch('../../../app/controllers/teacher/ReadingLevelController.php', {
@@ -984,6 +1074,9 @@ document.addEventListener('DOMContentLoaded', function(){
         if(editId){
             payload.id = editId
         }
+        const rlBtn = document.getElementById('rl_submit_btn')
+        setButtonLoading(rlBtn, true, editId ? 'Updating...' : 'Adding...')
+        studentModalGuard.setSubmitting(true)
         fetch('../../../app/controllers/teacher/ReadingLevelController.php', {
             method: editId ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -991,7 +1084,10 @@ document.addEventListener('DOMContentLoaded', function(){
         })
             .then(function(r){ return r.json() })
             .then(function(res){
+                setButtonLoading(rlBtn, false)
+                studentModalGuard.setSubmitting(false)
                 if(res.success){
+                    studentModalGuard.markClean()
                     notifySuccess(res.message || 'Saved.')
                     resetReadingLevelForm()
                     loadReadingLevels()
@@ -999,7 +1095,11 @@ document.addEventListener('DOMContentLoaded', function(){
                     notifyError(res.message)
                 }
             })
-            .catch(function(err){ notifyError(err.message) })
+            .catch(function(err){
+                setButtonLoading(rlBtn, false)
+                studentModalGuard.setSubmitting(false)
+                notifyError(err.message)
+            })
     })
 
     // Lazy-load each tab's data the moment it's shown.

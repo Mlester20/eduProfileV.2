@@ -137,6 +137,16 @@ require_once __DIR__ . '/../../../database/config/config.php';
                 if($this->model->isLrnExists($data['lrn'], $data['school_year_id'])){
                     return ['success' => false, 'message' => 'LRN already exists for that school year.'];
                 }
+                $trashed = $this->model->findTrashedByLrn($data['lrn'], $data['school_year_id']);
+                if($trashed){
+                    $trashedName = trim($trashed['first_name'] . ' ' . ($trashed['middle_name'] ?? '') . ' ' . $trashed['last_name'] . ' ' . ($trashed['suffix'] ?? ''));
+                    return [
+                        'success' => false,
+                        'trashed_conflict' => true,
+                        'trashed_student_id' => (int) $trashed['id'],
+                        'message' => 'That LRN belongs to ' . $trashedName . ', who is currently in Trash for this school year. Restore them instead of creating a new record.'
+                    ];
+                }
                 if(!empty($data['birth_date']) && StudentsAge::calculateAge($data['birth_date']) > 21){
                     return ['success' => false, 'message' => 'This student is over 21 years old and cannot be recorded.'];
                 }
@@ -209,19 +219,31 @@ require_once __DIR__ . '/../../../database/config/config.php';
             }
         }
 
+        /**
+         * Moves a student to Trash (soft delete) instead of removing them --
+         * see TrashController for restore/permanent-delete. Was previously
+         * a hard DELETE with no ownership check at all; both are fixed here.
+         */
         public function delete($id){
             try{
-                if($this->model->delete($id)){
+                $teacherId = (int) ($_SESSION['id'] ?? 0);
+                $id = (int) $id;
+                if(!$this->model->belongsToAdviser($id, $teacherId)){
+                    FlashMessage::setFlash('error', 'You are not authorized to delete this student.');
+                    header('Location: ../../../resources/views/teacher/students.php');
+                    exit();
+                }
+                if($this->model->softDelete($id, $teacherId)){
                     $this->auditLogs->log(
                         $_SESSION['id'] ?? null,
-                        $_SESSION['role'] ?? 'unkown',
-                        'Deleting a student',
+                        $_SESSION['role'] ?? 'unknown',
+                        'Moved a student to Trash',
                         'Students',
+                        $id,
                         null,
-                        null,
-                        $_SESSION['full_name'] . ' Deleted a student with ID: ' . $id
+                        ($_SESSION['full_name'] ?? 'A teacher') . ' moved student ID ' . $id . ' to Trash'
                     );
-                    FlashMessage::setFlash('success', 'Student deleted successfully.');
+                    FlashMessage::setFlash('success', 'Student moved to Trash. It can be restored from Trash within 30 days.');
                     header('Location: ../../../resources/views/teacher/students.php');
                     exit();
                 }else{

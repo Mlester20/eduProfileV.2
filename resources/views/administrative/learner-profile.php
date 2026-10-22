@@ -9,6 +9,21 @@ require_once __DIR__ . '/../../../app/middleware/Auth.php';
 AuthRole::allowOnly(['administrative']);
 
 $school = SchoolSettings::get($con);
+
+/**
+ * Consistent label/value pair for the profile tabs below -- renders a
+ * muted "Not provided" instead of leaving a blank <p> when a field was
+ * never filled in, so a gap in the record reads as "known to be empty"
+ * rather than "looks like the page is broken."
+ */
+function lpField($label, $value, $colClass = 'col-md-3 col-sm-6'){
+    $value = trim((string) ($value ?? ''));
+    $display = $value !== '' ? htmlspecialchars($value) : '<span class="lp-empty">Not provided</span>';
+    echo '<div class="' . htmlspecialchars($colClass) . ' mb-3">'
+        . '<span class="lp-field-label">' . htmlspecialchars($label) . '</span>'
+        . '<p class="lp-field-value mb-0">' . $display . '</p>'
+        . '</div>';
+}
 ?>
 <!DOCTYPE html>
 <html
@@ -32,6 +47,7 @@ $school = SchoolSettings::get($con);
   <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
   <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/theme-brown.css" />
   <link rel="stylesheet" href="../../../public/assets/css/profile-settings.css" />
   <link rel="stylesheet" href="../../../public/assets/css/learner-profile.css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
@@ -52,14 +68,6 @@ $school = SchoolSettings::get($con);
     .photo-zoom-overlay.show { display: flex; }
     .photo-zoom-overlay img { max-width: 90vw; max-height: 90vh; border-radius: .5rem; box-shadow: 0 0 24px rgba(0,0,0,.5); }
     .photo-zoom-overlay-close { position: absolute; top: 20px; right: 28px; color: #fff; font-size: 2rem; line-height: 1; cursor: pointer; }
-    @media print {
-      .no-print { display: none !important; }
-      .layout-menu, .layout-navbar, .content-footer { display: none !important; }
-      .tab-pane { display: block !important; opacity: 1 !important; }
-      .card-header-tabs { display: none !important; }
-      .print-section-title { display: block !important; }
-    }
-    .print-section-title { display: none; }
   </style>
 </head>
 <body>
@@ -125,18 +133,9 @@ $school = SchoolSettings::get($con);
                 <i class="bx bx-arrow-back"></i> Back to List
             </a>
             <div class="d-flex gap-2">
-                <button type="button" class="btn btn-outline-primary" onclick="window.print()">
-                    <i class="bx bx-printer"></i> Print
-                </button>
-            </div>
-        </div>
-
-        <!-- Print-only letterhead -->
-        <div class="d-none d-print-flex align-items-center gap-3 mb-4">
-            <img src="../../../public/assets/img/favicon/logo.png" alt="School Logo" style="width: 60px; height: 60px;">
-            <div>
-                <h5 class="mb-0"><?php echo htmlspecialchars($school['school_name']); ?></h5>
-                <small class="text-muted"><?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></small>
+                <a href="learner-profile-print.php?student_id=<?php echo (int) $info['id']; ?>" target="_blank" class="btn btn-outline-primary">
+                    <i class="bx bx-printer"></i> Print Profile
+                </a>
             </div>
         </div>
 
@@ -153,197 +152,180 @@ $school = SchoolSettings::get($con);
                         <span class="text-muted small ms-2"><i class='bx bx-calendar'></i> <?php echo htmlspecialchars($info['school_year'] ?? ''); ?></span>
                     </div>
                 </div>
-
-                <hr>
-                <p class="settings-section-title">Learner Information</p>
-                <div class="row">
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0"><i class='bx bx-calendar'></i> Birthdate</label>
-                        <p class="mb-0"><?php echo !empty($info['birth_date']) ? htmlspecialchars((new DateTime($info['birth_date']))->format('F j, Y')) : ''; ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Age / Sex</label>
-                        <p class="mb-0"><?php echo htmlspecialchars(StudentsAge::calculateAge($info['birth_date'])); ?> &middot; <?php echo htmlspecialchars($info['gender']); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Age (as of June)</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['age_as_of_june'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Recorded By</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['recorded_by_name'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <label class="form-label fw-bold mb-0"><i class='bx bx-map-pin'></i> Address</label>
-                        <p class="mb-0"><?php echo htmlspecialchars(AddressService::formatFullAddress($info)); ?></p>
-                    </div>
-                </div>
-
-                <hr>
-                <p class="settings-section-title">Background Information</p>
-                <div class="row">
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Mother Tongue</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['mother_tongue'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">IP / Ethnic Group</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['ip_ethnic_group'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Religion</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['religion'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-md-3 col-sm-6 mb-3">
-                        <label class="form-label fw-bold mb-0">Learning Modality</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['learning_modality'] ?? ''); ?></p>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <label class="form-label fw-bold mb-0">Remarks</label>
-                        <p class="mb-0"><?php echo htmlspecialchars($info['remarks'] ?? ''); ?></p>
-                    </div>
-                </div>
-
-                <hr>
-                <p class="settings-section-title">Parent/Guardian Information</p>
-                <?php $pg = $profile['parent_guardian']; ?>
-                <?php if(!$pg): ?>
-                    <p class="text-muted">No parent/guardian record found for this learner.</p>
-                <?php else: ?>
-                    <?php
-                        $pgPersons = [
-                            ['label' => 'Father', 'prefix' => 'father_', 'nameKey' => 'father_name', 'ageKey' => 'fathers_age', 'roleLabel' => 'Occupation', 'roleKey' => 'father_occupation', 'contactKey' => 'father_contact'],
-                            ['label' => 'Mother', 'prefix' => 'mother_', 'nameKey' => 'mother_name', 'ageKey' => 'mothers_age', 'roleLabel' => 'Occupation', 'roleKey' => 'mother_occupation', 'contactKey' => 'mother_contact'],
-                            ['label' => 'Guardian', 'prefix' => 'guardian_', 'nameKey' => 'guardian_name', 'ageKey' => 'guardians_age', 'roleLabel' => 'Relationship', 'roleKey' => 'guardian_relationship', 'contactKey' => 'guardian_contact'],
-                        ];
-                    ?>
-                    <div class="row">
-                        <?php foreach($pgPersons as $person): ?>
-                            <div class="col-md-4 mb-3">
-                                <div class="border rounded p-3 h-100">
-                                    <p class="fw-bold mb-2"><i class='bx bx-user'></i> <?php echo htmlspecialchars($person['label']); ?></p>
-                                    <label class="form-label small text-muted mb-0">Name</label>
-                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['nameKey']] ?? '') ?: '—'; ?></p>
-                                    <label class="form-label small text-muted mb-0">Age</label>
-                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['ageKey']] ?? '') ?: '—'; ?></p>
-                                    <label class="form-label small text-muted mb-0"><?php echo htmlspecialchars($person['roleLabel']); ?></label>
-                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['roleKey']] ?? '') ?: '—'; ?></p>
-                                    <label class="form-label small text-muted mb-0"><i class='bx bx-phone'></i> Contact</label>
-                                    <p class="mb-2"><?php echo htmlspecialchars($pg[$person['contactKey']] ?? '') ?: '—'; ?></p>
-                                    <label class="form-label small text-muted mb-0"><i class='bx bx-map-pin'></i> Address</label>
-                                    <p class="mb-0"><?php echo htmlspecialchars(AddressService::formatPersonAddress($pg, $person['prefix'])) ?: '—'; ?></p>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-
-                <hr>
-                <p class="settings-section-title">Height / Weight</p>
-                <?php $h = $profile['health']; ?>
-                <?php if(!$h): ?>
-                    <p class="text-muted">No health profile recorded.</p>
-                <?php else: ?>
-                    <div class="row">
-                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Height</label><p class="mb-0"><?php echo htmlspecialchars($h['height_cm'] ?? ''); ?> cm</p></div>
-                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Weight</label><p class="mb-0"><?php echo htmlspecialchars($h['weight_kg'] ?? ''); ?> kg</p></div>
-                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">BMI</label><p class="mb-0"><?php echo htmlspecialchars($h['bmi'] ?? ''); ?></p></div>
-                        <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Classification</label><p class="mb-0"><?php echo htmlspecialchars($h['bmi_classification'] ?? ''); ?></p></div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if(!empty($profile['other_years'])): ?>
-                    <hr class="no-print">
-                    <label class="form-label fw-bold mb-2 no-print">Also has records for:</label>
-                    <div class="d-flex flex-wrap gap-2 no-print">
-                        <?php foreach($profile['other_years'] as $other): ?>
-                            <a href="learner-profile.php?student_id=<?php echo htmlspecialchars($other['id']); ?>" class="btn btn-sm btn-outline-primary">
-                                <?php echo htmlspecialchars($other['school_year'] ?? ''); ?>
-                                (<?php echo htmlspecialchars(ucfirst($other['status'])); ?>)
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
+
+        <?php $pg = $profile['parent_guardian']; ?>
+        <?php $h = $profile['health']; ?>
+        <?php $hasHistory = !empty($profile['other_years']); ?>
 
         <div class="card">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_academic" type="button">Academic (<?php echo count($profile['academic']); ?>)</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_health" type="button">Health</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_reading_level" type="button">Reading Level (<?php echo count($profile['reading_level']); ?>)</button></li>
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab_overview" type="button">Overview</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_family" type="button">Family / Guardian</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_records" type="button">Records</button></li>
+                    <?php if($hasHistory): ?>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab_history" type="button">History</button></li>
+                    <?php endif; ?>
                 </ul>
             </div>
             <div class="card-body">
                 <div class="tab-content">
 
-                    <div class="tab-pane fade show active" id="tab_academic">
-                        <h6 class="print-section-title fw-bold mb-2">Academic Records</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead><tr><th>Subject</th><th>Grading Period</th><th>Grade</th><th>Remarks</th><th>School Year</th><th>Recorded By</th></tr></thead>
-                                <tbody>
-                                    <?php if(empty($profile['academic'])): ?>
-                                        <tr><td colspan="6" class="text-center text-muted">No academic records.</td></tr>
-                                    <?php else: foreach($profile['academic'] as $r): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($r['subject_name']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['grading_period']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['grade']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['remarks'] ?? ''); ?></td>
-                                            <td><?php echo htmlspecialchars($r['school_year'] ?? ''); ?></td>
-                                            <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
-                                        </tr>
-                                    <?php endforeach; endif; ?>
-                                </tbody>
-                            </table>
+                    <!-- Overview -->
+                    <div class="tab-pane fade show active" id="tab_overview">
+                        <p class="lp-section-heading">Learner Information</p>
+                        <div class="row">
+                            <?php lpField('Birthdate', !empty($info['birth_date']) ? (new DateTime($info['birth_date']))->format('F j, Y') : null); ?>
+                            <?php lpField('Age / Sex', StudentsAge::calculateAge($info['birth_date']) . ' / ' . ($info['gender'] ?? '')); ?>
+                            <?php lpField('Age (as of June)', $info['age_as_of_june'] ?? null); ?>
+                            <?php lpField('Recorded By', $info['recorded_by_name'] ?? null); ?>
+                            <?php lpField('Address', AddressService::formatFullAddress($info), 'col-12'); ?>
                         </div>
-                    </div>
 
-                    <div class="tab-pane fade" id="tab_health">
-                        <h6 class="print-section-title fw-bold mb-2">Health Profile</h6>
-                        <?php $h = $profile['health']; ?>
+                        <hr>
+                        <p class="lp-section-heading">Background Information</p>
+                        <div class="row">
+                            <?php lpField('Mother Tongue', $info['mother_tongue'] ?? null); ?>
+                            <?php lpField('IP / Ethnic Group', $info['ip_ethnic_group'] ?? null); ?>
+                            <?php lpField('Religion', $info['religion'] ?? null); ?>
+                            <?php lpField('Learning Modality', $info['learning_modality'] ?? null); ?>
+                            <?php lpField('Remarks', $info['remarks'] ?? null, 'col-12'); ?>
+                        </div>
+
+                        <hr>
+                        <p class="lp-section-heading">Height / Weight</p>
                         <?php if(!$h): ?>
-                            <p class="text-muted">No health profile recorded.</p>
+                            <p class="text-muted mb-0">No health profile recorded.</p>
                         <?php else: ?>
                             <div class="row">
-                                <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Height / Weight</label><p class="mb-0"><?php echo htmlspecialchars($h['height_cm'] ?? ''); ?> cm / <?php echo htmlspecialchars($h['weight_kg'] ?? ''); ?> kg</p></div>
-                                <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">BMI</label><p class="mb-0"><?php echo htmlspecialchars($h['bmi'] ?? ''); ?> (<?php echo htmlspecialchars($h['bmi_classification'] ?? ''); ?>)</p></div>
-                                <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">Blood Type</label><p class="mb-0"><?php echo htmlspecialchars($h['blood_type'] ?? ''); ?></p></div>
-                                <div class="col-md-3 col-sm-6 mb-3"><label class="form-label fw-bold mb-0">School Year</label><p class="mb-0"><?php echo htmlspecialchars($h['school_year'] ?? ''); ?></p></div>
-                                <div class="col-md-6 mb-3"><label class="form-label fw-bold mb-0">Allergies</label><p class="mb-0"><?php echo htmlspecialchars($h['allergies'] ?? ''); ?></p></div>
-                                <div class="col-md-6 mb-3"><label class="form-label fw-bold mb-0">Medical Conditions</label><p class="mb-0"><?php echo htmlspecialchars($h['medical_conditions'] ?? ''); ?></p></div>
-                                <div class="col-md-6 mb-3"><label class="form-label fw-bold mb-0">Vision Screening</label><p class="mb-0"><?php echo htmlspecialchars($h['vision_screening_result'] ?? ''); ?></p></div>
-                                <div class="col-md-6 mb-3"><label class="form-label fw-bold mb-0">Hearing Screening</label><p class="mb-0"><?php echo htmlspecialchars($h['hearing_screening_result'] ?? ''); ?></p></div>
-                                <div class="col-12 mb-3"><label class="form-label fw-bold mb-0">Immunization Status</label><p class="mb-0"><?php echo htmlspecialchars($h['immunization_status'] ?? ''); ?></p></div>
-                                <div class="col-12"><label class="form-label fw-bold mb-0">Recorded By</label><p class="mb-0"><?php echo htmlspecialchars($h['recorded_by_name'] ?? ''); ?></p></div>
+                                <?php lpField('Height', !empty($h['height_cm']) ? $h['height_cm'] . ' cm' : null); ?>
+                                <?php lpField('Weight', !empty($h['weight_kg']) ? $h['weight_kg'] . ' kg' : null); ?>
+                                <?php lpField('BMI', $h['bmi'] ?? null); ?>
+                                <?php lpField('Classification', $h['bmi_classification'] ?? null); ?>
                             </div>
                         <?php endif; ?>
                     </div>
 
-                    <div class="tab-pane fade" id="tab_reading_level">
-                        <h6 class="print-section-title fw-bold mb-2">Reading Level Records</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead><tr><th>Assessment Date</th><th>Reading Level</th><th>Reading Language</th><th>Remarks</th><th>School Year</th><th>Recorded By</th></tr></thead>
-                                <tbody>
-                                    <?php if(empty($profile['reading_level'])): ?>
-                                        <tr><td colspan="6" class="text-center text-muted">No reading level records.</td></tr>
-                                    <?php else: foreach($profile['reading_level'] as $r): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($r['assessment_date']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['reading_level']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['reading_language']); ?></td>
-                                            <td><?php echo htmlspecialchars($r['remarks'] ?? ''); ?></td>
-                                            <td><?php echo htmlspecialchars($r['school_year'] ?? ''); ?></td>
-                                            <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
-                                        </tr>
-                                    <?php endforeach; endif; ?>
-                                </tbody>
-                            </table>
+                    <!-- Family / Guardian -->
+                    <div class="tab-pane fade" id="tab_family">
+                        <?php if(!$pg): ?>
+                            <p class="text-muted mb-0">No parent/guardian record found for this learner.</p>
+                        <?php else: ?>
+                            <?php
+                                $pgPersons = [
+                                    ['label' => 'Father', 'prefix' => 'father_', 'nameKey' => 'father_name', 'ageKey' => 'fathers_age', 'roleLabel' => 'Occupation', 'roleKey' => 'father_occupation', 'contactKey' => 'father_contact'],
+                                    ['label' => 'Mother', 'prefix' => 'mother_', 'nameKey' => 'mother_name', 'ageKey' => 'mothers_age', 'roleLabel' => 'Occupation', 'roleKey' => 'mother_occupation', 'contactKey' => 'mother_contact'],
+                                    ['label' => 'Guardian', 'prefix' => 'guardian_', 'nameKey' => 'guardian_name', 'ageKey' => 'guardians_age', 'roleLabel' => 'Relationship', 'roleKey' => 'guardian_relationship', 'contactKey' => 'guardian_contact'],
+                                ];
+                            ?>
+                            <div class="row">
+                                <?php foreach($pgPersons as $person): ?>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="border rounded p-3 h-100">
+                                            <p class="fw-bold mb-2"><i class='bx bx-user'></i> <?php echo htmlspecialchars($person['label']); ?></p>
+                                            <?php lpField('Name', $pg[$person['nameKey']] ?? null, 'col-12'); ?>
+                                            <?php lpField('Age', $pg[$person['ageKey']] ?? null, 'col-12'); ?>
+                                            <?php lpField($person['roleLabel'], $pg[$person['roleKey']] ?? null, 'col-12'); ?>
+                                            <?php lpField('Contact', $pg[$person['contactKey']] ?? null, 'col-12'); ?>
+                                            <?php lpField('Address', AddressService::formatPersonAddress($pg, $person['prefix']), 'col-12'); ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Records: Academic / Health / Reading Level -->
+                    <div class="tab-pane fade" id="tab_records">
+                        <ul class="nav nav-pills mb-3" role="tablist">
+                            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab_academic" type="button">Academic (<?php echo count($profile['academic']); ?>)</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab_health" type="button">Health</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab_reading_level" type="button">Reading Level (<?php echo count($profile['reading_level']); ?>)</button></li>
+                        </ul>
+                        <div class="tab-content">
+
+                            <div class="tab-pane fade show active" id="tab_academic">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead><tr><th>Subject</th><th>Grading Period</th><th>Grade</th><th>Remarks</th><th>School Year</th><th>Recorded By</th></tr></thead>
+                                        <tbody>
+                                            <?php if(empty($profile['academic'])): ?>
+                                                <tr><td colspan="6" class="text-center text-muted">No academic records.</td></tr>
+                                            <?php else: foreach($profile['academic'] as $r): ?>
+                                                <tr>
+                                                    <td><?php echo htmlspecialchars($r['subject_name']); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['grading_period']); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['grade']); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['remarks'] ?? ''); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['school_year'] ?? ''); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
+                                                </tr>
+                                            <?php endforeach; endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="tab_health">
+                                <?php if(!$h): ?>
+                                    <p class="text-muted mb-0">No health profile recorded.</p>
+                                <?php else: ?>
+                                    <div class="row">
+                                        <?php lpField('Height / Weight', trim(($h['height_cm'] ?? '') . ' cm / ' . ($h['weight_kg'] ?? '') . ' kg', ' /')); ?>
+                                        <?php lpField('BMI', !empty($h['bmi']) ? $h['bmi'] . ' (' . ($h['bmi_classification'] ?? '') . ')' : null); ?>
+                                        <?php lpField('Blood Type', $h['blood_type'] ?? null); ?>
+                                        <?php lpField('School Year', $h['school_year'] ?? null); ?>
+                                        <?php lpField('Allergies', $h['allergies'] ?? null, 'col-md-6'); ?>
+                                        <?php lpField('Medical Conditions', $h['medical_conditions'] ?? null, 'col-md-6'); ?>
+                                        <?php lpField('Vision Screening', $h['vision_screening_result'] ?? null, 'col-md-6'); ?>
+                                        <?php lpField('Hearing Screening', $h['hearing_screening_result'] ?? null, 'col-md-6'); ?>
+                                        <?php lpField('Immunization Status', $h['immunization_status'] ?? null, 'col-12'); ?>
+                                        <?php lpField('Recorded By', $h['recorded_by_name'] ?? null, 'col-12'); ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="tab-pane fade" id="tab_reading_level">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead><tr><th>Assessment Date</th><th>Reading Level</th><th>Reading Language</th><th>Remarks</th><th>School Year</th><th>Recorded By</th></tr></thead>
+                                        <tbody>
+                                            <?php if(empty($profile['reading_level'])): ?>
+                                                <tr><td colspan="6" class="text-center text-muted">No reading level records.</td></tr>
+                                            <?php else: foreach($profile['reading_level'] as $r): ?>
+                                                <tr>
+                                                    <td><?php echo htmlspecialchars($r['assessment_date']); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['reading_level']); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['reading_language']); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['remarks'] ?? ''); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['school_year'] ?? ''); ?></td>
+                                                    <td><?php echo htmlspecialchars($r['recorded_by_name'] ?? ''); ?></td>
+                                                </tr>
+                                            <?php endforeach; endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
+
+                    <!-- History -->
+                    <?php if($hasHistory): ?>
+                        <div class="tab-pane fade" id="tab_history">
+                            <p class="text-muted small mb-2">This learner (same LRN) also has records under:</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <?php foreach($profile['other_years'] as $other): ?>
+                                    <a href="learner-profile.php?student_id=<?php echo htmlspecialchars($other['id']); ?>" class="btn btn-sm btn-outline-primary">
+                                        <?php echo htmlspecialchars($other['school_year'] ?? ''); ?>
+                                        (<?php echo htmlspecialchars(ucfirst($other['status'])); ?>)
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                 </div>
             </div>

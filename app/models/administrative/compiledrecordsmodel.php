@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class CompiledRecordsModel extends Model{
         protected $academic_profiles = 'academic_profiles';
@@ -57,7 +58,7 @@ require_once __DIR__ . '/../../core/Model.php';
 
         private function fetchFiltered($alias, $selectPrefix, $table, $schoolYearId, $sectionId, $gradeLevelId, $orderBy){
             try{
-                $query = "SELECT {$selectPrefix}, " . $this->studentColumns() . " " . $this->baseJoins($table, $alias) . " WHERE 1=1";
+                $query = "SELECT {$selectPrefix}, " . $this->studentColumns() . " " . $this->baseJoins($table, $alias) . " WHERE 1=1 AND s.deleted_at IS NULL";
 
                 $types = "";
                 $params = [];
@@ -96,7 +97,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 $query = "SELECT COUNT(*) AS total FROM {$table} {$alias}
                     JOIN {$this->students} s ON {$alias}.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE 1=1";
+                    WHERE 1=1 AND s.deleted_at IS NULL";
 
                 $types = "";
                 $params = [];

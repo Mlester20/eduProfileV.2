@@ -88,7 +88,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     sec.section_name,
                     gl.grade_name AS grade_level_name
                     FROM {$this->sections} sec
-                    JOIN students s ON s.section_id = sec.id AND s.school_year_id = ?
+                    JOIN students s ON s.section_id = sec.id AND s.school_year_id = ? AND s.deleted_at IS NULL
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
                     WHERE 1=1
                 ";
@@ -135,6 +135,33 @@ require_once __DIR__ . '/../../core/Model.php';
                 return $result->fetch_assoc();
             }catch(Exception $e){
                 error_log("Error finding section by id: " . $e->getMessage());
+                return null;
+            }
+        }
+
+        /**
+         * The section's current adviser name only -- for the "Prepared by"
+         * signature line on the Learner's Profile print page. Separate from
+         * findById() (which doesn't need the adviser) and from
+         * findByAdviser() (which goes the other direction, adviser -> their
+         * sections), so neither existing caller is touched.
+         */
+
+        public function getAdviserNameBySectionId($sectionId){
+            try{
+                $query = "SELECT u.full_name
+                    FROM {$this->sections} sec
+                    LEFT JOIN {$this->users} u ON sec.adviser_id = u.id
+                    WHERE sec.id = ?
+                    LIMIT 1
+                ";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $sectionId);
+                $stmt->execute();
+                $row = $stmt->get_result()->fetch_assoc();
+                return $row['full_name'] ?? null;
+            }catch(Exception $e){
+                error_log("Error fetching adviser name by section id: " . $e->getMessage());
                 return null;
             }
         }

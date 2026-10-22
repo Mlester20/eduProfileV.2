@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     /**
      * Flags active students for the DepEd School-Based Feeding Program
@@ -54,7 +55,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = s.section_id AND sta.school_year_id = s.school_year_id
                 LEFT JOIN {$this->users} tu ON sta.teacher_id = tu.id
                 LEFT JOIN {$this->users} adv ON sec.adviser_id = adv.id
-                WHERE s.status = 'active'";
+                WHERE " . StudentScope::ACTIVE . "";
 
             if($schoolYearId !== null){
                 $query .= " AND s.school_year_id = ?";

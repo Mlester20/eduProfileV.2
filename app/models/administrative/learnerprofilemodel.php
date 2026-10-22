@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     /**
      * One-student, all-categories dossier for the administrative role — the
@@ -42,6 +43,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
+                    WHERE " . StudentScope::NOT_TRASHED . "
                     ORDER BY s.last_name ASC, s.first_name ASC, sy.id DESC
                 ";
                 $stmt = $this->con->prepare($query);
@@ -62,7 +64,7 @@ require_once __DIR__ . '/../../core/Model.php';
          */
 
         private function buildMasterListFilter($status, $sectionId, $schoolYearId, $gender = null, $gradeLevelId = null){
-            $where = [];
+            $where = [StudentScope::NOT_TRASHED];
             $types = "";
             $params = [];
             if($status !== null){
@@ -160,7 +162,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
                     LEFT JOIN {$this->users} ru ON s.recorded_by = ru.id
-                    WHERE s.id = ?
+                    WHERE s.id = ? AND " . StudentScope::NOT_TRASHED . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("i", $studentId);
@@ -184,7 +186,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     sy.school_year AS school_year
                     FROM {$this->students} s
                     LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
-                    WHERE s.lrn = ? AND s.id != ?
+                    WHERE s.lrn = ? AND s.id != ? AND " . StudentScope::NOT_TRASHED . "
                     ORDER BY sy.id DESC
                 ";
                 $stmt = $this->con->prepare($query);

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     /**
      * Per-section "Class List" health/needs report: every active student,
@@ -26,7 +27,7 @@ require_once __DIR__ . '/../../core/Model.php';
         protected $health_profiles = 'health_profiles';
 
         private function buildWhere($schoolYearId, $sectionId, $teacherId, $gradeLevelId, $search = null){
-            $where = ["s.status = 'active'"];
+            $where = ["" . StudentScope::ACTIVE . ""];
             $types = "";
             $params = [];
 

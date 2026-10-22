@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class StudentsModel extends Model{
         protected $students = 'students';
@@ -18,7 +19,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 $query = "SELECT s.id
                     FROM {$this->students} s
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE s.id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                    WHERE s.id = ? AND sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $studentId, $teacherId);
@@ -37,7 +38,7 @@ require_once __DIR__ . '/../../core/Model.php';
                 $query = "SELECT COUNT(*)
                     FROM {$this->students} s
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
-                    WHERE ss.adviser_id = ? AND s.status = 'active'";
+                    WHERE ss.adviser_id = ? AND " . StudentScope::ACTIVE . "";
                 if ($search !== null && $search !== '') {
                     $query .= " AND (s.lrn LIKE ? OR s.first_name LIKE ? OR s.middle_name LIKE ? OR s.last_name LIKE ?)";
                 }
@@ -121,7 +122,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                     LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
-                    WHERE s.id = ? AND ss.adviser_id = ? AND s.status = 'active'
+                    WHERE s.id = ? AND ss.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $id, $teacher_id);
@@ -147,7 +148,39 @@ require_once __DIR__ . '/../../core/Model.php';
             }
         }
 
-        public function delete($id){
+        /** Moves a student to Trash -- no longer a real DELETE. */
+        public function softDelete($id, $deletedBy){
+            try{
+                $query = "UPDATE {$this->students} SET deleted_at = NOW(), deleted_by = ? WHERE id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("ii", $deletedBy, $id);
+                $stmt->execute();
+                return true;
+            }catch(Exception $e){
+                error_log("Error soft-deleting student " . $e->getMessage());
+                return false;
+            }
+        }
+
+        /** Pulls a student back out of Trash. */
+        public function restore($id){
+            try{
+                $query = "UPDATE {$this->students} SET deleted_at = NULL, deleted_by = NULL WHERE id = ?";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param("i", $id);
+                $stmt->execute();
+                return true;
+            }catch(Exception $e){
+                error_log("Error restoring student " . $e->getMessage());
+                return false;
+            }
+        }
+
+        /** The real DELETE -- only ever called from Trash (permanent delete,
+         *  bulk delete, empty trash, auto-purge), never from the normal
+         *  "Delete" action anymore. Related rows are removed via each
+         *  table's existing ON DELETE CASCADE. */
+        public function hardDelete($id){
             try{
                 $delete = "DELETE FROM {$this->students} WHERE id = ?";
                 $stmt = $this->con->prepare($delete);
@@ -219,7 +252,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                     LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
                     LEFT JOIN {$this->users} u ON s.recorded_by = u.id
-                    WHERE ss.adviser_id = ? AND s.status = 'active'";
+                    WHERE ss.adviser_id = ? AND " . StudentScope::ACTIVE . "";
                 if ($search !== null && $search !== '') {
                     $query .= " AND (s.lrn LIKE ? OR s.first_name LIKE ? OR s.middle_name LIKE ? OR s.last_name LIKE ?)";
                 }
@@ -252,7 +285,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                     LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
                     LEFT JOIN {$this->users} u ON s.recorded_by = u.id
-                    WHERE ss.adviser_id = ? AND s.status = 'active' ORDER BY s.last_name, s.first_name, s.middle_name ASC
+                    WHERE ss.adviser_id = ? AND " . StudentScope::ACTIVE . " ORDER BY s.last_name, s.first_name, s.middle_name ASC
                 ";
                 if($student_id !== null){
                     $query .= " AND s.id = ?";
@@ -281,9 +314,15 @@ require_once __DIR__ . '/../../core/Model.php';
          * @return bool
          */
 
+        /**
+         * Only counts non-deleted rows now -- a trashed student with this
+         * LRN doesn't block adding a new one (that's findTrashedByLrn()'s
+         * job, so the caller can offer "restore instead" rather than a
+         * flat duplicate error).
+         */
         public function isLrnExists($lrn, $schoolYearId, $excludeId = null){
             try{
-                $query = "SELECT lrn FROM {$this->students} WHERE lrn = ? AND school_year_id = ?";
+                $query = "SELECT lrn FROM {$this->students} WHERE lrn = ? AND school_year_id = ? AND deleted_at IS NULL";
                 if($excludeId !== null){
                     $query .= " AND id != ?";
                 }
@@ -300,6 +339,27 @@ require_once __DIR__ . '/../../core/Model.php';
             }catch(Exception $e){
                 error_log("Error " . $e->getMessage());
                 return false;
+            }
+        }
+
+        /**
+         * A trashed row with this LRN+school year, if any -- lets the Add
+         * Student flow offer "restore this student instead" rather than
+         * creating a second row for the same enrollment.
+         */
+        public function findTrashedByLrn($lrn, $schoolYearId){
+            try{
+                $query = "SELECT id, first_name, middle_name, last_name, suffix, deleted_at
+                    FROM {$this->students}
+                    WHERE lrn = ? AND school_year_id = ? AND deleted_at IS NOT NULL
+                    LIMIT 1";
+                $stmt = $this->con->prepare($query);
+                $stmt->bind_param('si', $lrn, $schoolYearId);
+                $stmt->execute();
+                return $stmt->get_result()->fetch_assoc();
+            }catch(Exception $e){
+                error_log("Error finding trashed student by LRN: " . $e->getMessage());
+                return null;
             }
         }
 

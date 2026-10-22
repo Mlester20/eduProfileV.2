@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     /**
      * Read-only view of a teacher's own ARCHIVED (rolled-over) students and
@@ -56,7 +57,7 @@ require_once __DIR__ . '/../../core/Model.php';
         private function fetchArchived($alias, $selectPrefix, $table, $teacherId, $studentId, $orderBy, $limit = 1000, $offset = 0){
             try{
                 $query = "SELECT {$selectPrefix}, " . $this->studentColumns() . " " . $this->baseJoins($table, $alias) . "
-                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived' AND {$alias}.student_id = ?
+                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND " . StudentScope::ARCHIVED . " AND {$alias}.student_id = ?
                     ORDER BY {$orderBy} LIMIT ? OFFSET ?";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("iiii", $teacherId, $studentId, $limit, $offset);
@@ -129,7 +130,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
                     LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = s.section_id AND sta.school_year_id = s.school_year_id
                     LEFT JOIN {$this->users} ru ON s.recorded_by = ru.id
-                    WHERE s.id = ? AND COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived'
+                    WHERE s.id = ? AND COALESCE(sta.teacher_id, sec.adviser_id) = ? AND " . StudentScope::ARCHIVED . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $studentId, $teacherId);
@@ -158,7 +159,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
                     LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
                     LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = s.section_id AND sta.school_year_id = s.school_year_id
-                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived'";
+                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND " . StudentScope::ARCHIVED . "";
                 $types = "i";
                 $params = [$teacherId];
                 if($schoolYearId !== null){
@@ -188,7 +189,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->students} s
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = s.section_id AND sta.school_year_id = s.school_year_id
-                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived'";
+                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND " . StudentScope::ARCHIVED . "";
                 $types = "i";
                 $params = [$teacherId];
                 if($schoolYearId !== null){
@@ -220,7 +221,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON s.school_year_id = sy.id
                     LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = s.section_id AND sta.school_year_id = s.school_year_id
-                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND s.status = 'archived'
+                    WHERE COALESCE(sta.teacher_id, sec.adviser_id) = ? AND " . StudentScope::ARCHIVED . "
                     ORDER BY sy.id DESC
                 ";
                 $stmt = $this->con->prepare($query);

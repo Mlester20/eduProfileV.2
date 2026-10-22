@@ -381,6 +381,10 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
                         $errors[] = "Row {$rowNumber}: LRN {$lrn} already exists for that school year.";
                         continue;
                     }
+                    if($this->studentsModel->findTrashedByLrn($lrn, $schoolYearId)){
+                        $errors[] = "Row {$rowNumber}: LRN {$lrn} belongs to a student currently in Trash for that school year. Restore them from Trash instead of importing a duplicate.";
+                        continue;
+                    }
 
                     $studentData = [
                         'lrn' => $lrn,

@@ -37,3 +37,36 @@
     height: 64px;
   }
 }
+
+/* ============================================================
+   Overview / Family / Records tabs -- consistent label/value
+   styling (via the lpField() helper in learner-profile.php)
+   instead of ad hoc <label>/<p> pairs with inconsistent spacing.
+   ============================================================ */
+.lp-section-heading {
+  font-size: .8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--text-muted, #7D6E5F);
+  margin-bottom: .75rem;
+}
+
+.lp-field-label {
+  display: block;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--text-muted, #7D6E5F);
+  margin-bottom: .125rem;
+}
+
+.lp-field-value {
+  font-size: .9375rem;
+  color: var(--text-body, #4A3C33);
+}
+
+.lp-empty {
+  color: var(--text-muted, #7D6E5F);
+  font-style: italic;
+  font-weight: 400;
+}

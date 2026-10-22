@@ -61,6 +61,7 @@ if ($profileAvatarSrc) {
     <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+    <link rel="stylesheet" href="../../../public/assets/css/theme-brown.css" />
     <link rel="stylesheet" href="../../../public/assets/css/profile-settings.css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <link rel="stylesheet" href="../../../public/assets/vendor/libs/apex-charts/apex-charts.css" />

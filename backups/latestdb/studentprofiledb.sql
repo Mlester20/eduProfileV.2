@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 22, 2026 at 01:54 PM
+-- Generation Time: Oct 22, 2026 at 04:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -50,45 +50,6 @@ INSERT INTO `academic_profiles` (`id`, `student_id`, `school_year_id`, `subject_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `achievements_profiles`
---
-
-CREATE TABLE `achievements_profiles` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `title` varchar(150) NOT NULL,
-  `category` enum('Academic','Sports','Leadership','Arts & Culture','Co-Curricular','Community Service','Other') NOT NULL,
-  `level` enum('School','District','Division','Regional','National','International') NOT NULL,
-  `description` text DEFAULT NULL,
-  `date_received` date NOT NULL,
-  `awarding_body` varchar(150) DEFAULT NULL,
-  `recorded_by` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `attendance`
---
-
-CREATE TABLE `attendance` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `attendance_date` date NOT NULL,
-  `session` enum('Morning','Afternoon') NOT NULL,
-  `status` enum('Present','Absent','Late','Excused') NOT NULL,
-  `remarks` text DEFAULT NULL,
-  `recorded_by` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `at_risk_insights`
 --
 
@@ -117,7 +78,7 @@ INSERT INTO `at_risk_insights` (`id`, `student_id`, `school_year_id`, `insight_t
 
 CREATE TABLE `audit_logs` (
   `id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `role` varchar(50) NOT NULL,
   `action` varchar(50) NOT NULL,
   `module` varchar(100) NOT NULL,
@@ -249,88 +210,15 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (113, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:42'),
 (114, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:42'),
 (115, 177, 'teacher', 'Updating an academic profile', 'Academic Profile', 48, NULL, 'ZZZ AR TEST TEACHER updated an academic record with ID: 48', '::1', 'success', '2026-10-21 15:16:57'),
-(116, 177, 'teacher', 'Deleting an academic profile', 'Academic Profile', 48, NULL, 'ZZZ AR TEST TEACHER deleted an academic record with ID: 48', '::1', 'success', '2026-10-21 15:16:58');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `behavioral_profiles`
---
-
-CREATE TABLE `behavioral_profiles` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `observation_date` date NOT NULL,
-  `category` varchar(100) NOT NULL,
-  `observation` text NOT NULL,
-  `intervention` text DEFAULT NULL,
-  `remarks` text DEFAULT NULL,
-  `recorded_by` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `dashboard_ai_summaries`
---
-
-CREATE TABLE `dashboard_ai_summaries` (
-  `id` int(11) NOT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `summary_text` text NOT NULL,
-  `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `dashboard_ai_summaries`
---
-
-INSERT INTO `dashboard_ai_summaries` (`id`, `school_year_id`, `summary_text`, `generated_at`) VALUES
-(2, 8, 'For the 2026–2027 school year, foundational staffing and section advisory roles are fully established, but immediate administrative attention is required in **Grade 1 - Mahogani**. The primary concern in this section is a compounding risk pattern where severe academic struggle, chronic absenteeism, and recurring disciplinary incidents intersect at once. In the coming weeks, leadership should focus on deploying a coordinated, wrap-around intervention plan for Grade 1 - Mahogani to simultaneously address behavioral, attendance, and learning challenges before they further destabilize student progress.', '2026-07-23 16:03:28'),
-(11, 14, 'For the 2027–2028 school year, all four sections are fully staffed with assigned advisers, and no specific grade levels or sections currently contain learners flagged for academic, attendance, or behavioral risks. The most critical operational pattern requiring immediate attention is a severe imbalance between capacity and enrollment, as full advisory resources are actively maintained across four sections for only a single enrolled student. Over the coming weeks, the primary focus area should be conducting a comprehensive enrollment audit and recruitment initiative to reconcile section allocations with actual student roster data.', '2026-08-06 14:57:16');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `developmental_profiles`
---
-
-CREATE TABLE `developmental_profiles` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `domain` enum('Cognitive','Social','Emotional','Physical','Language') NOT NULL,
-  `observation` text NOT NULL,
-  `recommendation` text DEFAULT NULL,
-  `recorded_by` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `feeding_program_insights`
---
-
-CREATE TABLE `feeding_program_insights` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `school_year_id` int(11) NOT NULL,
-  `insight_text` text NOT NULL,
-  `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `feeding_program_insights`
---
-
-INSERT INTO `feeding_program_insights` (`id`, `student_id`, `school_year_id`, `insight_text`, `generated_at`) VALUES
-(2, 160, 8, 'The learner\'s severe wasting indicates critical acute undernutrition relative to physical stature, presenting immediate risks to immune function, cognitive stamina, and classroom engagement. Immediate prioritization for the standard 120-day SBFP feeding cycle is recommended, paired with an urgent parent conference to evaluate home dietary practices and confirm deworming status. Additionally, the school health personnel should establish a monthly re-weighing cadence to closely track weight velocity and coordinate with the local health center if supplementary clinical care is required.', '2026-10-11 12:00:02'),
-(3, 202, 8, 'While flagged as \"Wasted,\" the learner\'s recorded metrics actually reflect a healthy, age-appropriate body mass index, pointing to a probable clerical error or misclassification during baseline screening. The administrator should immediately coordinate with the school health personnel for a prompt re-weighing and height validation before confirming enrollment in the daily feeding roster. Once verified, consult with the Grade 1 Purple adviser and the learner\'s parents to ensure accurate health profiling and establish a routine monthly monitoring cadence.', '2026-10-15 14:52:45');
+(116, 177, 'teacher', 'Deleting an academic profile', 'Academic Profile', 48, NULL, 'ZZZ AR TEST TEACHER deleted an academic record with ID: 48', '::1', 'success', '2026-10-21 15:16:58'),
+(117, 121, 'teacher', 'Updating a student', 'Students', 160, NULL, 'REMA BAGAMASPAD IGUAN updated a student with ID: 160', '::1', 'success', '2026-10-22 12:43:32'),
+(118, 121, 'teacher', 'Updating a student', 'Students', 160, NULL, 'REMA BAGAMASPAD IGUAN updated a student with ID: 160', '::1', 'success', '2026-10-22 12:43:38'),
+(134, 190, 'teacher', 'Moved a student to Trash', 'Students', 374, NULL, 'Test Teacher QA moved student ID 374 to Trash', '::1', 'success', '2026-10-22 14:04:24'),
+(135, 190, 'teacher', 'Moved a student to Trash', 'Students', 376, NULL, 'Test Teacher QA moved student ID 376 to Trash', '::1', 'success', '2026-10-22 14:06:10'),
+(136, 121, 'teacher', 'Moved a student to Trash', 'Students', 160, NULL, 'REMA BAGAMASPAD IGUAN moved student ID 160 to Trash', '::1', 'success', '2026-10-22 14:09:58'),
+(137, 121, 'teacher', 'Restored a student from Trash', 'Students', 160, NULL, 'REMA BAGAMASPAD IGUAN restored RAIZA PARAISO ABALOS from Trash', '::1', 'success', '2026-10-22 14:10:06'),
+(138, 121, 'teacher', 'Moved a student to Trash', 'Students', 160, NULL, 'REMA BAGAMASPAD IGUAN moved student ID 160 to Trash', '::1', 'success', '2026-10-22 14:10:18'),
+(139, 121, 'teacher', 'Restored a student from Trash', 'Students', 160, NULL, 'REMA BAGAMASPAD IGUAN restored RAIZA PARAISO ABALOS from Trash', '::1', 'success', '2026-10-22 14:10:27');
 
 -- --------------------------------------------------------
 
@@ -452,7 +340,9 @@ INSERT INTO `migrations` (`id`, `migration`, `applied_at`) VALUES
 (25, '024_add_address_to_users.sql', '2026-10-21 04:20:20'),
 (26, '025_create_subjects.sql', '2026-10-21 14:39:06'),
 (27, '026_add_recorded_by_to_subjects.sql', '2026-10-21 14:47:33'),
-(28, '027_create_subject_teacher_assignments.sql', '2026-10-21 14:54:24');
+(28, '027_create_subject_teacher_assignments.sql', '2026-10-21 14:54:24'),
+(29, '028_add_soft_delete_to_students.sql', '2026-10-22 13:11:58'),
+(30, '029_nullable_audit_log_user.sql', '2026-10-22 13:38:55');
 
 -- --------------------------------------------------------
 
@@ -44791,6 +44681,8 @@ CREATE TABLE `students` (
   `section_id` int(11) NOT NULL,
   `recorded_by` int(11) NOT NULL,
   `status` enum('active','archived') NOT NULL DEFAULT 'active',
+  `deleted_at` datetime DEFAULT NULL,
+  `deleted_by` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44799,209 +44691,209 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `picture`, `birth_date`, `age_as_of_june`, `gender`, `mother_tongue`, `ip_ethnic_group`, `religion`, `address`, `house_number`, `street`, `sitio`, `purok`, `barangay`, `city_municipality`, `province`, `learning_modality`, `remarks`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `created_at`, `updated_at`) VALUES
-(150, '103503250003', 'LIAM ARVIL', 'HERNAL', 'BALILA', NULL, NULL, '2019-10-09', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(151, '103503240003', 'JUSTINE', 'REYES', 'BALINAGAY', NULL, NULL, '2018-10-16', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(152, '103503250004', 'JARED', 'CASTILLO', 'BULATAO', NULL, NULL, '2020-03-16', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(153, '103503250005', 'USHER', 'BARTOLOME', 'CARIASO', NULL, NULL, '2020-08-23', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(154, '103503250007', 'ANGELO', 'COLLADO', 'GAGELONIA', NULL, NULL, '2020-03-23', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(155, '103503250009', 'ELMARK', 'ALIPIO', 'GAMBOA', NULL, NULL, '2020-10-31', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(156, '103503250010', 'KHERWIN', 'FLORES', 'GEBAÑA', NULL, NULL, '2020-05-19', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(157, '103503250015', 'KURT ETHAN', 'BONITA', 'JULIANO', NULL, NULL, '2020-07-16', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(158, '103503250017', 'HANZ', 'BAGAMASPAD', 'RAFAEL', NULL, NULL, '2019-10-28', 6, 'Male', 'Ilocano', 'Tingguian / Itneg', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE I', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(159, '103503250020', 'REYMOND', 'MAURO', 'SOBREPEÑA', NULL, NULL, '2019-11-01', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(160, '103503250021', 'RAIZA', 'PARAISO', 'ABALOS', NULL, NULL, '2020-02-02', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(161, '103503250023', 'KATE ZIA', 'ELARDO', 'BAUTISTA', NULL, NULL, '2020-09-27', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(162, '103503250024', 'AZALEA BELLE', 'GANIR', 'BUENO', NULL, NULL, '2020-05-04', 6, 'Female', 'English', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(163, '103503250025', 'LADY JOY', 'HELARDO', 'BUNAO', NULL, NULL, '2020-02-08', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(164, '103503250029', 'PRINCESS HEART', 'LOPEZ', 'LABE', NULL, NULL, '2020-05-27', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(165, '103503250031', 'HASIAH KATE', 'PATTUGALAN', 'OCTAVIANO', NULL, NULL, '2019-10-23', 6, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(166, '103503250032', 'GRACIANE', 'VIERNES', 'RAMOS', NULL, NULL, '2020-06-20', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(167, '103503250033', 'QUINN FIELA ICYLLE', 'BESA', 'RAMOS', NULL, NULL, '2019-12-20', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(168, '103503250037', 'SAFHIERA GRACE', 'SANTIAGO', 'SOMERA', NULL, NULL, '2020-05-18', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
-(169, '103503190001', 'AERON JADE', 'PARAISO', 'ABALOS', NULL, NULL, '2013-10-18', 12, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(170, '103503170032', 'SANDY', 'JR JOVILLANOS', 'ALVARADO', NULL, NULL, '2010-04-30', 16, 'Male', 'Iloko', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(171, '103503200002', 'JOHN LESTER', 'GASPAR', 'CASTILLO', NULL, NULL, '2015-02-06', 11, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(172, '103503190007', 'ROBERT', 'JR DELA CRUZ', 'CORPUZ', NULL, NULL, '2013-10-29', 12, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(173, '103502200020', 'XYDER BRYLLE', 'FLORES', 'FELIX', NULL, NULL, '2015-08-27', 11, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'BANTUG', 'UMINGAN', 'PANGASINAN', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(174, '101287200008', 'PRINCE JOVIT', 'FERRER', 'MENOR', NULL, NULL, '2014-10-15', 11, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'BUAYAEN', 'BAYAMBANG', 'PANGASINAN', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(175, '103503200004', 'MARK IVAN', 'BARTOLOME', 'PARAISO', NULL, NULL, '2014-09-11', 11, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(176, '103503200006', 'LEO', 'SOBREPENA', 'VALDEZ', NULL, NULL, '2014-09-02', 12, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(177, '103503190019', 'ALTHEA', 'JOVILLANOS', 'ALVARADO', NULL, NULL, '2014-01-15', 12, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(178, '103503200008', 'MATHEA VENHIZE', 'GIRAO', 'ANCHETA', NULL, NULL, '2014-11-19', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(179, '103503200029', 'KRISA MAE', 'BACCAY', 'ANTALAN', NULL, NULL, '2015-05-09', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(180, '103503200009', 'HANNAH', 'COSTALES', 'AQUILO', NULL, NULL, '2014-11-28', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(181, '103503200010', 'KENDRA MEGHAN', 'AULO', 'BALICAO', NULL, NULL, '2015-09-08', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(182, '103503200011', 'ROXANE', 'SANTUYO', 'BONITA', NULL, NULL, '2014-11-24', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(183, '103503200012', 'ANGELA', 'OCTAVIANO', 'BUENO', NULL, NULL, '2014-12-15', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(184, '103503200030', 'MARIA LOURDES', 'ARETAÑO', 'CAPANANG', NULL, NULL, '2015-08-23', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(185, '103503200013', 'HYACINTH', 'RAMISCAL', 'DAGA', NULL, NULL, '2014-10-20', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(186, '103503200014', 'CLARISA', 'CACHO', 'DOMINGO', NULL, NULL, '2014-12-18', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(187, '103503200015', 'GIFT', '-', 'FERRER', NULL, NULL, '2015-08-29', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(188, '159011200045', 'PRINCESS JUNELLA', 'ALIPIO', 'FLORENTINO', NULL, NULL, '2015-06-18', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'TAYABO', 'SAN JOSE CITY', 'NUEVA ECIJA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(189, '103503200016', 'YSANG', 'BALA', 'GASPAR', NULL, NULL, '2015-01-03', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(190, '103503200017', 'RHYCELLE KEITH', 'GALINDEZ', 'GONGORA', NULL, NULL, '2015-05-21', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(191, '103503200018', 'STRAWBERRY', 'ALCANTARA', 'GUIANG', NULL, NULL, '2015-08-09', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(192, '103503200019', 'ALIZA MAE', 'MACADANGDANG', 'JULIANO', NULL, NULL, '2015-02-25', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(193, '103503200020', 'QUEENNE', 'BERDANDINO', 'OCTAVIANO', NULL, NULL, '2015-04-14', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(194, '103503200021', 'JOMELLA MAE', 'CUEVAS', 'OPERIO', NULL, NULL, '2014-01-12', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(195, '103503200022', 'QUEEN ISABELLE', 'GAONA', 'PINEDA', NULL, NULL, '2014-01-10', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
-(196, '136413200039', 'AVEY ARRIANA', 'VALLES', 'RAMISCAL', NULL, NULL, '2015-07-30', 11, 'Female', 'Tagalog', 'Kankanaey / Kankanaey Ibenguet / Kankanaey Iyaplay', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
-(197, '105614200148', 'ERICH JAZ', 'DELA CRUZ', 'RAMISCAL', NULL, NULL, '2015-06-17', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'POBLACION I', 'PEÑARANDA', 'NUEVA ECIJA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
-(198, '103503200024', 'JAYNE', 'FLORES', 'REGINIO', NULL, NULL, '2014-09-27', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
-(199, '103503200025', 'HEZKIAH ELINAIA', 'TOMAS', 'RELLORTA', NULL, NULL, '2014-09-11', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
-(200, '103503200027', 'PRINCESS', 'VALDEZ', 'SOBREPEÑA', NULL, NULL, '2015-11-02', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
-(201, '103503200028', 'ASHLEY ZIAH', 'ABRIAM', 'SOMERA', NULL, NULL, '2015-07-27', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
-(202, '103503240001', 'EXCY', 'PARAISO', 'ABALOS', NULL, NULL, '2018-10-16', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(203, '103503250001', 'AYDEN LEIGH', 'RAMOS', 'AGREGADO', NULL, NULL, '2020-07-19', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(204, '103503250006', 'PRINCE YHUHAN', 'MATIAS', 'CERA', NULL, NULL, '2020-06-23', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(205, '103503250008', 'JOHN WILLIAM', 'FORTO', 'GALAPON', NULL, NULL, '2020-06-22', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(206, '103503250011', 'KENTH DAVE', 'GALINDEZ', 'GONGORA', NULL, NULL, '2020-07-12', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(207, '103503250012', 'NATHANIEL', 'GASPAR', 'ITLIONG', NULL, NULL, '2019-10-03', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(208, '103503250013', 'ROGEN DAVE', 'ANTING', 'JOSE', NULL, NULL, '2019-11-24', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(209, '103503250016', 'MARK RAINIEL', 'FLORES', 'NUDO', NULL, NULL, '2020-05-10', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(210, '103503250018', 'JOHN JHAMES', 'MAPILI', 'RAMISCAL', NULL, NULL, '2020-05-21', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(211, '103503250019', 'SEAN XAVIER', 'MASIDDO', 'RAMOS', NULL, NULL, '2020-03-14', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(212, '103503250022', 'MARTYELLA LUCIA', 'GIRAO', 'ANCHETA', NULL, NULL, '2019-12-26', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(213, '103503250026', 'DANISHA LUREN', 'CERA', 'CABENIAN', NULL, NULL, '2019-12-03', 6, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(214, '103503250030', 'LEANNE', 'LAPITAN', 'LARDIZABAL', NULL, NULL, '2019-11-13', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(215, '103503250034', 'CLARISSE JOY', 'DEL ROSARIO', 'RASPADO', NULL, NULL, '2020-10-15', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(216, '103503250036', 'HADIYA NATHALIE', 'ABRIAM', 'SOMERA', NULL, NULL, '2020-08-02', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(217, '103503250038', 'VHIA ANGELIE', 'COLLADO', 'SOMERA', NULL, NULL, '2020-01-07', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
-(218, '103503240002', 'MARK KENNETH', 'RAMISCAL', 'BALAGAN', NULL, NULL, '2019-03-13', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(219, '103501240003', 'JHIAN JHAIRUZ', 'MANAGUELOD', 'BENEDICTO', NULL, NULL, '2019-08-20', 7, 'Male', 'Ilocano', 'Ibanag / Ybanag / Iabanag', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nT/I DATE:2026-06-08', 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(220, '103503240004', 'EZEKIEL', 'TARIGA', 'BONITA', NULL, NULL, '2019-08-15', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(221, '103503240005', 'KEYFER', 'UBALDE', 'CARIAGA', NULL, NULL, '2018-12-25', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(222, '103503240006', 'PRINCE KHIAN', 'MONONG', 'CORPUZ', NULL, NULL, '2019-08-02', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(223, '103503240007', 'PRINCE ZACHARY', 'GUINAPON', 'GAGELONIA', NULL, NULL, '2018-11-22', 7, 'Male', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(224, '103503240008', 'DANIEL MARC', 'CARLOS', 'IBAÑEZ', NULL, NULL, '2019-08-27', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(225, '103503230026', 'RAYMOND', 'JR TABADA', 'LAUD', NULL, NULL, '2018-10-19', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(226, '103503240009', 'KING ZION', 'BENEDICTO', 'MAGCALAS', NULL, NULL, '2019-07-28', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(227, '103503240010', 'JOHN DENIEL', 'DELA CRUZ', 'PALAFOX', NULL, NULL, '2019-07-13', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(228, '103503240011', 'ANGELITO', 'III FRAGIO', 'RAMISCAL', NULL, NULL, '2018-12-01', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(229, '103503240012', 'JHONDER DAVE', 'TABADA', 'SOBREPEÑA', NULL, NULL, '2019-06-29', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(230, '103503240013', 'RICO', 'LAUD', 'SOMERA', NULL, NULL, '2018-12-10', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(231, '103501240013', 'WILLIAM MIGUEL', 'RESPICIO', 'VALDEZ', NULL, NULL, '2019-04-05', 7, 'Male', 'Tagalog', 'Ibanag / Ybanag / Iabanag', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'MALLIG', 'ISABELA', 'Face-to-Face', 'T/I DATE:2026-06-08', 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(232, '400548240015', 'DYLAN NICOLAI', 'VICENTE', 'VILLAROMAN', NULL, NULL, '2018-11-06', 7, 'Male', 'English', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(233, '103503240014', 'THRIXZHIA FLEIGH', 'GAGELONIA', 'BALUGA', NULL, NULL, '2019-03-20', 7, 'Female', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(234, '103503240015', 'NATHALIA MARIE', 'DOCTOR', 'CORPUZ', NULL, NULL, '2019-05-07', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(235, '103503240017', 'JASMIN MARIE', 'RAMOS', 'ESTIGOY', NULL, NULL, '2019-06-18', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(236, '103503240018', 'SHANELLE KRION', 'GAGELONIA', 'FERRER', NULL, NULL, '2018-12-17', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(237, '103503230020', 'CRISHELA', 'DAGA', 'FRANCISCO', NULL, NULL, '2018-07-06', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(238, '103503240019', 'JAMEELA AVERI', 'RAMISCAL', 'GUEVARRA', NULL, NULL, '2019-05-18', 7, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(239, '103503240020', 'PRINCESS JOY', 'TABADA', 'LAUD', NULL, NULL, '2018-11-21', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(240, '103503240021', 'ZEMIRAH', 'ANCHETA', 'NATIVIDAD', NULL, NULL, '2019-07-22', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
-(241, '103503230002', 'CHESTENVER', 'LOTTO', 'CERA', NULL, NULL, '2017-12-25', 8, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(242, '103186230007', 'MENARD JAY', 'SICAM', 'CREDO', NULL, NULL, '2018-07-17', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(243, '103503230003', 'PRINCE CHANG-AY', '-', 'DAGA', NULL, NULL, '2018-03-04', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(244, '103503230004', 'MIKAEL', 'GABAY', 'DUMAYAS', NULL, NULL, '2018-03-18', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(245, '103503230005', 'NATHANIEL', '-', 'FAUSTINO', NULL, NULL, '2018-09-06', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(246, '103503230006', 'ERL JHAY', 'DELA CRUZ', 'GAMBOA', NULL, NULL, '2018-03-20', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(247, '103503230007', 'LHERVIN DALE', 'FLORES', 'GEBAÑA', NULL, NULL, '2017-09-17', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(248, '103503220006', 'TRISTAN KURT', 'CATAMEN', 'GOMGOM-O', NULL, NULL, '2016-06-23', 10, 'Male', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(249, '103503230008', 'KURT HENRY', 'GALINDEZ', 'GONGORA', NULL, NULL, '2018-01-29', 8, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(250, '103503230009', 'MARK ANGELO RON', 'PINEDA', 'GUMIRAN', NULL, NULL, '2018-04-17', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(251, '103503230010', 'HEZIKIEL EPHRAIM', 'TOMAS', 'RELLORTA', NULL, NULL, '2018-08-27', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(252, '102639230010', 'PRINCE ZEDRICK', 'HERNAL', 'ROMERO', NULL, NULL, '2018-10-04', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(253, '103503230011', 'PRINCE HENRY', 'OLIGO', 'SOMERA', NULL, NULL, '2018-02-26', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(254, '103503230027', 'JOLINA', 'PALOMA', 'ANTONIO', NULL, NULL, '2017-07-06', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(255, '103503230012', 'PRINCESS JHAYBEL', 'GANATICE', 'BALINAGAY', NULL, NULL, '2018-08-23', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(256, '103503230013', 'CADEN AICA', 'DELA CRUZ', 'BALINTAG', NULL, NULL, '2018-06-10', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(257, '103503230014', 'SOFIA', 'DOLORIDO', 'BONITA', NULL, NULL, '2017-11-20', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(258, '103503230015', 'GIA BIANCA', 'CABUSAO', 'BUENO', NULL, NULL, '2017-11-28', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(259, '103503230016', 'ALTHEA JANINE', 'VIERNES', 'CAPANANG', NULL, NULL, '2017-10-24', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(260, '103503230017', 'ALPHA GRACE', 'BALA', 'CORPUZ', NULL, NULL, '2017-12-28', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(261, '103503230018', 'JAIRA', 'GIL', 'DE LEON', NULL, NULL, '2018-08-07', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(262, '103503230019', 'QUIM AVISHA', 'DAMASCO', 'FERRER', NULL, NULL, '2018-04-03', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(263, '103503220022', 'RHEALENE', 'FERRER', 'JOSE', NULL, NULL, '2017-09-14', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(264, '103503230021', 'CRISANTA', 'GABUYA', 'JULIANO', NULL, NULL, '2017-12-25', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(265, '103503230022', 'PRINCESS ARIANNA', 'CAPILI', 'MINA', NULL, NULL, '2018-08-01', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(266, '103503230023', 'ELIZABETH', 'BERDANDINO', 'OCTAVIANO', NULL, NULL, '2018-04-22', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(267, '103503220026', 'ANGELICA', 'GAONA', 'PINEDA', NULL, NULL, '2016-11-18', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(268, '103503220028', 'MARY GRACE', 'VIERNES', 'RAMOS', NULL, NULL, '2017-05-03', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(269, '103503230024', 'QUEEN JARIBEL', 'FERRER', 'RAMOS', NULL, NULL, '2018-04-20', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(270, '103503230025', 'ELAISA JANE', 'ABRIAM', 'SOMERA', NULL, NULL, '2018-09-24', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
-(271, '103503220001', 'CLYDE LOWIS', 'PASTOR', 'BALILA', NULL, NULL, '2017-07-11', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(272, '103503220002', 'TRISTAN JAY', 'EUGENIO', 'BUNAO', NULL, NULL, '2016-12-10', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(273, '103503220003', 'JAMES KYRIE', 'COLOMA', 'DE GUZMAN', NULL, NULL, '2017-04-07', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(274, '103503220004', 'RHODCH ALDRICH', 'DELOS SANTOS', 'GALAPON', NULL, NULL, '2017-08-01', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(275, '103203220008', 'FRANZ KYLE', 'CASTIL', 'GAMBOA', NULL, NULL, '2017-07-05', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'GURIBANG', 'DIFFUN', 'QUIRINO', 'Face-to-Face', 'LWD \nT/I DATE:2026-06-10', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(276, '103503220005', 'CEZAR JADE', '-', 'GASPAR', NULL, NULL, '2016-11-20', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(277, '103978220032', 'JULIUS NYGEL', 'BUENO', 'GOMBIO', NULL, NULL, '2017-07-09', 9, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN FERNANDO', 'BAMBANG', 'NUEVA VIZCAYA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(278, '103503220007', 'JOHN PHILIP', 'GAVINO', 'JOSE', NULL, NULL, '2016-07-11', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(279, '103503220008', 'JHAM KHENDRIX', 'ADVENCULA', 'MARCOS', NULL, NULL, '2016-11-02', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(280, '108077220116', 'JOHN CYRILL', 'BACCAY', 'MENDIORO', NULL, NULL, '2017-03-17', 9, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SABANG', 'NAIC', 'CAVITE', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(281, '103503220009', 'SRI PHILIP', 'FAUSTINO', 'NALLAWARIGE', NULL, NULL, '2017-06-30', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(282, '103503220010', 'VINCE ANDY', 'PILAR', 'OCTAVIANO', NULL, NULL, '2017-01-19', 9, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(283, '103503220011', 'JHON KENNETH', 'GUZMAN', 'PINEDA', NULL, NULL, '2017-02-16', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(284, '103503220013', 'ANGEL JOYCE', 'SISON', 'ALEJO', NULL, NULL, '2017-09-20', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(285, '103503220014', 'CLOUDEN JANE', 'DELA CRUZ', 'BAUTISTA', NULL, NULL, '2017-03-22', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(286, '103503220015', 'SCARLET', 'OCTAVIANO', 'BUENO', NULL, NULL, '2017-10-24', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(287, '103503220016', 'KEARRA SOPHIA', 'LICUBEN', 'ERCILLA', NULL, NULL, '2016-12-29', 9, 'Female', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(288, '103503220017', 'JULIANA MARIE', 'RAMOS', 'ESTIGOY', NULL, NULL, '2017-02-15', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(289, '103503220018', 'ALEIGHSHA BRAYE', 'GUINAPON', 'GAGELONIA', NULL, NULL, '2016-12-29', 9, 'Female', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(290, '103503220019', 'TIFFANY GWENAELLE', 'FORTO', 'GALAPON', NULL, NULL, '2017-09-22', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(291, '103503220020', 'ARYANA', 'OLIGO', 'GAURAN', NULL, NULL, '2017-01-15', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(292, '103503220021', 'RAJAH ALEXA', 'RAMISCAL', 'INERE', NULL, NULL, '2016-12-07', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(293, '103503220023', 'JANICE', 'DUMAYAS', 'LOPEZ', NULL, NULL, '2016-12-19', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(294, '103503220024', 'ISABELA CLARA', 'OCTAVIANO', 'OKATCH', NULL, NULL, '2017-02-11', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(295, '103503220025', 'GIRLY', 'NACION', 'PALADAN', NULL, NULL, '2017-06-02', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nCCT', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(296, '103503220029', 'SOPHIA CLAIRE', 'DEL ROSARIO', 'RASPADO', NULL, NULL, '2017-07-08', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(297, '136176220013', 'RHEA', 'DOMINGO', 'SOMERA', NULL, NULL, '2017-08-01', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'NANENG', 'CITY OF TABUK (Capital)', 'KALINGA', 'Face-to-Face', 'LWD \nCCT', 8, 13, 20, 126, 'active', '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
-(298, '103503210001', 'JHON PAUL', '-', 'ALAMBRA', NULL, NULL, '2016-07-21', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(299, '103503210002', 'DANIEL', 'COSTALES', 'AQUILO', NULL, NULL, '2016-04-04', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(300, '103503210003', 'MIKE GEURON', 'ACOB', 'BALICAO', NULL, NULL, '2016-01-26', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE I', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(301, '103503210004', 'ROMMELSON', 'JR MEJIA', 'BALICAO', NULL, NULL, '2016-02-26', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(302, '103503210006', 'KING DENNIS', 'PASCUA', 'DELA CRUZ', NULL, NULL, '2016-03-07', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(303, '135292210003', 'NYLE OXIE BRYANT', 'OPINION', 'DELA CRUZ', NULL, NULL, '2016-10-15', 9, 'Male', 'Iloko', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SANTA MARIA', 'FLORA', 'APAYAO', 'Face-to-Face', 'Pending TI', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(304, '103503180016', 'FERNANDO JOSE', 'RAMOS', 'MAGNO', NULL, NULL, '2012-12-22', 13, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nCCT', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(305, '103503180015', 'LUIS FERNANDO', 'RAMOS', 'MAGNO', NULL, NULL, '2012-12-22', 13, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(306, '103503210030', 'MIKE ANGELO', 'BARTOLOME', 'PARAISO', NULL, NULL, '2016-06-20', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(307, '103503210007', 'HECTOR LIAM ACHILLES', 'SOLEDAD', 'PINEDA', NULL, NULL, '2016-10-10', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(308, '400488210016', 'RHONELSON', 'CIMATO', 'SALES', NULL, NULL, '2016-05-22', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SARANAY', 'ANGADANAN', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(309, '103503210008', 'FRANCIS KYLE', 'ANTING', 'SOMERA', NULL, NULL, '2015-08-30', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nCCT', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(310, '103503210009', 'RICKY', 'LAUD', 'SOMERA', NULL, NULL, '2016-03-16', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(311, '103501210011', 'JANRY', 'SOBREPEÑA', 'VALDEZ', NULL, NULL, '2016-01-05', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(312, '103503210010', 'JAIRA', 'GAURAN', 'ANQUILLANO', NULL, NULL, '2016-02-13', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(313, '103503210011', 'ANGEL', 'DELA CRUZ', 'BAJACAN', NULL, NULL, '2016-08-10', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(314, '103503210012', 'LUCKYZIAH', 'AULO', 'BALICAO', NULL, NULL, '2016-09-22', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(315, '103503210013', 'EZRA', 'TARIGA', 'BONITA', NULL, NULL, '2016-01-05', 10, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(316, '103503210014', 'REAH MAE', 'DOLORIDO', 'BONITA', NULL, NULL, '2015-10-18', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(317, '103503210015', 'PRINCESS', 'SALAZAR', 'CABUTUTAN', NULL, NULL, '2015-12-26', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(318, '103634210019', 'IRIS NHOMARIE', 'RAMOS', 'CASTRO', NULL, NULL, '2016-07-27', 10, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'ROXAS', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(319, '103503210016', 'RENALYN JOY', 'DELA CRUZ', 'CORPUZ', NULL, NULL, '2015-11-24', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(320, '103503210017', 'SHIEKA HESSA', 'PINEDA', 'DAGA', NULL, NULL, '2015-09-08', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14');
-INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `picture`, `birth_date`, `age_as_of_june`, `gender`, `mother_tongue`, `ip_ethnic_group`, `religion`, `address`, `house_number`, `street`, `sitio`, `purok`, `barangay`, `city_municipality`, `province`, `learning_modality`, `remarks`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `created_at`, `updated_at`) VALUES
-(321, '103503210018', 'ABRIL MAYUMI', '-', 'DOMINGO', NULL, NULL, '2016-04-26', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(322, '128923210080', 'PRISCELLA', 'DAGA', 'FRANCISCO', NULL, NULL, '2016-05-20', 10, 'Female', 'Cebuano / Sinugbuanong Binisay', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(323, '103503210021', 'JENIPHER', 'DUMAYAS', 'LOPEZ', NULL, NULL, '2015-11-11', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(324, '221009210001', 'JANINE', 'FLORES', 'MANIPON', NULL, NULL, '2016-06-04', 10, 'Female', 'Iloko', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SIMIMBAAN', 'ROXAS', 'ISABELA', 'Face-to-Face', 'Pending TI', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(325, '136524210397', 'VIA ANGELINE', 'FORTUNA', 'MEDRANO', NULL, NULL, '2016-09-19', 9, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(326, '103503210023', 'HANNAH KATE', 'PATTUGALAN', 'OCTAVIANO', NULL, NULL, '2016-02-15', 10, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(327, '103503210024', 'NICOLE', 'NACION', 'PALADAN', NULL, NULL, '2016-02-16', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(328, '103496210021', 'MARRIANE JADE', 'ADRIOSULA', 'PULIDO', NULL, NULL, '2015-10-13', 10, 'Female', 'Filipino', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'LEONARDA', 'TUGUEGARAO CITY(Capital)', 'CAGAYAN', 'Face-to-Face', 'Pending TI', 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(329, '103503210027', 'ANGELICA QUIN', 'FRAGIO', 'RAMISCAL', NULL, NULL, '2016-03-29', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(330, '103503210028', 'RHEMALYN', 'GAMBOA', 'SAMONTE', NULL, NULL, '2016-01-10', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
-(331, '103503260001', 'JEHORAM', 'CUARESMA', 'ANTOLIN', NULL, NULL, '2020-11-09', 5, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(332, '103503260002', 'KING JAMEEL', 'AGURIN', 'DOMINGO', NULL, NULL, '2021-08-02', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(333, '103503260003', 'CHRISTIAN', 'GALBANIO', 'GAGELONIA', NULL, NULL, '2021-10-05', 4, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(334, '103503260004', 'AYDEN EZEKIEL', 'TEJADA', 'GASPAR', NULL, NULL, '2021-08-28', 5, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(335, '103503260005', 'RAMSEY RYU', 'BAGAMASPAD', 'IGUAN', NULL, NULL, '2021-04-28', 5, 'Male', 'Tagalog', 'Ayangan', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE II', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(336, '103503260006', 'KAISER', 'JR ALAVA', 'RAMISCAL', NULL, NULL, '2021-05-15', 5, 'Male', 'English', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(337, '103503260007', 'PRINCE JHON', 'LEYSA', 'SANTOS', NULL, NULL, '2021-05-04', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(338, '103503260008', 'CHRIS CARLSON', 'SANTIAGO', 'SOMERA', NULL, NULL, '2021-09-10', 4, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(339, '103503260009', 'CARL ESTEVEN', 'BAUTISTA', 'TORRES', NULL, NULL, '2020-12-17', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(340, '103503260010', 'ANGEL MAY', '-', 'BALMORES', NULL, NULL, '2021-07-06', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'VICTORIA', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(341, '103503260011', 'GLORIENNE ESTELLE', 'MALSI', 'BUSTAMANTE', NULL, NULL, '2021-06-05', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(342, '103503260012', 'PRINCESS REYN', 'SAGUN', 'CASIMIRO', NULL, NULL, '2021-06-07', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(343, '103503260013', 'BRIANNA', 'PARIO', 'CATUBIG', NULL, NULL, '2021-09-09', 4, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(344, '103503260014', 'SOPHIA LORIS', 'ASIS', 'DUQUE', NULL, NULL, '2020-11-23', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(345, '103503260015', 'ZYRELLE JUZH', 'RAMISCAL', 'GABALDON', NULL, NULL, '2020-11-10', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(346, '103503260016', 'PRECIOUS KIM', 'GAONA', 'PINEDA', NULL, NULL, '2021-01-27', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(347, '103503260017', 'HARLHEN', 'BAGAMASPAD', 'RAFAEL', NULL, NULL, '2021-10-13', 4, 'Female', 'Tagalog', 'Tingguian / Itneg', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE II', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(348, '103503260018', 'ERLYN JADE', 'DELA CRUZ', 'RAMISCAL', NULL, NULL, '2021-04-18', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(349, '103503260019', 'OLIVE', 'SOBREPEÑA', 'VALDEZ', NULL, NULL, '2020-11-25', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
-(350, '103503260020', 'SCARLET', 'DELA CRUZ', 'VILLAROMAN', NULL, NULL, '2021-07-29', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', '2026-09-30 12:57:26', '2026-09-30 12:57:26');
+INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `picture`, `birth_date`, `age_as_of_june`, `gender`, `mother_tongue`, `ip_ethnic_group`, `religion`, `address`, `house_number`, `street`, `sitio`, `purok`, `barangay`, `city_municipality`, `province`, `learning_modality`, `remarks`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `deleted_at`, `deleted_by`, `created_at`, `updated_at`) VALUES
+(150, '103503250003', 'LIAM ARVIL', 'HERNAL', 'BALILA', NULL, NULL, '2019-10-09', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(151, '103503240003', 'JUSTINE', 'REYES', 'BALINAGAY', NULL, NULL, '2018-10-16', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(152, '103503250004', 'JARED', 'CASTILLO', 'BULATAO', NULL, NULL, '2020-03-16', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(153, '103503250005', 'USHER', 'BARTOLOME', 'CARIASO', NULL, NULL, '2020-08-23', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(154, '103503250007', 'ANGELO', 'COLLADO', 'GAGELONIA', NULL, NULL, '2020-03-23', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(155, '103503250009', 'ELMARK', 'ALIPIO', 'GAMBOA', NULL, NULL, '2020-10-31', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(156, '103503250010', 'KHERWIN', 'FLORES', 'GEBAÑA', NULL, NULL, '2020-05-19', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(157, '103503250015', 'KURT ETHAN', 'BONITA', 'JULIANO', NULL, NULL, '2020-07-16', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(158, '103503250017', 'HANZ', 'BAGAMASPAD', 'RAFAEL', NULL, NULL, '2019-10-28', 6, 'Male', 'Ilocano', 'Tingguian / Itneg', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE I', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(159, '103503250020', 'REYMOND', 'MAURO', 'SOBREPEÑA', NULL, NULL, '2019-11-01', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(160, '103503250021', 'RAIZA', 'PARAISO', 'ABALOS', NULL, NULL, '2020-02-02', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'San Jose Sur', 'Mallig', 'Isabela', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-10-22 14:10:27'),
+(161, '103503250023', 'KATE ZIA', 'ELARDO', 'BAUTISTA', NULL, NULL, '2020-09-27', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(162, '103503250024', 'AZALEA BELLE', 'GANIR', 'BUENO', NULL, NULL, '2020-05-04', 6, 'Female', 'English', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(163, '103503250025', 'LADY JOY', 'HELARDO', 'BUNAO', NULL, NULL, '2020-02-08', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(164, '103503250029', 'PRINCESS HEART', 'LOPEZ', 'LABE', NULL, NULL, '2020-05-27', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(165, '103503250031', 'HASIAH KATE', 'PATTUGALAN', 'OCTAVIANO', NULL, NULL, '2019-10-23', 6, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(166, '103503250032', 'GRACIANE', 'VIERNES', 'RAMOS', NULL, NULL, '2020-06-20', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(167, '103503250033', 'QUINN FIELA ICYLLE', 'BESA', 'RAMOS', NULL, NULL, '2019-12-20', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(168, '103503250037', 'SAFHIERA GRACE', 'SANTIAGO', 'SOMERA', NULL, NULL, '2020-05-18', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 15, 121, 'active', NULL, NULL, '2026-09-29 12:33:25', '2026-09-29 12:33:25'),
+(169, '103503190001', 'AERON JADE', 'PARAISO', 'ABALOS', NULL, NULL, '2013-10-18', 12, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(170, '103503170032', 'SANDY', 'JR JOVILLANOS', 'ALVARADO', NULL, NULL, '2010-04-30', 16, 'Male', 'Iloko', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(171, '103503200002', 'JOHN LESTER', 'GASPAR', 'CASTILLO', NULL, NULL, '2015-02-06', 11, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(172, '103503190007', 'ROBERT', 'JR DELA CRUZ', 'CORPUZ', NULL, NULL, '2013-10-29', 12, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(173, '103502200020', 'XYDER BRYLLE', 'FLORES', 'FELIX', NULL, NULL, '2015-08-27', 11, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'BANTUG', 'UMINGAN', 'PANGASINAN', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(174, '101287200008', 'PRINCE JOVIT', 'FERRER', 'MENOR', NULL, NULL, '2014-10-15', 11, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'BUAYAEN', 'BAYAMBANG', 'PANGASINAN', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(175, '103503200004', 'MARK IVAN', 'BARTOLOME', 'PARAISO', NULL, NULL, '2014-09-11', 11, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(176, '103503200006', 'LEO', 'SOBREPENA', 'VALDEZ', NULL, NULL, '2014-09-02', 12, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(177, '103503190019', 'ALTHEA', 'JOVILLANOS', 'ALVARADO', NULL, NULL, '2014-01-15', 12, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(178, '103503200008', 'MATHEA VENHIZE', 'GIRAO', 'ANCHETA', NULL, NULL, '2014-11-19', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(179, '103503200029', 'KRISA MAE', 'BACCAY', 'ANTALAN', NULL, NULL, '2015-05-09', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(180, '103503200009', 'HANNAH', 'COSTALES', 'AQUILO', NULL, NULL, '2014-11-28', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(181, '103503200010', 'KENDRA MEGHAN', 'AULO', 'BALICAO', NULL, NULL, '2015-09-08', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(182, '103503200011', 'ROXANE', 'SANTUYO', 'BONITA', NULL, NULL, '2014-11-24', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(183, '103503200012', 'ANGELA', 'OCTAVIANO', 'BUENO', NULL, NULL, '2014-12-15', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(184, '103503200030', 'MARIA LOURDES', 'ARETAÑO', 'CAPANANG', NULL, NULL, '2015-08-23', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(185, '103503200013', 'HYACINTH', 'RAMISCAL', 'DAGA', NULL, NULL, '2014-10-20', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(186, '103503200014', 'CLARISA', 'CACHO', 'DOMINGO', NULL, NULL, '2014-12-18', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(187, '103503200015', 'GIFT', '-', 'FERRER', NULL, NULL, '2015-08-29', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(188, '159011200045', 'PRINCESS JUNELLA', 'ALIPIO', 'FLORENTINO', NULL, NULL, '2015-06-18', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'TAYABO', 'SAN JOSE CITY', 'NUEVA ECIJA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(189, '103503200016', 'YSANG', 'BALA', 'GASPAR', NULL, NULL, '2015-01-03', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(190, '103503200017', 'RHYCELLE KEITH', 'GALINDEZ', 'GONGORA', NULL, NULL, '2015-05-21', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(191, '103503200018', 'STRAWBERRY', 'ALCANTARA', 'GUIANG', NULL, NULL, '2015-08-09', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(192, '103503200019', 'ALIZA MAE', 'MACADANGDANG', 'JULIANO', NULL, NULL, '2015-02-25', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(193, '103503200020', 'QUEENNE', 'BERDANDINO', 'OCTAVIANO', NULL, NULL, '2015-04-14', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(194, '103503200021', 'JOMELLA MAE', 'CUEVAS', 'OPERIO', NULL, NULL, '2014-01-12', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(195, '103503200022', 'QUEEN ISABELLE', 'GAONA', 'PINEDA', NULL, NULL, '2014-01-10', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:57', '2026-09-29 12:58:57'),
+(196, '136413200039', 'AVEY ARRIANA', 'VALLES', 'RAMISCAL', NULL, NULL, '2015-07-30', 11, 'Female', 'Tagalog', 'Kankanaey / Kankanaey Ibenguet / Kankanaey Iyaplay', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
+(197, '105614200148', 'ERICH JAZ', 'DELA CRUZ', 'RAMISCAL', NULL, NULL, '2015-06-17', 11, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'POBLACION I', 'PEÑARANDA', 'NUEVA ECIJA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
+(198, '103503200024', 'JAYNE', 'FLORES', 'REGINIO', NULL, NULL, '2014-09-27', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
+(199, '103503200025', 'HEZKIAH ELINAIA', 'TOMAS', 'RELLORTA', NULL, NULL, '2014-09-11', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
+(200, '103503200027', 'PRINCESS', 'VALDEZ', 'SOBREPEÑA', NULL, NULL, '2015-11-02', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
+(201, '103503200028', 'ASHLEY ZIAH', 'ABRIAM', 'SOMERA', NULL, NULL, '2015-07-27', 11, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 12, 16, 122, 'active', NULL, NULL, '2026-09-29 12:58:58', '2026-09-29 12:58:58'),
+(202, '103503240001', 'EXCY', 'PARAISO', 'ABALOS', NULL, NULL, '2018-10-16', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(203, '103503250001', 'AYDEN LEIGH', 'RAMOS', 'AGREGADO', NULL, NULL, '2020-07-19', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(204, '103503250006', 'PRINCE YHUHAN', 'MATIAS', 'CERA', NULL, NULL, '2020-06-23', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(205, '103503250008', 'JOHN WILLIAM', 'FORTO', 'GALAPON', NULL, NULL, '2020-06-22', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(206, '103503250011', 'KENTH DAVE', 'GALINDEZ', 'GONGORA', NULL, NULL, '2020-07-12', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(207, '103503250012', 'NATHANIEL', 'GASPAR', 'ITLIONG', NULL, NULL, '2019-10-03', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(208, '103503250013', 'ROGEN DAVE', 'ANTING', 'JOSE', NULL, NULL, '2019-11-24', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(209, '103503250016', 'MARK RAINIEL', 'FLORES', 'NUDO', NULL, NULL, '2020-05-10', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(210, '103503250018', 'JOHN JHAMES', 'MAPILI', 'RAMISCAL', NULL, NULL, '2020-05-21', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(211, '103503250019', 'SEAN XAVIER', 'MASIDDO', 'RAMOS', NULL, NULL, '2020-03-14', 6, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(212, '103503250022', 'MARTYELLA LUCIA', 'GIRAO', 'ANCHETA', NULL, NULL, '2019-12-26', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(213, '103503250026', 'DANISHA LUREN', 'CERA', 'CABENIAN', NULL, NULL, '2019-12-03', 6, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(214, '103503250030', 'LEANNE', 'LAPITAN', 'LARDIZABAL', NULL, NULL, '2019-11-13', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(215, '103503250034', 'CLARISSE JOY', 'DEL ROSARIO', 'RASPADO', NULL, NULL, '2020-10-15', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(216, '103503250036', 'HADIYA NATHALIE', 'ABRIAM', 'SOMERA', NULL, NULL, '2020-08-02', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(217, '103503250038', 'VHIA ANGELIE', 'COLLADO', 'SOMERA', NULL, NULL, '2020-01-07', 6, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 5, 17, 123, 'active', NULL, NULL, '2026-09-30 12:43:57', '2026-09-30 12:43:57'),
+(218, '103503240002', 'MARK KENNETH', 'RAMISCAL', 'BALAGAN', NULL, NULL, '2019-03-13', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(219, '103501240003', 'JHIAN JHAIRUZ', 'MANAGUELOD', 'BENEDICTO', NULL, NULL, '2019-08-20', 7, 'Male', 'Ilocano', 'Ibanag / Ybanag / Iabanag', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nT/I DATE:2026-06-08', 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(220, '103503240004', 'EZEKIEL', 'TARIGA', 'BONITA', NULL, NULL, '2019-08-15', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(221, '103503240005', 'KEYFER', 'UBALDE', 'CARIAGA', NULL, NULL, '2018-12-25', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(222, '103503240006', 'PRINCE KHIAN', 'MONONG', 'CORPUZ', NULL, NULL, '2019-08-02', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(223, '103503240007', 'PRINCE ZACHARY', 'GUINAPON', 'GAGELONIA', NULL, NULL, '2018-11-22', 7, 'Male', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(224, '103503240008', 'DANIEL MARC', 'CARLOS', 'IBAÑEZ', NULL, NULL, '2019-08-27', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(225, '103503230026', 'RAYMOND', 'JR TABADA', 'LAUD', NULL, NULL, '2018-10-19', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(226, '103503240009', 'KING ZION', 'BENEDICTO', 'MAGCALAS', NULL, NULL, '2019-07-28', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(227, '103503240010', 'JOHN DENIEL', 'DELA CRUZ', 'PALAFOX', NULL, NULL, '2019-07-13', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(228, '103503240011', 'ANGELITO', 'III FRAGIO', 'RAMISCAL', NULL, NULL, '2018-12-01', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(229, '103503240012', 'JHONDER DAVE', 'TABADA', 'SOBREPEÑA', NULL, NULL, '2019-06-29', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(230, '103503240013', 'RICO', 'LAUD', 'SOMERA', NULL, NULL, '2018-12-10', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(231, '103501240013', 'WILLIAM MIGUEL', 'RESPICIO', 'VALDEZ', NULL, NULL, '2019-04-05', 7, 'Male', 'Tagalog', 'Ibanag / Ybanag / Iabanag', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'MALLIG', 'ISABELA', 'Face-to-Face', 'T/I DATE:2026-06-08', 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(232, '400548240015', 'DYLAN NICOLAI', 'VICENTE', 'VILLAROMAN', NULL, NULL, '2018-11-06', 7, 'Male', 'English', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(233, '103503240014', 'THRIXZHIA FLEIGH', 'GAGELONIA', 'BALUGA', NULL, NULL, '2019-03-20', 7, 'Female', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(234, '103503240015', 'NATHALIA MARIE', 'DOCTOR', 'CORPUZ', NULL, NULL, '2019-05-07', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(235, '103503240017', 'JASMIN MARIE', 'RAMOS', 'ESTIGOY', NULL, NULL, '2019-06-18', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(236, '103503240018', 'SHANELLE KRION', 'GAGELONIA', 'FERRER', NULL, NULL, '2018-12-17', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(237, '103503230020', 'CRISHELA', 'DAGA', 'FRANCISCO', NULL, NULL, '2018-07-06', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(238, '103503240019', 'JAMEELA AVERI', 'RAMISCAL', 'GUEVARRA', NULL, NULL, '2019-05-18', 7, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(239, '103503240020', 'PRINCESS JOY', 'TABADA', 'LAUD', NULL, NULL, '2018-11-21', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(240, '103503240021', 'ZEMIRAH', 'ANCHETA', 'NATIVIDAD', NULL, NULL, '2019-07-22', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 6, 18, 124, 'active', NULL, NULL, '2026-09-30 12:51:51', '2026-09-30 12:51:51'),
+(241, '103503230002', 'CHESTENVER', 'LOTTO', 'CERA', NULL, NULL, '2017-12-25', 8, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(242, '103186230007', 'MENARD JAY', 'SICAM', 'CREDO', NULL, NULL, '2018-07-17', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(243, '103503230003', 'PRINCE CHANG-AY', '-', 'DAGA', NULL, NULL, '2018-03-04', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(244, '103503230004', 'MIKAEL', 'GABAY', 'DUMAYAS', NULL, NULL, '2018-03-18', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(245, '103503230005', 'NATHANIEL', '-', 'FAUSTINO', NULL, NULL, '2018-09-06', 7, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(246, '103503230006', 'ERL JHAY', 'DELA CRUZ', 'GAMBOA', NULL, NULL, '2018-03-20', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(247, '103503230007', 'LHERVIN DALE', 'FLORES', 'GEBAÑA', NULL, NULL, '2017-09-17', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(248, '103503220006', 'TRISTAN KURT', 'CATAMEN', 'GOMGOM-O', NULL, NULL, '2016-06-23', 10, 'Male', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(249, '103503230008', 'KURT HENRY', 'GALINDEZ', 'GONGORA', NULL, NULL, '2018-01-29', 8, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(250, '103503230009', 'MARK ANGELO RON', 'PINEDA', 'GUMIRAN', NULL, NULL, '2018-04-17', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(251, '103503230010', 'HEZIKIEL EPHRAIM', 'TOMAS', 'RELLORTA', NULL, NULL, '2018-08-27', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(252, '102639230010', 'PRINCE ZEDRICK', 'HERNAL', 'ROMERO', NULL, NULL, '2018-10-04', 7, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(253, '103503230011', 'PRINCE HENRY', 'OLIGO', 'SOMERA', NULL, NULL, '2018-02-26', 8, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(254, '103503230027', 'JOLINA', 'PALOMA', 'ANTONIO', NULL, NULL, '2017-07-06', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(255, '103503230012', 'PRINCESS JHAYBEL', 'GANATICE', 'BALINAGAY', NULL, NULL, '2018-08-23', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(256, '103503230013', 'CADEN AICA', 'DELA CRUZ', 'BALINTAG', NULL, NULL, '2018-06-10', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(257, '103503230014', 'SOFIA', 'DOLORIDO', 'BONITA', NULL, NULL, '2017-11-20', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(258, '103503230015', 'GIA BIANCA', 'CABUSAO', 'BUENO', NULL, NULL, '2017-11-28', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(259, '103503230016', 'ALTHEA JANINE', 'VIERNES', 'CAPANANG', NULL, NULL, '2017-10-24', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(260, '103503230017', 'ALPHA GRACE', 'BALA', 'CORPUZ', NULL, NULL, '2017-12-28', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(261, '103503230018', 'JAIRA', 'GIL', 'DE LEON', NULL, NULL, '2018-08-07', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(262, '103503230019', 'QUIM AVISHA', 'DAMASCO', 'FERRER', NULL, NULL, '2018-04-03', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(263, '103503220022', 'RHEALENE', 'FERRER', 'JOSE', NULL, NULL, '2017-09-14', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(264, '103503230021', 'CRISANTA', 'GABUYA', 'JULIANO', NULL, NULL, '2017-12-25', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(265, '103503230022', 'PRINCESS ARIANNA', 'CAPILI', 'MINA', NULL, NULL, '2018-08-01', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(266, '103503230023', 'ELIZABETH', 'BERDANDINO', 'OCTAVIANO', NULL, NULL, '2018-04-22', 8, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(267, '103503220026', 'ANGELICA', 'GAONA', 'PINEDA', NULL, NULL, '2016-11-18', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(268, '103503220028', 'MARY GRACE', 'VIERNES', 'RAMOS', NULL, NULL, '2017-05-03', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(269, '103503230024', 'QUEEN JARIBEL', 'FERRER', 'RAMOS', NULL, NULL, '2018-04-20', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(270, '103503230025', 'ELAISA JANE', 'ABRIAM', 'SOMERA', NULL, NULL, '2018-09-24', 7, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 8, 19, 125, 'active', NULL, NULL, '2026-09-30 12:53:26', '2026-09-30 12:53:26'),
+(271, '103503220001', 'CLYDE LOWIS', 'PASTOR', 'BALILA', NULL, NULL, '2017-07-11', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(272, '103503220002', 'TRISTAN JAY', 'EUGENIO', 'BUNAO', NULL, NULL, '2016-12-10', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(273, '103503220003', 'JAMES KYRIE', 'COLOMA', 'DE GUZMAN', NULL, NULL, '2017-04-07', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(274, '103503220004', 'RHODCH ALDRICH', 'DELOS SANTOS', 'GALAPON', NULL, NULL, '2017-08-01', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(275, '103203220008', 'FRANZ KYLE', 'CASTIL', 'GAMBOA', NULL, NULL, '2017-07-05', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'GURIBANG', 'DIFFUN', 'QUIRINO', 'Face-to-Face', 'LWD \nT/I DATE:2026-06-10', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(276, '103503220005', 'CEZAR JADE', '-', 'GASPAR', NULL, NULL, '2016-11-20', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(277, '103978220032', 'JULIUS NYGEL', 'BUENO', 'GOMBIO', NULL, NULL, '2017-07-09', 9, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN FERNANDO', 'BAMBANG', 'NUEVA VIZCAYA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(278, '103503220007', 'JOHN PHILIP', 'GAVINO', 'JOSE', NULL, NULL, '2016-07-11', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(279, '103503220008', 'JHAM KHENDRIX', 'ADVENCULA', 'MARCOS', NULL, NULL, '2016-11-02', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(280, '108077220116', 'JOHN CYRILL', 'BACCAY', 'MENDIORO', NULL, NULL, '2017-03-17', 9, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SABANG', 'NAIC', 'CAVITE', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(281, '103503220009', 'SRI PHILIP', 'FAUSTINO', 'NALLAWARIGE', NULL, NULL, '2017-06-30', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(282, '103503220010', 'VINCE ANDY', 'PILAR', 'OCTAVIANO', NULL, NULL, '2017-01-19', 9, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(283, '103503220011', 'JHON KENNETH', 'GUZMAN', 'PINEDA', NULL, NULL, '2017-02-16', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(284, '103503220013', 'ANGEL JOYCE', 'SISON', 'ALEJO', NULL, NULL, '2017-09-20', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(285, '103503220014', 'CLOUDEN JANE', 'DELA CRUZ', 'BAUTISTA', NULL, NULL, '2017-03-22', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(286, '103503220015', 'SCARLET', 'OCTAVIANO', 'BUENO', NULL, NULL, '2017-10-24', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(287, '103503220016', 'KEARRA SOPHIA', 'LICUBEN', 'ERCILLA', NULL, NULL, '2016-12-29', 9, 'Female', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(288, '103503220017', 'JULIANA MARIE', 'RAMOS', 'ESTIGOY', NULL, NULL, '2017-02-15', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(289, '103503220018', 'ALEIGHSHA BRAYE', 'GUINAPON', 'GAGELONIA', NULL, NULL, '2016-12-29', 9, 'Female', 'Ilocano', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(290, '103503220019', 'TIFFANY GWENAELLE', 'FORTO', 'GALAPON', NULL, NULL, '2017-09-22', 8, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(291, '103503220020', 'ARYANA', 'OLIGO', 'GAURAN', NULL, NULL, '2017-01-15', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(292, '103503220021', 'RAJAH ALEXA', 'RAMISCAL', 'INERE', NULL, NULL, '2016-12-07', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(293, '103503220023', 'JANICE', 'DUMAYAS', 'LOPEZ', NULL, NULL, '2016-12-19', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(294, '103503220024', 'ISABELA CLARA', 'OCTAVIANO', 'OKATCH', NULL, NULL, '2017-02-11', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(295, '103503220025', 'GIRLY', 'NACION', 'PALADAN', NULL, NULL, '2017-06-02', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nCCT', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(296, '103503220029', 'SOPHIA CLAIRE', 'DEL ROSARIO', 'RASPADO', NULL, NULL, '2017-07-08', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(297, '136176220013', 'RHEA', 'DOMINGO', 'SOMERA', NULL, NULL, '2017-08-01', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'NANENG', 'CITY OF TABUK (Capital)', 'KALINGA', 'Face-to-Face', 'LWD \nCCT', 8, 13, 20, 126, 'active', NULL, NULL, '2026-09-30 12:55:25', '2026-09-30 12:55:25'),
+(298, '103503210001', 'JHON PAUL', '-', 'ALAMBRA', NULL, NULL, '2016-07-21', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(299, '103503210002', 'DANIEL', 'COSTALES', 'AQUILO', NULL, NULL, '2016-04-04', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(300, '103503210003', 'MIKE GEURON', 'ACOB', 'BALICAO', NULL, NULL, '2016-01-26', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE I', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(301, '103503210004', 'ROMMELSON', 'JR MEJIA', 'BALICAO', NULL, NULL, '2016-02-26', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(302, '103503210006', 'KING DENNIS', 'PASCUA', 'DELA CRUZ', NULL, NULL, '2016-03-07', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(303, '135292210003', 'NYLE OXIE BRYANT', 'OPINION', 'DELA CRUZ', NULL, NULL, '2016-10-15', 9, 'Male', 'Iloko', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SANTA MARIA', 'FLORA', 'APAYAO', 'Face-to-Face', 'Pending TI', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(304, '103503180016', 'FERNANDO JOSE', 'RAMOS', 'MAGNO', NULL, NULL, '2012-12-22', 13, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nCCT', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(305, '103503180015', 'LUIS FERNANDO', 'RAMOS', 'MAGNO', NULL, NULL, '2012-12-22', 13, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(306, '103503210030', 'MIKE ANGELO', 'BARTOLOME', 'PARAISO', NULL, NULL, '2016-06-20', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(307, '103503210007', 'HECTOR LIAM ACHILLES', 'SOLEDAD', 'PINEDA', NULL, NULL, '2016-10-10', 9, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(308, '400488210016', 'RHONELSON', 'CIMATO', 'SALES', NULL, NULL, '2016-05-22', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SARANAY', 'ANGADANAN', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(309, '103503210008', 'FRANCIS KYLE', 'ANTING', 'SOMERA', NULL, NULL, '2015-08-30', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD \nCCT', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(310, '103503210009', 'RICKY', 'LAUD', 'SOMERA', NULL, NULL, '2016-03-16', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(311, '103501210011', 'JANRY', 'SOBREPEÑA', 'VALDEZ', NULL, NULL, '2016-01-05', 10, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(312, '103503210010', 'JAIRA', 'GAURAN', 'ANQUILLANO', NULL, NULL, '2016-02-13', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(313, '103503210011', 'ANGEL', 'DELA CRUZ', 'BAJACAN', NULL, NULL, '2016-08-10', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14');
+INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `suffix`, `picture`, `birth_date`, `age_as_of_june`, `gender`, `mother_tongue`, `ip_ethnic_group`, `religion`, `address`, `house_number`, `street`, `sitio`, `purok`, `barangay`, `city_municipality`, `province`, `learning_modality`, `remarks`, `school_year_id`, `grade_level_id`, `section_id`, `recorded_by`, `status`, `deleted_at`, `deleted_by`, `created_at`, `updated_at`) VALUES
+(314, '103503210012', 'LUCKYZIAH', 'AULO', 'BALICAO', NULL, NULL, '2016-09-22', 9, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(315, '103503210013', 'EZRA', 'TARIGA', 'BONITA', NULL, NULL, '2016-01-05', 10, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(316, '103503210014', 'REAH MAE', 'DOLORIDO', 'BONITA', NULL, NULL, '2015-10-18', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(317, '103503210015', 'PRINCESS', 'SALAZAR', 'CABUTUTAN', NULL, NULL, '2015-12-26', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(318, '103634210019', 'IRIS NHOMARIE', 'RAMOS', 'CASTRO', NULL, NULL, '2016-07-27', 10, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'RANG-AYAN', 'ROXAS', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(319, '103503210016', 'RENALYN JOY', 'DELA CRUZ', 'CORPUZ', NULL, NULL, '2015-11-24', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(320, '103503210017', 'SHIEKA HESSA', 'PINEDA', 'DAGA', NULL, NULL, '2015-09-08', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(321, '103503210018', 'ABRIL MAYUMI', '-', 'DOMINGO', NULL, NULL, '2016-04-26', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(322, '128923210080', 'PRISCELLA', 'DAGA', 'FRANCISCO', NULL, NULL, '2016-05-20', 10, 'Female', 'Cebuano / Sinugbuanong Binisay', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(323, '103503210021', 'JENIPHER', 'DUMAYAS', 'LOPEZ', NULL, NULL, '2015-11-11', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(324, '221009210001', 'JANINE', 'FLORES', 'MANIPON', NULL, NULL, '2016-06-04', 10, 'Female', 'Iloko', 'Kalinga', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SIMIMBAAN', 'ROXAS', 'ISABELA', 'Face-to-Face', 'Pending TI', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(325, '136524210397', 'VIA ANGELINE', 'FORTUNA', 'MEDRANO', NULL, NULL, '2016-09-19', 9, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(326, '103503210023', 'HANNAH KATE', 'PATTUGALAN', 'OCTAVIANO', NULL, NULL, '2016-02-15', 10, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(327, '103503210024', 'NICOLE', 'NACION', 'PALADAN', NULL, NULL, '2016-02-16', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(328, '103496210021', 'MARRIANE JADE', 'ADRIOSULA', 'PULIDO', NULL, NULL, '2015-10-13', 10, 'Female', 'Filipino', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'LEONARDA', 'TUGUEGARAO CITY(Capital)', 'CAGAYAN', 'Face-to-Face', 'Pending TI', 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(329, '103503210027', 'ANGELICA QUIN', 'FRAGIO', 'RAMISCAL', NULL, NULL, '2016-03-29', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(330, '103503210028', 'RHEMALYN', 'GAMBOA', 'SAMONTE', NULL, NULL, '2016-01-10', 10, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 11, 21, 127, 'active', NULL, NULL, '2026-09-30 12:56:14', '2026-09-30 12:56:14'),
+(331, '103503260001', 'JEHORAM', 'CUARESMA', 'ANTOLIN', NULL, NULL, '2020-11-09', 5, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(332, '103503260002', 'KING JAMEEL', 'AGURIN', 'DOMINGO', NULL, NULL, '2021-08-02', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(333, '103503260003', 'CHRISTIAN', 'GALBANIO', 'GAGELONIA', NULL, NULL, '2021-10-05', 4, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(334, '103503260004', 'AYDEN EZEKIEL', 'TEJADA', 'GASPAR', NULL, NULL, '2021-08-28', 5, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(335, '103503260005', 'RAMSEY RYU', 'BAGAMASPAD', 'IGUAN', NULL, NULL, '2021-04-28', 5, 'Male', 'Tagalog', 'Ayangan', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE II', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(336, '103503260006', 'KAISER', 'JR ALAVA', 'RAMISCAL', NULL, NULL, '2021-05-15', 5, 'Male', 'English', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(337, '103503260007', 'PRINCE JHON', 'LEYSA', 'SANTOS', NULL, NULL, '2021-05-04', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(338, '103503260008', 'CHRIS CARLSON', 'SANTIAGO', 'SOMERA', NULL, NULL, '2021-09-10', 4, 'Male', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(339, '103503260009', 'CARL ESTEVEN', 'BAUTISTA', 'TORRES', NULL, NULL, '2020-12-17', 5, 'Male', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(340, '103503260010', 'ANGEL MAY', '-', 'BALMORES', NULL, NULL, '2021-07-06', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'VICTORIA', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(341, '103503260011', 'GLORIENNE ESTELLE', 'MALSI', 'BUSTAMANTE', NULL, NULL, '2021-06-05', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(342, '103503260012', 'PRINCESS REYN', 'SAGUN', 'CASIMIRO', NULL, NULL, '2021-06-07', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(343, '103503260013', 'BRIANNA', 'PARIO', 'CATUBIG', NULL, NULL, '2021-09-09', 4, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(344, '103503260014', 'SOPHIA LORIS', 'ASIS', 'DUQUE', NULL, NULL, '2020-11-23', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(345, '103503260015', 'ZYRELLE JUZH', 'RAMISCAL', 'GABALDON', NULL, NULL, '2020-11-10', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(346, '103503260016', 'PRECIOUS KIM', 'GAONA', 'PINEDA', NULL, NULL, '2021-01-27', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(347, '103503260017', 'HARLHEN', 'BAGAMASPAD', 'RAFAEL', NULL, NULL, '2021-10-13', 4, 'Female', 'Tagalog', 'Tingguian / Itneg', 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE NORTE II', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(348, '103503260018', 'ERLYN JADE', 'DELA CRUZ', 'RAMISCAL', NULL, NULL, '2021-04-18', 5, 'Female', 'Tagalog', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(349, '103503260019', 'OLIVE', 'SOBREPEÑA', 'VALDEZ', NULL, NULL, '2020-11-25', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', 'LWD', 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26'),
+(350, '103503260020', 'SCARLET', 'DELA CRUZ', 'VILLAROMAN', NULL, NULL, '2021-07-29', 5, 'Female', 'Ilocano', NULL, 'Christianity', NULL, NULL, NULL, NULL, NULL, 'SAN JOSE SUR', 'MALLIG', 'ISABELA', 'Face-to-Face', NULL, 8, 14, 22, 128, 'active', NULL, NULL, '2026-09-30 12:57:26', '2026-09-30 12:57:26');
 
 -- --------------------------------------------------------
 
@@ -45176,7 +45068,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `full_name`, `email`, `contact_number`, `address`, `province`, `city_municipality`, `barangay`, `birth_date`, `sex`, `password`, `role`, `position`, `status`, `profile_picture`, `created_at`, `updated_at`) VALUES
-(3, 'Administrative', 'administrative@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$1Udp2o44Me8keizlG6yUfu90YDUL7AiaWtH2rE3KjC4P2jPDwDme6', 'administrative', NULL, 'active', 'storage/profiles/pfp_3_1792591833.png', '2026-05-09', '2026-10-21'),
+(3, 'Administrative', 'administrative@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$1Udp2o44Me8keizlG6yUfu90YDUL7AiaWtH2rE3KjC4P2jPDwDme6', 'administrative', NULL, 'active', 'storage/profiles/pfp_3_1792673526.png', '2026-05-09', '2026-10-22'),
 (4, 'admin', 'admin@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$ihbCVd8WOJO17B4BFQgAUORhb1UEYpIFmpd1Q/ShW6n5uNMkLZ7kq', 'admin', NULL, 'active', 'storage/profiles/pfp_4_1782273895.jpg', '2026-05-09', '2026-06-24'),
 (121, 'REMA BAGAMASPAD IGUAN', 'remaiguan@gmail.com', '', '', NULL, NULL, NULL, NULL, 'Female', '$2y$10$upp5mcz9Hh.2KmTY2XlCFubQHsFCw/hPNJm7jN1/neo0vkImja7f2', 'teacher', 'Teacher 1', 'active', NULL, '2026-09-29', '0000-00-00'),
 (122, 'MARICEL MANUEL BESA', 'maricelbesa@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$aO1HD3ElgbeoWCk/0IQadu3eTQQZ33xOFUCqKyTCi1G1GfdV2rChm', 'teacher', NULL, 'active', NULL, '2026-09-29', '0000-00-00'),
@@ -45230,24 +45122,6 @@ ALTER TABLE `academic_profiles`
   ADD KEY `recorded_by` (`recorded_by`);
 
 --
--- Indexes for table `achievements_profiles`
---
-ALTER TABLE `achievements_profiles`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
-  ADD KEY `school_year_id` (`school_year_id`),
-  ADD KEY `recorded_by` (`recorded_by`);
-
---
--- Indexes for table `attendance`
---
-ALTER TABLE `attendance`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_student_date_session` (`student_id`,`attendance_date`,`session`),
-  ADD KEY `school_year_id` (`school_year_id`),
-  ADD KEY `recorded_by` (`recorded_by`);
-
---
 -- Indexes for table `at_risk_insights`
 --
 ALTER TABLE `at_risk_insights`
@@ -45259,38 +45133,6 @@ ALTER TABLE `at_risk_insights`
 --
 ALTER TABLE `audit_logs`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `behavioral_profiles`
---
-ALTER TABLE `behavioral_profiles`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
-  ADD KEY `school_year_id` (`school_year_id`),
-  ADD KEY `recorded_by` (`recorded_by`);
-
---
--- Indexes for table `dashboard_ai_summaries`
---
-ALTER TABLE `dashboard_ai_summaries`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `school_year_unique` (`school_year_id`);
-
---
--- Indexes for table `developmental_profiles`
---
-ALTER TABLE `developmental_profiles`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
-  ADD KEY `school_year_id` (`school_year_id`),
-  ADD KEY `recorded_by` (`recorded_by`);
-
---
--- Indexes for table `feeding_program_insights`
---
-ALTER TABLE `feeding_program_insights`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `student_year_unique` (`student_id`,`school_year_id`);
 
 --
 -- Indexes for table `grade_levels`
@@ -45400,7 +45242,9 @@ ALTER TABLE `students`
   ADD KEY `fk_students_school_year` (`school_year_id`),
   ADD KEY `fk_students_grade_level` (`grade_level_id`),
   ADD KEY `fk_students_section` (`section_id`),
-  ADD KEY `fk_students_recorded_by` (`recorded_by`);
+  ADD KEY `fk_students_recorded_by` (`recorded_by`),
+  ADD KEY `idx_students_deleted_at` (`deleted_at`),
+  ADD KEY `fk_students_deleted_by` (`deleted_by`);
 
 --
 -- Indexes for table `subjects`
@@ -45438,19 +45282,7 @@ ALTER TABLE `_migrations`
 -- AUTO_INCREMENT for table `academic_profiles`
 --
 ALTER TABLE `academic_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
-
---
--- AUTO_INCREMENT for table `achievements_profiles`
---
-ALTER TABLE `achievements_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- AUTO_INCREMENT for table `attendance`
---
-ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `at_risk_insights`
@@ -45462,31 +45294,7 @@ ALTER TABLE `at_risk_insights`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
-
---
--- AUTO_INCREMENT for table `behavioral_profiles`
---
-ALTER TABLE `behavioral_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
-
---
--- AUTO_INCREMENT for table `dashboard_ai_summaries`
---
-ALTER TABLE `dashboard_ai_summaries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- AUTO_INCREMENT for table `developmental_profiles`
---
-ALTER TABLE `developmental_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT for table `feeding_program_insights`
---
-ALTER TABLE `feeding_program_insights`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
 
 --
 -- AUTO_INCREMENT for table `grade_levels`
@@ -45498,19 +45306,19 @@ ALTER TABLE `grade_levels`
 -- AUTO_INCREMENT for table `health_profiles`
 --
 ALTER TABLE `health_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
 --
 ALTER TABLE `parents_guardians`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=241;
 
 --
 -- AUTO_INCREMENT for table `password_reset_codes`
@@ -45534,7 +45342,7 @@ ALTER TABLE `school_year`
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `section_teacher_assignments`
@@ -45546,7 +45354,7 @@ ALTER TABLE `section_teacher_assignments`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=365;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=377;
 
 --
 -- AUTO_INCREMENT for table `subjects`
@@ -45564,7 +45372,7 @@ ALTER TABLE `subject_teacher_assignments`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=180;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
 
 --
 -- Constraints for dumped tables
@@ -45577,38 +45385,6 @@ ALTER TABLE `academic_profiles`
   ADD CONSTRAINT `academic_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `academic_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
   ADD CONSTRAINT `academic_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `achievements_profiles`
---
-ALTER TABLE `achievements_profiles`
-  ADD CONSTRAINT `achievements_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `achievements_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
-  ADD CONSTRAINT `achievements_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `attendance`
---
-ALTER TABLE `attendance`
-  ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
-  ADD CONSTRAINT `attendance_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `behavioral_profiles`
---
-ALTER TABLE `behavioral_profiles`
-  ADD CONSTRAINT `behavioral_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `behavioral_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
-  ADD CONSTRAINT `behavioral_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `developmental_profiles`
---
-ALTER TABLE `developmental_profiles`
-  ADD CONSTRAINT `developmental_profiles_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `developmental_profiles_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`),
-  ADD CONSTRAINT `developmental_profiles_ibfk_3` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `health_profiles`
@@ -45670,6 +45446,7 @@ ALTER TABLE `section_teacher_assignments`
 -- Constraints for table `students`
 --
 ALTER TABLE `students`
+  ADD CONSTRAINT `fk_students_deleted_by` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `fk_students_grade_level` FOREIGN KEY (`grade_level_id`) REFERENCES `grade_levels` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_students_recorded_by` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_students_school_year` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`) ON UPDATE CASCADE,

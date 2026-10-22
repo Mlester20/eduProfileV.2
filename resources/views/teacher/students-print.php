@@ -42,6 +42,8 @@ $activeSchoolYear = ($school_years ?? [])[0]['school_year'] ?? '';
   <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" />
   <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/theme-brown.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/teacher-portal.css" />
   <style>
     body { background: #fff; padding: 24px; }
     .sf1-table { width: 100%; border-collapse: collapse; font-size: 10px; }

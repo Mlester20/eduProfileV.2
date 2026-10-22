@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class DuplicatesModel extends Model{
         protected $students = 'students';
@@ -44,7 +45,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     JOIN (
                         SELECT LOWER(first_name) AS fn, LOWER(last_name) AS ln, birth_date, school_year_id, COUNT(*) AS dup_count
                         FROM {$this->students}
-                        WHERE status = 'active'
+                        WHERE status = 'active' AND deleted_at IS NULL
                         GROUP BY LOWER(first_name), LOWER(last_name), birth_date, school_year_id
                         HAVING COUNT(*) > 1
                     ) dk ON LOWER(s.first_name) = dk.fn AND LOWER(s.last_name) = dk.ln
@@ -53,7 +54,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
                     LEFT JOIN {$this->users} ru ON s.recorded_by = ru.id
-                    WHERE s.status = 'active'";
+                    WHERE " . StudentScope::ACTIVE . "";
 
                 $types = "";
                 $params = [];

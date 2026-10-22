@@ -1,0 +1,404 @@
+/* ============================================================
+   EduProfile — Warm Brown theme
+   ============================================================
+   Single, centralized override layer. Loaded AFTER core.css,
+   theme-default.css and demo.css on every page, so every rule
+   here wins the cascade by source order alone (no !important
+   needed except where the original vendor/app rule already used
+   !important, or where a later same-page inline <style> block
+   would otherwise win — both are called out below).
+
+   To revert the whole redesign: remove this file's <link> tag
+   from each page (or delete the file). Nothing else was changed.
+   ============================================================ */
+
+:root {
+  /* ---- Sidebar (already tokenized in demo.css — just repoint) ---- */
+  --sidebar-bg: #4A3B32;
+  --sidebar-text: #F3EDE7;
+  --sidebar-text-muted: #C2AD9C;
+  --sidebar-hover: rgba(255, 255, 255, 0.07);
+  --sidebar-active-bg: rgba(212, 163, 86, 0.14);
+  --sidebar-accent: #D4A656;
+  --sidebar-divider: rgba(255, 255, 255, 0.14);
+
+  /* ---- Surfaces ---- */
+  --page-bg: #F7F2EC;
+  --surface: #FFFFFF;
+  --surface-border: #E4D9CD;
+  --table-header-bg: #F1E8DD;
+  --table-hover-bg: rgba(139, 94, 60, 0.06);
+
+  /* ---- Text ---- */
+  --text-heading: #342A21;
+  --text-body: #4A3C33;
+  --text-muted: #7D6E5F;
+
+  /* ---- Brand / primary ---- */
+  --primary: #8B5E3C;
+  --primary-rgb: 139, 94, 60;
+  --primary-hover: #6F4A2C;
+  --focus-ring: rgba(139, 94, 60, 0.15);
+
+  /* ---- Secondary ---- */
+  --secondary: #9C8D7E;
+  --secondary-rgb: 156, 141, 126;
+  --secondary-btn: #6B5D4F;
+  --secondary-btn-hover: #594D41;
+
+  /* ---- Accent (gold/amber, echoes the logo) ---- */
+  --accent: #C8923F;
+  --accent-rgb: 200, 146, 63;
+  --accent-bg: #FBF0DF;
+  --accent-text: #8A5A18;
+
+  /* ---- Semantic (warm-tuned, still recognizable) ---- */
+  --success: #5B8C3A;
+  --success-rgb: 91, 140, 58;
+  --success-strong: #3E6126;
+  --success-bg: #E7F0DD;
+
+  --danger: #B8452F;
+  --danger-rgb: 184, 69, 47;
+  --danger-strong: #7C2D1B;
+  --danger-bg: #FBE2DC;
+
+  --warning: #D1A14A;
+  --warning-rgb: 209, 161, 74;
+  --warning-strong: #8A5A18;
+  --warning-bg: #FBF0DF;
+
+  --info: #6E8FA3;
+  --info-rgb: 110, 143, 163;
+  --info-strong: #3D5A68;
+  --info-bg: #E6EEF1;
+}
+
+/* ============================================================
+   Bootstrap CSS variables -- covers anything that already reads
+   var(--bs-*) at runtime (stat-card borders in demo.css, table
+   hover/stripe, body bg/color).
+   ============================================================ */
+:root {
+  --bs-primary: var(--primary);
+  --bs-primary-rgb: var(--primary-rgb);
+  --bs-secondary: var(--secondary-btn);
+  --bs-secondary-rgb: var(--secondary-rgb);
+  --bs-success: var(--success);
+  --bs-success-rgb: var(--success-rgb);
+  --bs-info: var(--info);
+  --bs-info-rgb: var(--info-rgb);
+  --bs-warning: var(--warning);
+  --bs-warning-rgb: var(--warning-rgb);
+  --bs-danger: var(--danger);
+  --bs-danger-rgb: var(--danger-rgb);
+  --bs-dark: var(--text-heading);
+  --bs-body-color: var(--text-body);
+  --bs-body-bg: var(--page-bg);
+  --bs-body-bg-rgb: 247, 242, 236;
+}
+
+body {
+  background-color: var(--page-bg);
+  color: var(--text-body);
+}
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+  color: var(--text-heading);
+}
+
+a {
+  color: var(--primary);
+}
+a:hover {
+  color: var(--primary-hover);
+}
+.text-body[href]:hover {
+  color: var(--primary-hover) !important;
+}
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* ============================================================
+   Cards / surfaces
+   ============================================================ */
+.card {
+  background-color: var(--surface);
+  border-color: var(--surface-border);
+}
+
+/* ============================================================
+   Links / utility text & bg classes
+   ============================================================ */
+.text-primary { color: var(--primary) !important; }
+.bg-primary { background-color: var(--primary) !important; }
+.border-primary { border-color: var(--primary) !important; }
+.bg-label-primary { background-color: var(--accent-bg) !important; color: var(--primary) !important; }
+
+.bg-label-secondary { background-color: #F2EDE7 !important; color: var(--secondary-btn) !important; }
+.border-label-secondary { border-color: var(--surface-border) !important; }
+
+.bg-label-success { background-color: var(--success-bg) !important; color: var(--success-strong) !important; }
+.border-label-success { border-color: #C7DCB3 !important; }
+
+.bg-label-info { background-color: var(--info-bg) !important; color: var(--info-strong) !important; }
+.border-label-info { border-color: #C3D6DE !important; }
+
+.bg-label-warning { background-color: var(--warning-bg) !important; color: var(--warning-strong) !important; }
+.border-label-warning { border-color: #ECCF97 !important; }
+
+.bg-label-danger { background-color: var(--danger-bg) !important; color: var(--danger-strong) !important; }
+.border-label-danger { border-color: #EFB6A4 !important; }
+
+.bg-label-dark { background-color: #E7E1DA !important; color: var(--text-heading) !important; }
+
+/* ============================================================
+   Buttons -- theme-default.css bakes these as static hex per
+   state, so every state needs its own override here.
+   ============================================================ */
+.btn-primary {
+  color: #fff;
+  background-color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0.125rem 0.25rem 0 rgba(var(--primary-rgb), 0.4);
+}
+.btn-primary:hover {
+  color: #fff;
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+.btn-check:focus + .btn-primary, .btn-primary:focus, .btn-primary.focus {
+  color: #fff;
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  box-shadow: 0 0 0 0.15rem var(--focus-ring);
+}
+.btn-check:checked + .btn-primary, .btn-check:active + .btn-primary,
+.btn-primary:active, .btn-primary.active, .show > .btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-outline-primary:hover,
+.btn-check:focus + .btn-outline-primary, .btn-outline-primary:focus {
+  color: #fff;
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary,
+.btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
+  color: #fff;
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+.btn-outline-primary .badge { background: var(--primary); border-color: var(--primary); }
+
+.btn-secondary {
+  color: #fff;
+  background-color: var(--secondary-btn);
+  border-color: var(--secondary-btn);
+}
+.btn-secondary:hover,
+.btn-check:focus + .btn-secondary, .btn-secondary:focus, .btn-secondary.focus,
+.btn-check:checked + .btn-secondary, .btn-check:active + .btn-secondary,
+.btn-secondary:active, .btn-secondary.active, .show > .btn-secondary.dropdown-toggle {
+  color: #fff;
+  background-color: var(--secondary-btn-hover);
+  border-color: var(--secondary-btn-hover);
+}
+
+.btn-outline-secondary {
+  color: var(--secondary-btn);
+  border-color: var(--secondary);
+}
+.btn-outline-secondary:hover {
+  color: #fff;
+  background-color: var(--secondary-btn);
+  border-color: var(--secondary-btn);
+}
+
+.btn-success { color: #fff; background-color: var(--success-strong); border-color: var(--success-strong); }
+.btn-success:hover, .btn-success:focus, .btn-success:active { background-color: #325220; border-color: #325220; }
+.btn-outline-success { color: var(--success-strong); border-color: var(--success); }
+.btn-outline-success:hover { color: #fff; background-color: var(--success-strong); border-color: var(--success-strong); }
+
+.btn-danger { color: #fff; background-color: var(--danger-strong); border-color: var(--danger-strong); }
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active { background-color: #632316; border-color: #632316; }
+.btn-outline-danger { color: var(--danger-strong); border-color: var(--danger); }
+.btn-outline-danger:hover { color: #fff; background-color: var(--danger-strong); border-color: var(--danger-strong); }
+
+.btn-warning { color: #fff; background-color: var(--warning-strong); border-color: var(--warning-strong); }
+.btn-warning:hover, .btn-warning:focus, .btn-warning:active { background-color: #6F4712; border-color: #6F4712; }
+.btn-outline-warning { color: var(--warning-strong); border-color: var(--warning); }
+.btn-outline-warning:hover { color: #fff; background-color: var(--warning-strong); border-color: var(--warning-strong); }
+
+.btn-info { color: #fff; background-color: var(--info-strong); border-color: var(--info-strong); }
+.btn-info:hover, .btn-info:focus, .btn-info:active { background-color: #2E4350; border-color: #2E4350; }
+.btn-outline-info { color: var(--info-strong); border-color: var(--info); }
+.btn-outline-info:hover { color: #fff; background-color: var(--info-strong); border-color: var(--info-strong); }
+
+/* ============================================================
+   Forms -- focus ring, checked states
+   ============================================================ */
+.form-control:focus,
+.form-select:focus,
+.input-group:focus-within .form-control,
+.input-group:focus-within .input-group-text,
+.form-check-input:focus,
+.form-control:focus ~ .form-label {
+  border-color: var(--primary);
+}
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 0.15rem var(--focus-ring);
+}
+.form-check-input:checked, .form-check-input[type=checkbox]:indeterminate {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+.form-floating > .form-control:not(:-moz-placeholder-shown) ~ label,
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label,
+.form-floating > .form-control:-webkit-autofill ~ label {
+  color: var(--primary);
+}
+.custom-option.checked { border-color: var(--primary); }
+
+/* ============================================================
+   Dropdowns, pagination, nav-pills, alerts, list-group, progress
+   ============================================================ */
+.dropdown-item:not(.disabled).active,
+.dropdown-item:not(.disabled):active,
+.dropdown-menu > li:not(.disabled) > a:not(.dropdown-item):active,
+.dropdown-menu > li.active:not(.disabled) > a:not(.dropdown-item) {
+  background-color: rgba(var(--primary-rgb), 0.08);
+  color: var(--primary) !important;
+}
+
+.pagination li.active > a:not(.page-link),
+.pagination li.active > a:not(.page-link):hover,
+.pagination li.active > a:not(.page-link):focus,
+.page-item.active .page-link {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+.page-link {
+  color: var(--primary);
+}
+
+.nav .nav-link:hover, .nav .nav-link:focus { color: var(--primary-hover); }
+.nav-pills .nav-link.active, .nav-pills .nav-link.active:hover, .nav-pills .nav-link.active:focus {
+  background-color: var(--primary);
+}
+.nav-tabs .nav-link.active {
+  color: var(--primary);
+  border-color: var(--surface-border) var(--surface-border) var(--surface);
+}
+
+.progress-bar { background-color: var(--primary); }
+
+.alert-primary {
+  background-color: var(--accent-bg);
+  border-color: #EAD2A6;
+  color: var(--primary);
+}
+.alert-primary .alert-link { color: var(--primary); }
+.card .alert-primary hr { background-color: var(--primary) !important; }
+
+.list-group-item-primary,
+a.list-group-item-primary,
+button.list-group-item-primary {
+  background-color: var(--accent-bg);
+  color: var(--primary) !important;
+}
+a.list-group-item-primary:hover, a.list-group-item-primary:focus,
+button.list-group-item-primary:hover, button.list-group-item-primary:focus {
+  background-color: #F5E4C6;
+  color: var(--primary);
+}
+a.list-group-item-primary.active, button.list-group-item-primary.active,
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.divider.divider-primary .divider-text:before, .divider.divider-primary .divider-text:after {
+  border-color: var(--primary);
+}
+
+.svg-illustration svg, .fill-primary { fill: var(--primary); }
+
+/* ============================================================
+   Navbar / sidebar-adjacent bg-primary usage (not the sidebar
+   itself -- that's its own .sidebar-navy + --sidebar-* system
+   in demo.css, untouched here).
+   ============================================================ */
+.navbar.bg-primary,
+.navbar.bg-primary .search-input-wrapper .search-input,
+.navbar.bg-primary .search-input-wrapper .search-toggler,
+.footer.bg-primary,
+.bg-primary.toast .toast-header .btn-close, .bg-primary.bs-toast .toast-header .btn-close {
+  background-color: var(--primary) !important;
+}
+
+/* ============================================================
+   Tables -- hover/stripe vars are scoped inside .table itself,
+   so a bare :root redefinition wouldn't reach them.
+   ============================================================ */
+.table {
+  --bs-table-hover-bg: var(--table-hover-bg);
+  --bs-table-striped-bg: #FAF5EF;
+  --bs-table-striped-color: var(--text-body);
+}
+.table thead {
+  background-color: var(--table-header-bg);
+}
+.table > :not(:first-child) {
+  border-top-color: var(--surface-border);
+}
+
+/* ============================================================
+   Stat cards (demo.css) already read var(--bs-primary) etc. via
+   rgba(), so they pick up the palette automatically. Only the
+   stray hardcoded gray hover needs a warm equivalent.
+   ============================================================ */
+
+/* ============================================================
+   BMI badges -- duplicated inline <style> blocks in
+   health-profile.php and students.php load AFTER this file in
+   the document, so they'd otherwise win on source order alone;
+   !important forces the warm-tuned equivalents to take over
+   without touching those two files.
+   ============================================================ */
+.bmi-badge-severely-wasted { background-color: var(--danger-bg) !important; color: var(--danger-strong) !important; }
+.bmi-badge-wasted           { background-color: var(--warning-bg) !important; color: var(--warning-strong) !important; }
+.bmi-badge-normal           { background-color: var(--success-bg) !important; color: var(--success-strong) !important; }
+.bmi-badge-overweight       { background-color: var(--warning-bg) !important; color: var(--warning-strong) !important; }
+.bmi-badge-obese            { background-color: var(--danger-bg) !important; color: var(--danger-strong) !important; }
+
+/* ============================================================
+   Login / Forgot Password / Reset Password / Verify Code
+   (page-auth.css's left brand panel gradient + input focus)
+   ============================================================ */
+.auth-left-panel {
+  background: linear-gradient(150deg, #A97A4E 0%, #8B5E3C 45%, #4A3B32 100%) !important;
+}
+.input-icon-right:hover,
+.auth-forgot-link {
+  color: var(--primary);
+}
+.auth-input.form-control:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--focus-ring) !important;
+}
+.auth-btn {
+  background: linear-gradient(135deg, #A97A4E 0%, #8B5E3C 100%) !important;
+}

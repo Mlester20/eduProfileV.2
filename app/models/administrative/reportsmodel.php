@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class ReportsModel extends Model{
         protected $students = 'students';
@@ -76,7 +77,7 @@ require_once __DIR__ . '/../../core/Model.php';
                         COUNT(DISTINCT CASE WHEN s.gender = 'Female' THEN s.id END) AS female_count
                     FROM {$this->sections} sec
                     LEFT JOIN {$this->grade_levels} gl ON sec.grade_level_id = gl.id
-                    LEFT JOIN {$this->students} s ON s.section_id = sec.id AND s.school_year_id = ? AND s.status = 'active'
+                    LEFT JOIN {$this->students} s ON s.section_id = sec.id AND s.school_year_id = ? AND " . StudentScope::ACTIVE . "
                     LEFT JOIN {$this->section_teacher_assignments} sta ON sta.section_id = sec.id AND sta.school_year_id = ?
                     LEFT JOIN {$this->users} tu ON sta.teacher_id = tu.id
                     LEFT JOIN {$this->users} adv ON sec.adviser_id = adv.id

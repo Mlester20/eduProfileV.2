@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class AcademicProfileModel extends Model{
         protected $academic_profiles = 'academic_profiles';
@@ -23,7 +24,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->sy} sy ON ap.school_year_id = sy.id
                     LEFT JOIN {$this->users} u ON ap.recorded_by = u.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($student_id !== null){
                     $query .= " AND ap.student_id = ?";
@@ -58,7 +59,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->sy} sy ON ap.school_year_id = sy.id
                     LEFT JOIN {$this->users} u ON ap.recorded_by = u.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($student_id !== null){
                     $query .= " AND ap.student_id = ?";
@@ -85,7 +86,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->academic_profiles} ap
                     LEFT JOIN {$this->student} s ON ap.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($student_id !== null){
                     $query .= " AND ap.student_id = ?";
@@ -111,7 +112,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->academic_profiles} ap
                     LEFT JOIN {$this->student} s ON ap.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE ap.id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                    WHERE ap.id = ? AND sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $id, $teacher_id);
@@ -161,7 +162,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->sy} sy ON ap.school_year_id = sy.id
                     LEFT JOIN {$this->users} u ON ap.recorded_by = u.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($student_id !== null){
                     $query .= " AND ap.student_id = ?";

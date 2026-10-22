@@ -56,6 +56,7 @@ $categoryFieldLabels = [
   <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" />
   <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/theme-brown.css" />
   <style>
     body { background: #fff; padding: 24px; }
     .cr-table { width: 100%; border-collapse: collapse; font-size: 11px; }

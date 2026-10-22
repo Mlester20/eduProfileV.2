@@ -1,10 +1,25 @@
 <?php
 // Get current page name
 $currentPage = basename($_SERVER['PHP_SELF']);
+
+// Trash count badge -- queried directly here (rather than passed in by
+// every single page's own controller) so it can never be forgotten when
+// a new teacher page is added later.
+$trashCount = 0;
+if(isset($con) && $con instanceof mysqli && isset($_SESSION['id'])){
+    $trashStmt = $con->prepare(
+        "SELECT COUNT(*) AS total FROM students s
+         LEFT JOIN sections sec ON s.section_id = sec.id
+         WHERE sec.adviser_id = ? AND s.deleted_at IS NOT NULL"
+    );
+    $trashStmt->bind_param("i", $_SESSION['id']);
+    $trashStmt->execute();
+    $trashCount = (int) ($trashStmt->get_result()->fetch_assoc()['total'] ?? 0);
+}
 ?>
 
 <!-- Layout wrapper -->
-<div class="layout-wrapper layout-content-navbar">
+<div class="layout-wrapper layout-content-navbar teacher-portal">
   <div class="layout-container">
 
     <!-- Menu -->
@@ -45,14 +60,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
-        <!-- Academic Records -->
-        <li class="menu-item <?php echo ($currentPage === 'academic-records.php') ? 'active' : ''; ?>">
-          <a href="academic-records.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-book-content"></i>
-            <div data-i18n="Academic Records">Academic Records</div>
-          </a>
-        </li>
-
         <!-- Reports (dropdown: Overview, At-Risk Learners, Feeding Program, Class List) -->
         <?php $reportsPages = ['at-risk.php', 'feeding-program.php']; ?>
         <li class="menu-item <?php echo in_array($currentPage, $reportsPages, true) ? 'active' : ''; ?>">
@@ -80,6 +87,29 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </ul>
         </li>
 
+        <!-- Academic Records -->
+        <li class="menu-item <?php echo ($currentPage === 'academic-records.php') ? 'active' : ''; ?>">
+          <a href="academic-records.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-book-content"></i>
+            <div data-i18n="Academic Records">Academic Records</div>
+          </a>
+        </li>
+
+        <li class="menu-header small text-uppercase">
+          <span class="menu-header-text">Trash</span>
+        </li>
+
+        <!-- Trash -->
+        <li class="menu-item <?php echo ($currentPage === 'trash.php') ? 'active' : ''; ?>">
+          <a href="trash.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-trash"></i>
+            <div data-i18n="Trash">Trash</div>
+            <?php if($trashCount > 0): ?>
+              <div class="badge bg-label-danger rounded-pill ms-auto"><?php echo $trashCount; ?></div>
+            <?php endif; ?>
+          </a>
+        </li>
+
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">History</span>
         </li>
@@ -93,7 +123,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="menu-header small text-uppercase">
-          <span class="menu-header-text">History</span>
+          <span class="menu-header-text">Audit</span>
         </li>
 
         <!-- Audit Logs -->

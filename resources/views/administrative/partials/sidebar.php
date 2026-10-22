@@ -1,5 +1,14 @@
 <?php
 $currentPage = basename($_SERVER['PHP_SELF']);
+
+// School-wide Trash count badge -- queried directly here so every
+// administrative page shows it without each controller having to
+// remember to pass it in.
+$trashCount = 0;
+if(isset($con) && $con instanceof mysqli){
+    $trashResult = $con->query("SELECT COUNT(*) AS total FROM students WHERE deleted_at IS NOT NULL");
+    $trashCount = (int) ($trashResult ? ($trashResult->fetch_assoc()['total'] ?? 0) : 0);
+}
 ?>
 
 <!-- Layout wrapper -->
@@ -99,6 +108,17 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           <a href="duplicates.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-copy-alt"></i>
             <div data-i18n="Possible Duplicates">Possible Duplicates</div>
+          </a>
+        </li>
+
+        <!-- Trash -->
+        <li class="menu-item <?php echo ($currentPage === 'trash.php') ? 'active' : ''; ?>">
+          <a href="trash.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-trash"></i>
+            <div data-i18n="Trash">Trash</div>
+            <?php if($trashCount > 0): ?>
+              <div class="badge bg-label-danger rounded-pill ms-auto"><?php echo $trashCount; ?></div>
+            <?php endif; ?>
           </a>
         </li>
 

@@ -1,5 +1,6 @@
 <?php   
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class ParentGuardianModel extends Model{
         protected $parent_guardian = 'parents_guardians';
@@ -18,7 +19,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->parent_guardian} pg
                     LEFT JOIN {$this->students} s ON pg.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("i", $teacher_id);
@@ -42,7 +43,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->parent_guardian} pg
                     LEFT JOIN {$this->students} s ON pg.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE pg.student_id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                    WHERE pg.student_id = ? AND sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                     LIMIT 1
                 ";
                 $stmt = $this->con->prepare($query);
@@ -99,7 +100,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->students} s ON pg.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->users} u ON pg.recorded_by = u.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($studentId !== null){
                     $query .= " AND pg.student_id = ?";
@@ -126,7 +127,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->parent_guardian} pg
                     LEFT JOIN {$this->students} s ON pg.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($studentId !== null){
                     $query .= " AND pg.student_id = ?";

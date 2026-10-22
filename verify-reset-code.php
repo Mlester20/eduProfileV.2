@@ -44,6 +44,7 @@ $school = SchoolSettings::get($con);
     <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/core.css') ?>" class="template-customizer-core-css" />
     <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/theme-default.css') ?>" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="<?= base_url('public/assets/css/demo.css') ?>" />
+    <link rel="stylesheet" href="<?= base_url('public/assets/css/theme-brown.css') ?>" />
     <link rel="stylesheet" href="<?= base_url('public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') ?>" />
     <link rel="stylesheet" href="<?= base_url('public/assets/vendor/css/pages/page-auth.css') ?>?v=<?php echo filemtime(__DIR__ . '/public/assets/vendor/css/pages/page-auth.css'); ?>" />
     <script src="<?= base_url('public/assets/vendor/js/helpers.js') ?>"></script>

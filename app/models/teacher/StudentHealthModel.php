@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/Model.php';
+require_once __DIR__ . '/../../helpers/StudentScope.php';
 
     class StudentHealthModel extends Model{
         protected $health_profiles = 'health_profiles';
@@ -20,7 +21,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->health_profiles} hp
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE hp.student_id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                    WHERE hp.student_id = ? AND sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                     LIMIT 1
                 ";
                 $stmt = $this->con->prepare($query);
@@ -47,7 +48,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON hp.school_year_id = sy.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($student_id !== null){
                     $query .= " AND hp.student_id = ?";
@@ -80,7 +81,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON hp.school_year_id = sy.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($student_id !== null){
                     $query .= " AND hp.student_id = ?";
@@ -107,7 +108,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->health_profiles} hp
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 if($student_id !== null){
                     $query .= " AND hp.student_id = ?";
@@ -140,7 +141,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
                     LEFT JOIN {$this->school_year} sy ON hp.school_year_id = sy.id
-                    WHERE hp.id = ? AND sec.adviser_id = ? AND s.status = 'active'
+                    WHERE hp.id = ? AND sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $id, $teacher_id);
@@ -228,7 +229,7 @@ require_once __DIR__ . '/../../core/Model.php';
 
         public function belongsToTeacher($student_id, $teacher_id){
             try{
-                $query = "SELECT s.id FROM {$this->student} s LEFT JOIN {$this->sections} sec ON s.section_id = sec.id WHERE s.id = ? AND sec.adviser_id = ? AND s.status = 'active'";
+                $query = "SELECT s.id FROM {$this->student} s LEFT JOIN {$this->sections} sec ON s.section_id = sec.id WHERE s.id = ? AND sec.adviser_id = ? AND " . StudentScope::ACTIVE . "";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("ii", $student_id, $teacher_id);
                 $stmt->execute();
@@ -267,7 +268,7 @@ require_once __DIR__ . '/../../core/Model.php';
                     FROM {$this->health_profiles} hp
                     LEFT JOIN {$this->student} s ON hp.student_id = s.id
                     LEFT JOIN {$this->sections} sec ON s.section_id = sec.id
-                    WHERE sec.adviser_id = ? AND s.status = 'active'
+                    WHERE sec.adviser_id = ? AND " . StudentScope::ACTIVE . "
                 ";
                 $stmt = $this->con->prepare($query);
                 $stmt->bind_param("i", $teacher_id);

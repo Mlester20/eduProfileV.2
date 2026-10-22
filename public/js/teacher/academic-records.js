@@ -33,7 +33,7 @@ function notifySuccess(message){
 }
 
 function notifyError(message){
-    Swal.fire({ icon: 'error', title: 'Error', text: message || 'Something went wrong.', confirmButtonColor: '#696cff' })
+    Swal.fire({ icon: 'error', title: 'Error', text: message || 'Something went wrong.', confirmButtonColor: 'var(--primary)' })
 }
 
 /**
@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', function(){
     let currentGradeLevelId = null
     let currentRecordsPage = 1
 
+    const academicRecordsModalGuard = watchUnsavedChanges(document.getElementById('academicRecordsModal'), ['#academicRecordForm'])
+
     function resetAcademicRecordForm(){
         document.getElementById('academicRecordForm').reset()
         document.getElementById('ap_edit_id').value = ''
@@ -125,8 +127,8 @@ document.addEventListener('DOMContentLoaded', function(){
                 '<td>' + remarksBadge + '</td>' +
                 '<td>' + escapeHtml(row.recorded_by_name || '') + '</td>' +
                 '<td>' +
-                    '<button type="button" class="btn btn-sm btn-warning ap-edit-btn"><i class="bx bx-edit"></i></button> ' +
-                    '<button type="button" class="btn btn-sm btn-danger ap-delete-btn"><i class="bx bx-trash"></i></button>' +
+                    '<button type="button" class="btn btn-sm btn-warning ap-edit-btn" title="Edit" data-bs-toggle="tooltip"><i class="bx bx-edit"></i></button> ' +
+                    '<button type="button" class="btn btn-sm btn-danger ap-delete-btn" title="Delete" data-bs-toggle="tooltip"><i class="bx bx-trash"></i></button>' +
                 '</td>'
             tr.querySelector('.ap-edit-btn').addEventListener('click', function(){
                 editAcademicRecord(row.id, row.subject_name, row.grading_period, row.grade)
@@ -136,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function(){
             })
             tbody.appendChild(tr)
         })
+        initTeacherTooltips(tbody)
     }
 
     // Keeps the first, last, and a small window around the current page,
@@ -237,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function(){
     function deleteAcademicRecord(id){
         Swal.fire({
             icon: 'warning', title: 'Delete this record?', text: 'This action cannot be undone.',
-            showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'Delete'
+            showCancelButton: true, confirmButtonColor: 'var(--danger-strong)', cancelButtonColor: 'var(--primary)', confirmButtonText: 'Delete'
         }).then(function(result){
             if(!result.isConfirmed) return
             fetch('../../../app/controllers/teacher/AcademicProfileController.php', {
@@ -272,6 +275,9 @@ document.addEventListener('DOMContentLoaded', function(){
         if(editId){
             payload.id = editId
         }
+        const apBtn = document.getElementById('ap_submit_btn')
+        setButtonLoading(apBtn, true, editId ? 'Updating...' : 'Adding...')
+        academicRecordsModalGuard.setSubmitting(true)
         fetch('../../../app/controllers/teacher/AcademicProfileController.php', {
             method: editId ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -279,7 +285,10 @@ document.addEventListener('DOMContentLoaded', function(){
         })
             .then(function(r){ return r.json() })
             .then(function(res){
+                setButtonLoading(apBtn, false)
+                academicRecordsModalGuard.setSubmitting(false)
                 if(res.success){
+                    academicRecordsModalGuard.markClean()
                     notifySuccess(res.message || 'Saved.')
                     resetAcademicRecordForm()
                     loadAcademicRecords(editId ? currentRecordsPage : 1)
@@ -287,6 +296,10 @@ document.addEventListener('DOMContentLoaded', function(){
                     notifyError(res.message)
                 }
             })
-            .catch(function(err){ notifyError(err.message) })
+            .catch(function(err){
+                setButtonLoading(apBtn, false)
+                academicRecordsModalGuard.setSubmitting(false)
+                notifyError(err.message)
+            })
     })
 })()

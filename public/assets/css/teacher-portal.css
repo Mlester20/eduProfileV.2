@@ -1,0 +1,267 @@
+/* ============================================================
+   EduProfile — Teacher portal hover & modal polish
+   ============================================================
+   Scoped entirely under .teacher-portal (added to the
+   .layout-wrapper div in resources/views/teacher/partials/
+   sidebar.php) so none of this reaches Admin or Administrative,
+   even though the underlying markup/classes are shared with
+   them. Uses only the existing --primary/--accent/--danger/etc.
+   tokens from theme-brown.css -- no new colors.
+
+   To revert: remove this file's <link> tag from the teacher
+   pages (or delete the file) and drop the .teacher-portal class
+   from sidebar.php. Nothing else depends on it.
+   ============================================================ */
+
+/* ---- Motion: smooth everywhere, but honor reduced-motion ---- */
+.teacher-portal .menu-link,
+.teacher-portal .menu-inner > .menu-item::before,
+.teacher-portal tr[role="button"],
+.teacher-portal .btn,
+.teacher-portal .card.stat-card,
+.teacher-portal a.card-body,
+.teacher-portal .modal-dialog {
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease,
+              box-shadow .18s ease, transform .18s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teacher-portal .menu-link,
+  .teacher-portal .menu-inner > .menu-item::before,
+  .teacher-portal tr[role="button"],
+  .teacher-portal .btn,
+  .teacher-portal .card.stat-card,
+  .teacher-portal a.card-body,
+  .teacher-portal .modal-dialog {
+    transition: background-color .01ms ease, color .01ms ease, border-color .01ms ease !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   Sidebar — smooth hover + an amber indicator that fades in on
+   hover (not just on .active), so hover reads as a clear preview
+   of "this is clickable" without being mistaken for the active
+   item, which keeps its own persistent bar + bold label.
+   ============================================================ */
+.teacher-portal .sidebar-navy .menu-inner > .menu-item {
+  position: relative;
+}
+.teacher-portal .sidebar-navy .menu-inner > .menu-item:not(.active)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.1875rem;
+  bottom: 0.1875rem;
+  width: 3px;
+  background-color: var(--sidebar-accent);
+  border-radius: 0 3px 3px 0;
+  opacity: 0;
+  transition: opacity .18s ease;
+  pointer-events: none;
+}
+.teacher-portal .sidebar-navy .menu-inner > .menu-item:not(.active):hover::before {
+  opacity: .55;
+}
+.teacher-portal .sidebar-navy .menu-link:focus-visible {
+  outline: 2px solid var(--sidebar-accent);
+  outline-offset: -2px;
+}
+
+/* ============================================================
+   Clickable table rows -- Manage Students list, Academic Records
+   student picker, Past Records student picker all use
+   role="button" already; give them the warm highlight the color
+   pass never added. Non-clickable tables are untouched (no
+   role="button" on their rows).
+   ============================================================ */
+.teacher-portal tr[role="button"]:hover {
+  background-color: var(--table-hover-bg);
+}
+.teacher-portal tr[role="button"]:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+/* ============================================================
+   Buttons -- lift + deeper shadow + explicit pressed state +
+   focus-visible ring on every variant (theme-brown.css only
+   gave primary a focus ring). No layout shift: lift uses
+   transform, never border/padding.
+   ============================================================ */
+.teacher-portal .btn:not(:disabled):not(.disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 .25rem .5rem rgba(74, 60, 51, .15);
+}
+.teacher-portal .btn:not(:disabled):not(.disabled):active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+.teacher-portal .btn:disabled,
+.teacher-portal .btn.disabled {
+  transform: none;
+  box-shadow: none;
+}
+.teacher-portal .btn:focus-visible {
+  box-shadow: 0 0 0 .2rem var(--focus-ring);
+  outline: none;
+}
+.teacher-portal .btn-danger:focus-visible,
+.teacher-portal .btn-outline-danger:focus-visible {
+  box-shadow: 0 0 0 .2rem rgba(var(--danger-rgb), .25);
+}
+.teacher-portal .btn-secondary:focus-visible,
+.teacher-portal .btn-outline-secondary:focus-visible {
+  box-shadow: 0 0 0 .2rem rgba(var(--secondary-rgb), .3);
+}
+
+/* Icon-only action buttons in tables (Print/Edit/Delete/View) --
+   consistent footprint so a row of them lines up cleanly. */
+.teacher-portal .table .btn-sm {
+  min-width: 2.125rem;
+}
+
+/* ============================================================
+   Clickable cards (dashboard stat cards) -- lift + shadow on
+   top of the existing subtle bg-tint from demo.css. Hovering the
+   anchor inside counts as hovering the card (standard CSS
+   ancestor :hover), so lifting .stat-card itself keeps the
+   border/shadow moving as one piece instead of just the text.
+   ============================================================ */
+.teacher-portal .card.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1rem rgba(74, 60, 51, .12);
+}
+
+/* ============================================================
+   Links / icon buttons -- color shift already comes from
+   theme-brown.css; add an underline-on-hover for plain text
+   links so the affordance isn't color alone.
+   ============================================================ */
+.teacher-portal .card-body a:not(.btn):not(.dropdown-item):not(.card-body) {
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color .18s ease, color .18s ease;
+}
+.teacher-portal .card-body a:not(.btn):not(.dropdown-item):not(.card-body):hover {
+  text-decoration-color: currentColor;
+}
+
+/* Bootstrap tooltips (native component, already bundled --
+   just re-tint to match the palette instead of Bootstrap's
+   default near-black). */
+.teacher-portal ~ .tooltip .tooltip-inner,
+.tooltip .tooltip-inner {
+  background-color: var(--text-heading);
+}
+.tooltip.bs-tooltip-top .tooltip-arrow::before { border-top-color: var(--text-heading); }
+.tooltip.bs-tooltip-bottom .tooltip-arrow::before { border-bottom-color: var(--text-heading); }
+.tooltip.bs-tooltip-start .tooltip-arrow::before { border-left-color: var(--text-heading); }
+.tooltip.bs-tooltip-end .tooltip-arrow::before { border-right-color: var(--text-heading); }
+
+/* ============================================================
+   Modals -- one consistent look across studentModal,
+   importStudentsModal, academicRecordsModal.
+   ============================================================ */
+.teacher-portal .modal-backdrop.show {
+  background-color: var(--text-heading);
+  opacity: .55;
+}
+@supports (backdrop-filter: blur(2px)) {
+  .teacher-portal .modal-backdrop.show {
+    backdrop-filter: blur(2px);
+  }
+}
+
+.teacher-portal .modal-content {
+  border: 1px solid var(--surface-border);
+  border-radius: .5rem;
+  box-shadow: 0 1rem 2.5rem rgba(74, 60, 51, .2);
+  overflow: hidden;
+}
+.teacher-portal .modal-header {
+  background-color: var(--table-header-bg);
+  border-bottom: 1px solid var(--surface-border);
+}
+.teacher-portal .modal-title {
+  color: var(--text-heading);
+  font-weight: 600;
+}
+.teacher-portal .modal-footer {
+  border-top: 1px solid var(--surface-border);
+  justify-content: flex-end;
+  gap: .5rem;
+}
+/* Cancel/secondary action first (left), primary action last (right) --
+   matches existing markup order (Close, then Save) already. */
+.teacher-portal .modal-footer .btn-primary,
+.teacher-portal .modal-footer button[type="submit"] {
+  order: 2;
+}
+.teacher-portal .modal-footer .btn-secondary {
+  order: 1;
+}
+
+/* Fade + slight scale/slide-up, a touch more deliberate than
+   Bootstrap's stock 0.3 scale-only transition. */
+.teacher-portal .modal.fade .modal-dialog {
+  transform: translateY(12px) scale(.98);
+  transition: transform .2s ease-out, opacity .2s ease-out;
+  opacity: 0;
+}
+.teacher-portal .modal.show .modal-dialog {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Large modals scroll inside the body, header/footer stay put --
+   studentModal/academicRecordsModal already use
+   .modal-dialog-scrollable; this just keeps the body from
+   collapsing to 0 height on short viewports. */
+.teacher-portal .modal-dialog-scrollable .modal-body {
+  min-height: 200px;
+}
+
+/* Loading state on a submit button mid-request (spinner markup
+   is injected by modal-helpers.js, this just styles it). */
+.teacher-portal .btn .btn-spinner {
+  width: .85rem;
+  height: .85rem;
+  border-width: .15rem;
+}
+
+/* Inline validation feedback already uses Bootstrap's
+   .is-invalid/.invalid-feedback -- just retint from Bootstrap's
+   default red to the palette's danger token. */
+.teacher-portal .is-invalid,
+.teacher-portal .form-control.is-invalid,
+.teacher-portal .form-select.is-invalid {
+  border-color: var(--danger);
+}
+.teacher-portal .invalid-feedback {
+  color: var(--danger-strong);
+}
+
+/* ============================================================
+   Mobile -- near full-width modals with comfortable padding,
+   footer buttons stack instead of overflowing.
+   ============================================================ */
+@media (max-width: 575.98px) {
+  .teacher-portal .modal-dialog {
+    margin: .75rem;
+  }
+  .teacher-portal .modal-body {
+    padding: 1rem;
+  }
+  .teacher-portal .modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .teacher-portal .modal-footer .btn {
+    width: 100%;
+    margin: 0 !important;
+  }
+  .teacher-portal .modal-footer .btn + .btn {
+    margin-bottom: .5rem !important;
+  }
+}

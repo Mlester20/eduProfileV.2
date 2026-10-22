@@ -42,6 +42,8 @@ $religionOptions = [
   <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
   <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/theme-brown.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/teacher-portal.css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
   <script src="../../../public/assets/vendor/js/helpers.js"></script>
   <script src="../../../public/assets/js/config.js"></script>
@@ -129,7 +131,7 @@ $religionOptions = [
                         <div class="ms-3 flex-grow-1">
                             <h6 class="mb-3">Upload the filled-in template or an SF1 export</h6>
 
-                            <form action="../../../app/controllers/teacher/StudentImportController.php" method="post" enctype="multipart/form-data">
+                            <form id="importStudentsForm" action="../../../app/controllers/teacher/StudentImportController.php" method="post" enctype="multipart/form-data">
                                 <?= Csrf::field() ?>
                                 <div class="border rounded p-3 bg-light">
                                     <div class="row g-3">
@@ -182,7 +184,7 @@ $religionOptions = [
                                 </div>
                                 <div class="modal-footer px-0 pb-0">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary" name="import_students">
+                                    <button type="submit" class="btn btn-primary" name="import_students" id="importStudentsSubmitBtn">
                                         <i class="bx bx-upload"></i> Upload & Import
                                     </button>
                                 </div>
@@ -195,7 +197,7 @@ $religionOptions = [
     </div>
 
     <!-- student modal: single Add/Edit modal, everything else lives in tabs -->
-    <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -626,7 +628,7 @@ $religionOptions = [
                                 </div>
 
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-primary">Save Parent/Guardian Info</button>
+                                    <button type="submit" class="btn btn-primary" id="pgSaveBtn">Save Parent/Guardian Info</button>
                                 </div>
                             </form>
                         </div>
@@ -709,7 +711,7 @@ $religionOptions = [
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-primary">Save Health Profile</button>
+                                    <button type="submit" class="btn btn-primary" id="hpSaveBtn">Save Health Profile</button>
                                 </div>
                             </form>
                         </div>
@@ -835,6 +837,7 @@ $religionOptions = [
                         target="_blank"
                         class="btn btn-sm btn-outline-primary"
                         title="Print"
+                        data-bs-toggle="tooltip"
                         onclick="event.stopPropagation();"
                       >
                         <i class="bx bx-printer"></i>
@@ -844,20 +847,22 @@ $religionOptions = [
                         class="btn btn-sm btn-warning"
                         type="button"
                         title="Edit"
+                        data-bs-toggle="tooltip"
                         onclick="event.stopPropagation(); openStudentModal(<?= (int) $student['id'] ?>)"
                       >
                         <i class="bx bx-edit"></i>
                       </button>
 
-                      <form action="../../../app/controllers/teacher/StudentsController.php" method="post" class="d-inline">
+                      <form action="../../../app/controllers/teacher/StudentsController.php" method="post" class="d-inline delete-student-form" data-student-name="<?= htmlspecialchars(addslashes($student['full_name'])) ?>">
                           <?= Csrf::field() ?>
                         <input type="hidden" name="id" value="<?= htmlspecialchars($student['id']) ?>">
+                        <input type="hidden" name="delete_student" value="1">
                         <button
                           type="submit"
                           class="btn btn-sm btn-danger"
-                          name="delete_student"
                           title="Delete"
-                          onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this student? this action cannot be undone.');"
+                          data-bs-toggle="tooltip"
+                          onclick="event.stopPropagation();"
                         >
                           <i class="bx bx-trash"></i>
                         </button>
@@ -907,6 +912,7 @@ $religionOptions = [
     <script src="../../../public/assets/vendor/js/menu.js"></script>
     <script src="../../../public/assets/js/main.js"></script>
     <script src="../../../public/js/teacher/home.js"></script>
+    <script src="../../../public/js/teacher/modal-helpers.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/teacher/modal-helpers.js'); ?>"></script>
     <script src="../../../public/js/teacher/students.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/teacher/students.js'); ?>"></script>
 </body>
 </html>

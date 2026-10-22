@@ -30,6 +30,8 @@ AuthRole::allowOnly(['teacher']);
   <link rel="stylesheet" href="../../../public/assets/vendor/css/core.css" class="template-customizer-core-css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
   <link rel="stylesheet" href="../../../public/assets/css/demo.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/theme-brown.css" />
+  <link rel="stylesheet" href="../../../public/assets/css/teacher-portal.css" />
   <link rel="stylesheet" href="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
   <script src="../../../public/assets/vendor/js/helpers.js"></script>
   <script src="../../../public/assets/js/config.js"></script>
@@ -229,6 +231,7 @@ AuthRole::allowOnly(['teacher']);
     <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="../../../public/assets/vendor/js/menu.js"></script>
     <script src="../../../public/assets/js/main.js"></script>
+    <script src="../../../public/js/teacher/modal-helpers.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/teacher/modal-helpers.js'); ?>"></script>
     <script src="../../../public/js/teacher/academic-records.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/teacher/academic-records.js'); ?>"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../core/Model.php';
+require_once __DIR__ . '/../helpers/StudentScope.php';
 require_once __DIR__ . '/../models/teacher/StudentsModel.php';
 
 class StudentService extends Model {
@@ -26,7 +27,7 @@ class StudentService extends Model {
                 FROM {$this->students} s
                 LEFT JOIN {$this->sections} ss ON s.section_id = ss.id
                 LEFT JOIN {$this->grade_levels} gl ON ss.grade_level_id = gl.id
-                WHERE ss.adviser_id = ? AND s.status = 'active'";
+                WHERE ss.adviser_id = ? AND " . StudentScope::ACTIVE . "";
             if($schoolYearId !== null){
                 $query .= " AND s.school_year_id = ?";
             }
