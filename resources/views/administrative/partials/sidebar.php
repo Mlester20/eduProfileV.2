@@ -114,6 +114,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
+        <!-- Subjects -->
+        <li class="menu-item <?php echo ($currentPage === 'subjects.php') ? 'active' : ''; ?>">
+          <a href="subjects.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-book"></i>
+            <div data-i18n="Subjects">Subjects</div>
+          </a>
+        </li>
+
         <li class="menu-header small text-uppercase">
           <span class="menu-header-text">Staff</span>
         </li>

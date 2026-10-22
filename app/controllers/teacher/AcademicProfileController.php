@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../models/teacher/AcademicProfileModel.php';
 require_once __DIR__ . '/../../models/teacher/StudentsModel.php';
 require_once __DIR__ . '/../../helpers/csrf.php';
 require_once __DIR__ . '/../../helpers/auditLogs.php';
+require_once __DIR__ . '/../../helpers/Paginator.php';
 require_once __DIR__ . '/../../core/Controller.php';
 require_once __DIR__ . '/../../../database/config/config.php';
 
@@ -21,11 +22,22 @@ require_once __DIR__ . '/../../../database/config/config.php';
             $this->auditLogs = new AuditLogs($con);
         }
 
-        public function index($student_id = null){
+        /**
+         * Academic Records moved out of the Add/Edit Student modal into
+         * its own page (one student can rack up a lot of records across
+         * subjects/quarters/years), so this is paginated server-side
+         * instead of handing back every row for the student at once.
+         */
+        public function index($student_id = null, $page = 1){
+            $perPage = 10;
             if(!isset($_SESSION['id'])){
-                return [];
+                return array_merge(['data' => []], Paginator::meta(0, $page, $perPage));
             }
-            return $this->model->index((int) $_SESSION['id'], $student_id);
+            $teacherId = (int) $_SESSION['id'];
+            $offset = Paginator::offset($page, $perPage);
+            $rows = $this->model->getPage($teacherId, $perPage, $offset, $student_id);
+            $total = $this->model->countAll($teacherId, $student_id);
+            return array_merge(['data' => $rows], Paginator::meta($total, $page, $perPage));
         }
 
         /**
@@ -128,7 +140,8 @@ require_once __DIR__ . '/../../../database/config/config.php';
         switch($method){
             case 'GET':
                 $studentId = isset($_GET['student_id']) ? (int) $_GET['student_id'] : null;
-                echo json_encode(['success' => true, 'data' => $controller->index($studentId)]);
+                $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+                echo json_encode(array_merge(['success' => true], $controller->index($studentId, $page)));
                 break;
 
             case 'POST':

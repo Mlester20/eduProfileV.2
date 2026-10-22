@@ -38,6 +38,20 @@ $school = SchoolSettings::get($con);
   <script src="../../../public/assets/vendor/js/helpers.js"></script>
   <script src="../../../public/assets/js/config.js"></script>
   <style>
+    .learner-avatar-img { cursor: zoom-in; }
+    .photo-zoom-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .photo-zoom-overlay.show { display: flex; }
+    .photo-zoom-overlay img { max-width: 90vw; max-height: 90vh; border-radius: .5rem; box-shadow: 0 0 24px rgba(0,0,0,.5); }
+    .photo-zoom-overlay-close { position: absolute; top: 20px; right: 28px; color: #fff; font-size: 2rem; line-height: 1; cursor: pointer; }
     @media print {
       .no-print { display: none !important; }
       .layout-menu, .layout-navbar, .content-footer { display: none !important; }
@@ -49,6 +63,11 @@ $school = SchoolSettings::get($con);
   </style>
 </head>
 <body>
+
+    <div id="photoZoomOverlay" class="photo-zoom-overlay no-print" onclick="closePhotoZoom()">
+        <span class="photo-zoom-overlay-close" onclick="closePhotoZoom()">&times;</span>
+        <img id="photoZoomOverlayImg" src="" alt="Learner's photo (enlarged)">
+    </div>
 
     <?php FlashMessage::showFlash(); ?>
 
@@ -124,7 +143,7 @@ $school = SchoolSettings::get($con);
         <div class="card learner-header-card mb-4">
             <div class="card-body">
                 <div class="learner-header-body">
-                    <img src="<?php echo htmlspecialchars($learnerAvatarSrc); ?>" alt="Learner's photo" class="learner-avatar-img">
+                    <img src="<?php echo htmlspecialchars($learnerAvatarSrc); ?>" alt="Learner's photo" class="learner-avatar-img" onclick="openPhotoZoom(this.src)">
                     <div class="learner-header-info">
                         <h5 class="mb-0"><?php echo htmlspecialchars($fullName); ?></h5>
                         <p class="text-muted mb-2"><?php echo htmlspecialchars(($info['grade_name'] ?? '') . ' - ' . ($info['section_name'] ?? '')); ?> &middot; LRN <?php echo htmlspecialchars($info['lrn'] ?? 'N/A'); ?></p>
@@ -490,6 +509,6 @@ $school = SchoolSettings::get($con);
   <script src="../../../public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
   <script src="../../../public/assets/vendor/js/menu.js"></script>
   <script src="../../../public/assets/js/main.js"></script>
-  <script src="../../../public/js/administrative/learner-profile.js"></script>
+  <script src="../../../public/js/administrative/learner-profile.js?v=<?php echo filemtime(__DIR__ . '/../../../public/js/administrative/learner-profile.js'); ?>"></script>
 </body>
 </html>

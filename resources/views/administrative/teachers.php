@@ -17,6 +17,7 @@ AuthRole::allowOnly(['administrative']);
 >
 <head>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
@@ -289,6 +290,28 @@ AuthRole::allowOnly(['administrative']);
         </div>
     </div>
 
+    <div class="modal fade" id="assignSubjectsModal" tabindex="-1" aria-labelledby="assignSubjectsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignSubjectsModalLabel">Assign Subjects</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="assignSubjectsTeacherId">
+                    <p class="mb-3">Subjects taught by <strong id="assignSubjectsTeacherName"></strong>. Only these will appear in their Academic Records dropdown.</p>
+                    <div id="assignSubjectsList">
+                        <p class="text-muted small mb-0">Loading...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="assignSubjectsSaveBtn" onclick="saveAssignSubjects()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card mt-4">
         <h5 class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <span>Manage Teachers</span>
@@ -345,66 +368,83 @@ AuthRole::allowOnly(['administrative']);
                                             </button>
                                         </form>
                                     <?php else: ?>
-                                        <button class="btn btn-sm btn-warning"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editTeacherModal"
-                                            data-id="<?= htmlspecialchars($teacher['id']) ?>"
-                                            data-full-name="<?= htmlspecialchars($teacher['full_name']) ?>"
-                                            data-position="<?= htmlspecialchars($teacher['position'] ?? '') ?>"
-                                            data-email="<?= htmlspecialchars($teacher['email']) ?>"
-                                            data-contact-number="<?= htmlspecialchars($teacher['contact_number'] ?? '') ?>"
-                                            data-province="<?= htmlspecialchars($teacher['province'] ?? '') ?>"
-                                            data-city-municipality="<?= htmlspecialchars($teacher['city_municipality'] ?? '') ?>"
-                                            data-barangay="<?= htmlspecialchars($teacher['barangay'] ?? '') ?>"
-                                            data-birth-date="<?= htmlspecialchars($teacher['birth_date'] ?? '') ?>"
-                                            data-sex="<?= htmlspecialchars($teacher['sex'] ?? '') ?>"
-                                            onclick="editTeacher(this.dataset)"
-                                            title="Edit"
-                                            >
-                                            <i class="bx bx-edit"></i>
-                                        </button>
-
-                                        <button class="btn btn-sm btn-secondary"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#resetTeacherPasswordModal"
-                                            onclick="resetTeacherPassword(
-                                                '<?= htmlspecialchars($teacher['id']) ?>',
-                                                '<?= htmlspecialchars($teacher['full_name']) ?>'
-                                            )"
-                                            title="Reset Password"
-                                            >
-                                            <i class="bx bx-key"></i>
-                                        </button>
-
-                                        <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST" style="display: inline;">
-                                            <?= Csrf::field() ?>
-                                            <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
-                                            <input type="hidden" name="status" value="<?= $isActive ? 'inactive' : 'active' ?>">
-                                            <button
-                                                type="submit"
-                                                class="btn btn-sm <?= $isActive ? 'btn-danger' : 'btn-success' ?>"
-                                                name="toggleUserStatus"
-                                                title="<?= $isActive ? 'Deactivate' : 'Activate' ?>"
-                                                onclick="return confirm('Are you sure you want to <?= $isActive ? 'deactivate' : 'activate' ?> this teacher?')"
-                                                >
-                                                <i class="bx <?= $isActive ? 'bx-block' : 'bx-check-circle' ?>"></i>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
-                                        </form>
-
-                                        <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST" style="display: inline;">
-                                            <?= Csrf::field() ?>
-                                            <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
-                                            <input type="hidden" name="status" value="archived">
-                                            <button
-                                                type="submit"
-                                                class="btn btn-sm btn-outline-dark"
-                                                name="toggleUserStatus"
-                                                title="Archive"
-                                                onclick="return confirm('Archive this teacher? They will be hidden from the main Manage Teachers list until unarchived.')"
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="javascript:void(0);"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editTeacherModal"
+                                                    data-id="<?= htmlspecialchars($teacher['id']) ?>"
+                                                    data-full-name="<?= htmlspecialchars($teacher['full_name']) ?>"
+                                                    data-position="<?= htmlspecialchars($teacher['position'] ?? '') ?>"
+                                                    data-email="<?= htmlspecialchars($teacher['email']) ?>"
+                                                    data-contact-number="<?= htmlspecialchars($teacher['contact_number'] ?? '') ?>"
+                                                    data-province="<?= htmlspecialchars($teacher['province'] ?? '') ?>"
+                                                    data-city-municipality="<?= htmlspecialchars($teacher['city_municipality'] ?? '') ?>"
+                                                    data-barangay="<?= htmlspecialchars($teacher['barangay'] ?? '') ?>"
+                                                    data-birth-date="<?= htmlspecialchars($teacher['birth_date'] ?? '') ?>"
+                                                    data-sex="<?= htmlspecialchars($teacher['sex'] ?? '') ?>"
+                                                    onclick="editTeacher(this.dataset)"
                                                 >
-                                                <i class="bx bx-archive-in"></i>
-                                            </button>
-                                        </form>
+                                                    <i class="bx bx-edit me-1"></i> Edit
+                                                </a>
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="javascript:void(0);"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#resetTeacherPasswordModal"
+                                                    onclick="resetTeacherPassword(
+                                                        '<?= htmlspecialchars($teacher['id']) ?>',
+                                                        '<?= htmlspecialchars($teacher['full_name']) ?>'
+                                                    )"
+                                                >
+                                                    <i class="bx bx-key me-1"></i> Reset Password
+                                                </a>
+                                                <a
+                                                    class="dropdown-item"
+                                                    href="javascript:void(0);"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#assignSubjectsModal"
+                                                    onclick="openAssignSubjects(
+                                                        '<?= htmlspecialchars($teacher['id']) ?>',
+                                                        '<?= htmlspecialchars(addslashes($teacher['full_name'])) ?>'
+                                                    )"
+                                                >
+                                                    <i class="bx bx-book-content me-1"></i> Assign Subjects
+                                                </a>
+                                                <div class="dropdown-divider"></div>
+                                                <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST">
+                                                    <?= Csrf::field() ?>
+                                                    <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
+                                                    <input type="hidden" name="status" value="<?= $isActive ? 'inactive' : 'active' ?>">
+                                                    <button
+                                                        type="submit"
+                                                        class="dropdown-item <?= $isActive ? 'text-danger' : 'text-success' ?>"
+                                                        name="toggleUserStatus"
+                                                        onclick="return confirm('Are you sure you want to <?= $isActive ? 'deactivate' : 'activate' ?> this teacher?')"
+                                                    >
+                                                        <i class="bx <?= $isActive ? 'bx-block' : 'bx-check-circle' ?> me-1"></i> <?= $isActive ? 'Deactivate' : 'Activate' ?>
+                                                    </button>
+                                                </form>
+                                                <form action="../../../app/controllers/administrative/teacherscontroller.php" method="POST">
+                                                    <?= Csrf::field() ?>
+                                                    <input type="hidden" name="id" value="<?= htmlspecialchars($teacher['id']) ?>">
+                                                    <input type="hidden" name="status" value="archived">
+                                                    <button
+                                                        type="submit"
+                                                        class="dropdown-item"
+                                                        name="toggleUserStatus"
+                                                        onclick="return confirm('Archive this teacher? They will be hidden from the main Manage Teachers list until unarchived.')"
+                                                    >
+                                                        <i class="bx bx-archive-in me-1"></i> Archive
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -421,6 +461,7 @@ AuthRole::allowOnly(['administrative']);
 
     <?php require_once __DIR__ . '/partials/footer.php'; ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../../public/assets/vendor/libs/jquery/jquery.js"></script>
     <script src="../../../public/assets/vendor/libs/popper/popper.js"></script>
     <script src="../../../public/assets/vendor/js/bootstrap.js"></script>

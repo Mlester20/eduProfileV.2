@@ -176,9 +176,19 @@
         if (!btn || btn.disabled) {
           return;
         }
-        btn.disabled = true;
         btn.dataset.originalText = btn.innerHTML;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
+        // Disabling the submit button here, synchronously inside its own
+        // form's submit handler, would drop its name=value pair from the
+        // request -- the browser builds the submitted form data AFTER the
+        // submit event finishes, and a disabled button isn't included in
+        // it. That silently strips update_personal_info/update_security
+        // from the POST, so the server never matches either branch and
+        // never redirects. Deferring the disable to the next tick lets the
+        // browser finish serializing the submission first.
+        setTimeout(function () {
+          btn.disabled = true;
+        }, 0);
       });
     });
   }

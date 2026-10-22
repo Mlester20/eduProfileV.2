@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 21, 2026 at 06:59 AM
+-- Generation Time: Oct 22, 2026 at 01:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -226,7 +226,30 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `role`, `action`, `module`, `referenc
 (90, 159, 'administrative', 'Created user', 'Users', NULL, NULL, 'Modal Test Admin2 created a new teacher account for MODAL TEST TEACHER', '::1', 'success', '2026-10-21 04:36:37'),
 (91, 161, 'administrative', 'Created user', 'Users', NULL, NULL, 'Pos Dropdown Admin created a new teacher account for POS DROPDOWN TEACHER', '::1', 'success', '2026-10-21 04:39:10'),
 (92, 161, 'administrative', 'Created user', 'Users', NULL, NULL, 'Pos Dropdown Admin created a new teacher account for CUSTOM POS TEACHER', '::1', 'success', '2026-10-21 04:39:19'),
-(93, 165, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'PG Contact Teacher added a parent/guardian record for student 362', '::1', 'success', '2026-10-21 04:45:14');
+(93, 165, 'teacher', 'Added Parent/Guardian', 'Parent/Guardian', NULL, NULL, 'PG Contact Teacher added a parent/guardian record for student 362', '::1', 'success', '2026-10-21 04:45:14'),
+(94, 172, 'administrative', 'Created Subject', 'Subject', NULL, 'Subject', 'ZZZ SUBJ TEST ADMIN Created Subject Filipino', '::1', 'success', '2026-10-21 14:49:49'),
+(95, 172, 'administrative', 'Updated Subject', 'Subject', NULL, 'Subject', 'ZZZ SUBJ TEST ADMIN Updated the Subject Filipino (Updated)', '::1', 'success', '2026-10-21 14:50:09'),
+(96, 172, 'administrative', 'Deleted Subject', 'Subject', NULL, 'Subject', 'ZZZ SUBJ TEST ADMIN Deleted a Subject', '::1', 'success', '2026-10-21 14:50:10'),
+(97, 4, 'admin', 'Created Subject', 'Subject', NULL, 'Subject', 'admin Created Subject Filipino 1', '::1', 'success', '2026-10-21 14:56:53'),
+(98, 174, 'administrative', 'Assigned Subjects', 'Subject', 175, 'Subject Teacher Assignment', 'ZZZ ASSIGN TEST ADMIN updated subject assignments for teacher ID: 175', '::1', 'success', '2026-10-21 14:57:13'),
+(99, 3, 'administrative', 'Assigned Subjects', 'Subject', 121, 'Subject Teacher Assignment', 'Administrative updated subject assignments for teacher ID: 121', '::1', 'success', '2026-10-21 14:58:58'),
+(100, 3, 'administrative', 'Assigned Subjects', 'Subject', 121, 'Subject Teacher Assignment', 'Administrative updated subject assignments for teacher ID: 121', '::1', 'success', '2026-10-21 14:59:03'),
+(101, 3, 'administrative', 'Assigned Subjects', 'Subject', 124, 'Subject Teacher Assignment', 'Administrative updated subject assignments for teacher ID: 124', '::1', 'success', '2026-10-21 15:01:42'),
+(102, 176, 'administrative', 'Assigned Subjects', 'Subject', 126, 'Subject Teacher Assignment', 'ZZZ DROPDOWN TEST ADMIN updated subject assignments for teacher ID: 126', '::1', 'success', '2026-10-21 15:02:11'),
+(103, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(104, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(105, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(106, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(107, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(108, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(109, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(110, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(111, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(112, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:41'),
+(113, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:42'),
+(114, 177, 'teacher', 'Adding an academic profile', 'Academic Profile', NULL, NULL, 'ZZZ AR TEST TEACHER added an academic record for student 363', '::1', 'success', '2026-10-21 15:16:42'),
+(115, 177, 'teacher', 'Updating an academic profile', 'Academic Profile', 48, NULL, 'ZZZ AR TEST TEACHER updated an academic record with ID: 48', '::1', 'success', '2026-10-21 15:16:57'),
+(116, 177, 'teacher', 'Deleting an academic profile', 'Academic Profile', 48, NULL, 'ZZZ AR TEST TEACHER deleted an academic record with ID: 48', '::1', 'success', '2026-10-21 15:16:58');
 
 -- --------------------------------------------------------
 
@@ -426,7 +449,10 @@ INSERT INTO `migrations` (`id`, `migration`, `applied_at`) VALUES
 (22, '021_create_password_reset_codes.sql', '2026-10-20 03:08:53'),
 (23, '022_add_position_to_users.sql', '2026-10-20 11:58:57'),
 (24, '023_add_special_needs_to_health_profiles.sql', '2026-10-21 03:57:30'),
-(25, '024_add_address_to_users.sql', '2026-10-21 04:20:20');
+(25, '024_add_address_to_users.sql', '2026-10-21 04:20:20'),
+(26, '025_create_subjects.sql', '2026-10-21 14:39:06'),
+(27, '026_add_recorded_by_to_subjects.sql', '2026-10-21 14:47:33'),
+(28, '027_create_subject_teacher_assignments.sql', '2026-10-21 14:54:24');
 
 -- --------------------------------------------------------
 
@@ -44980,6 +45006,148 @@ INSERT INTO `students` (`id`, `lrn`, `first_name`, `middle_name`, `last_name`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `subjects`
+--
+
+CREATE TABLE `subjects` (
+  `id` int(11) NOT NULL,
+  `grade_level_id` int(11) NOT NULL,
+  `subject_name` varchar(100) NOT NULL,
+  `recorded_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `subjects`
+--
+
+INSERT INTO `subjects` (`id`, `grade_level_id`, `subject_name`, `recorded_by`, `created_at`, `updated_at`) VALUES
+(5, 5, 'Filipino 1', 4, '2026-10-21 14:56:53', '2026-10-21 14:56:53'),
+(6, 14, 'Filipino', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(7, 14, 'English', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(8, 14, 'Mathematics', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(9, 14, 'Makabansa', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(10, 14, 'MAPEH', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(11, 14, 'Mother Tongue', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(12, 5, 'English', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(13, 5, 'Mathematics', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(14, 5, 'Makabansa', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(15, 5, 'MAPEH', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(16, 5, 'Mother Tongue', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(17, 6, 'Filipino', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(18, 6, 'English', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(19, 6, 'Mathematics', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(20, 6, 'Makabansa', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(21, 6, 'MAPEH', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(22, 6, 'Mother Tongue', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(23, 8, 'Filipino', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(24, 8, 'English', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(25, 8, 'Mathematics', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(26, 8, 'Makabansa', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(27, 8, 'MAPEH', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(28, 8, 'Mother Tongue', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(29, 13, 'Filipino', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(30, 13, 'English', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(31, 13, 'Mathematics', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(32, 13, 'Science', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(33, 13, 'Araling Panlipunan', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(34, 13, 'Edukasyon sa Pagpapakatao', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(35, 13, 'MAPEH', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(36, 13, 'TLE', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(37, 11, 'Filipino', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(38, 11, 'English', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(39, 11, 'Mathematics', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(40, 11, 'Science', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(41, 11, 'Araling Panlipunan', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(42, 11, 'Edukasyon sa Pagpapakatao', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(43, 11, 'MAPEH', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(44, 11, 'TLE', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(45, 12, 'Filipino', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(46, 12, 'English', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(47, 12, 'Mathematics', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(48, 12, 'Science', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(49, 12, 'Araling Panlipunan', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(50, 12, 'Edukasyon sa Pagpapakatao', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(51, 12, 'MAPEH', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49'),
+(52, 12, 'TLE', 3, '2026-10-21 15:05:49', '2026-10-21 15:05:49');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `subject_teacher_assignments`
+--
+
+CREATE TABLE `subject_teacher_assignments` (
+  `id` int(11) NOT NULL,
+  `subject_id` int(11) NOT NULL,
+  `teacher_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `subject_teacher_assignments`
+--
+
+INSERT INTO `subject_teacher_assignments` (`id`, `subject_id`, `teacher_id`, `created_at`) VALUES
+(4, 5, 121, '2026-10-21 14:59:03'),
+(5, 12, 121, '2026-10-21 15:06:03'),
+(7, 14, 121, '2026-10-21 15:06:03'),
+(8, 15, 121, '2026-10-21 15:06:03'),
+(9, 13, 121, '2026-10-21 15:06:03'),
+(10, 16, 121, '2026-10-21 15:06:03'),
+(11, 49, 122, '2026-10-21 15:06:03'),
+(12, 50, 122, '2026-10-21 15:06:03'),
+(13, 46, 122, '2026-10-21 15:06:03'),
+(14, 45, 122, '2026-10-21 15:06:03'),
+(15, 51, 122, '2026-10-21 15:06:03'),
+(16, 47, 122, '2026-10-21 15:06:03'),
+(17, 48, 122, '2026-10-21 15:06:03'),
+(18, 52, 122, '2026-10-21 15:06:03'),
+(19, 12, 123, '2026-10-21 15:06:03'),
+(20, 5, 123, '2026-10-21 15:06:03'),
+(21, 14, 123, '2026-10-21 15:06:03'),
+(22, 15, 123, '2026-10-21 15:06:03'),
+(23, 13, 123, '2026-10-21 15:06:03'),
+(24, 16, 123, '2026-10-21 15:06:03'),
+(25, 18, 124, '2026-10-21 15:06:03'),
+(26, 17, 124, '2026-10-21 15:06:03'),
+(27, 20, 124, '2026-10-21 15:06:03'),
+(28, 21, 124, '2026-10-21 15:06:03'),
+(29, 19, 124, '2026-10-21 15:06:03'),
+(30, 22, 124, '2026-10-21 15:06:03'),
+(31, 24, 125, '2026-10-21 15:06:03'),
+(32, 23, 125, '2026-10-21 15:06:03'),
+(33, 26, 125, '2026-10-21 15:06:03'),
+(34, 27, 125, '2026-10-21 15:06:03'),
+(35, 25, 125, '2026-10-21 15:06:03'),
+(36, 28, 125, '2026-10-21 15:06:03'),
+(37, 33, 126, '2026-10-21 15:06:03'),
+(38, 34, 126, '2026-10-21 15:06:03'),
+(39, 30, 126, '2026-10-21 15:06:03'),
+(40, 29, 126, '2026-10-21 15:06:03'),
+(41, 35, 126, '2026-10-21 15:06:03'),
+(42, 31, 126, '2026-10-21 15:06:03'),
+(43, 32, 126, '2026-10-21 15:06:03'),
+(44, 36, 126, '2026-10-21 15:06:03'),
+(45, 41, 127, '2026-10-21 15:06:03'),
+(46, 42, 127, '2026-10-21 15:06:03'),
+(47, 38, 127, '2026-10-21 15:06:03'),
+(48, 37, 127, '2026-10-21 15:06:03'),
+(49, 43, 127, '2026-10-21 15:06:03'),
+(50, 39, 127, '2026-10-21 15:06:03'),
+(51, 40, 127, '2026-10-21 15:06:03'),
+(52, 44, 127, '2026-10-21 15:06:03'),
+(53, 7, 128, '2026-10-21 15:06:03'),
+(54, 6, 128, '2026-10-21 15:06:03'),
+(55, 9, 128, '2026-10-21 15:06:03'),
+(56, 10, 128, '2026-10-21 15:06:03'),
+(57, 8, 128, '2026-10-21 15:06:03'),
+(58, 11, 128, '2026-10-21 15:06:03');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -45008,7 +45176,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `full_name`, `email`, `contact_number`, `address`, `province`, `city_municipality`, `barangay`, `birth_date`, `sex`, `password`, `role`, `position`, `status`, `profile_picture`, `created_at`, `updated_at`) VALUES
-(3, 'Administrative', 'administrative@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$1Udp2o44Me8keizlG6yUfu90YDUL7AiaWtH2rE3KjC4P2jPDwDme6', 'administrative', NULL, 'active', 'storage/profiles/pfp_3_1782485485.jpg', '2026-05-09', '2026-10-20'),
+(3, 'Administrative', 'administrative@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$1Udp2o44Me8keizlG6yUfu90YDUL7AiaWtH2rE3KjC4P2jPDwDme6', 'administrative', NULL, 'active', 'storage/profiles/pfp_3_1792591833.png', '2026-05-09', '2026-10-21'),
 (4, 'admin', 'admin@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$ihbCVd8WOJO17B4BFQgAUORhb1UEYpIFmpd1Q/ShW6n5uNMkLZ7kq', 'admin', NULL, 'active', 'storage/profiles/pfp_4_1782273895.jpg', '2026-05-09', '2026-06-24'),
 (121, 'REMA BAGAMASPAD IGUAN', 'remaiguan@gmail.com', '', '', NULL, NULL, NULL, NULL, 'Female', '$2y$10$upp5mcz9Hh.2KmTY2XlCFubQHsFCw/hPNJm7jN1/neo0vkImja7f2', 'teacher', 'Teacher 1', 'active', NULL, '2026-09-29', '0000-00-00'),
 (122, 'MARICEL MANUEL BESA', 'maricelbesa@gmail.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$10$aO1HD3ElgbeoWCk/0IQadu3eTQQZ33xOFUCqKyTCi1G1GfdV2rChm', 'teacher', NULL, 'active', NULL, '2026-09-29', '0000-00-00'),
@@ -45235,6 +45403,22 @@ ALTER TABLE `students`
   ADD KEY `fk_students_recorded_by` (`recorded_by`);
 
 --
+-- Indexes for table `subjects`
+--
+ALTER TABLE `subjects`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_subject_per_grade` (`grade_level_id`,`subject_name`),
+  ADD KEY `fk_subjects_recorded_by` (`recorded_by`);
+
+--
+-- Indexes for table `subject_teacher_assignments`
+--
+ALTER TABLE `subject_teacher_assignments`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_subject_teacher` (`subject_id`,`teacher_id`),
+  ADD KEY `fk_sta_teacher` (`teacher_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -45254,7 +45438,7 @@ ALTER TABLE `_migrations`
 -- AUTO_INCREMENT for table `academic_profiles`
 --
 ALTER TABLE `academic_profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `achievements_profiles`
@@ -45278,7 +45462,7 @@ ALTER TABLE `at_risk_insights`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
 
 --
 -- AUTO_INCREMENT for table `behavioral_profiles`
@@ -45320,7 +45504,7 @@ ALTER TABLE `health_profiles`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `parents_guardians`
@@ -45350,7 +45534,7 @@ ALTER TABLE `school_year`
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `section_teacher_assignments`
@@ -45362,13 +45546,25 @@ ALTER TABLE `section_teacher_assignments`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=363;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=365;
+
+--
+-- AUTO_INCREMENT for table `subjects`
+--
+ALTER TABLE `subjects`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+
+--
+-- AUTO_INCREMENT for table `subject_teacher_assignments`
+--
+ALTER TABLE `subject_teacher_assignments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=180;
 
 --
 -- Constraints for dumped tables
@@ -45478,6 +45674,20 @@ ALTER TABLE `students`
   ADD CONSTRAINT `fk_students_recorded_by` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_students_school_year` FOREIGN KEY (`school_year_id`) REFERENCES `school_year` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_students_section` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `subjects`
+--
+ALTER TABLE `subjects`
+  ADD CONSTRAINT `fk_subjects_grade_level` FOREIGN KEY (`grade_level_id`) REFERENCES `grade_levels` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_subjects_recorded_by` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `subject_teacher_assignments`
+--
+ALTER TABLE `subject_teacher_assignments`
+  ADD CONSTRAINT `fk_sta_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_sta_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

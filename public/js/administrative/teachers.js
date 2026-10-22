@@ -332,3 +332,105 @@ function resetTeacherPassword(id, fullName){
     document.getElementById('resetTeacherPasswordId').value = id;
     document.getElementById('resetTeacherPasswordName').textContent = fullName;
 }
+
+// ===== Assign Subjects =====
+// Each teacher's assigned subjects are independent -- two teachers
+// advising the same grade level can end up with different checked
+// subjects here, since this is per-teacher, not per-grade-level.
+
+function csrfToken(){
+    const meta = document.querySelector('meta[name="csrf-token"]')
+    return meta ? meta.getAttribute('content') : ''
+}
+
+function escapeHtml(text){
+    const div = document.createElement('div')
+    div.textContent = text
+    return div.innerHTML
+}
+
+function notifySuccess(message){
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: message,
+        showConfirmButton: false,
+        timer: 1800,
+        timerProgressBar: true
+    })
+}
+
+function notifyError(message){
+    Swal.fire({ icon: 'error', title: 'Error', text: message || 'Something went wrong.', confirmButtonColor: '#696cff' })
+}
+
+function openAssignSubjects(teacherId, teacherName){
+    document.getElementById('assignSubjectsTeacherId').value = teacherId
+    document.getElementById('assignSubjectsTeacherName').textContent = teacherName
+    const list = document.getElementById('assignSubjectsList')
+    list.innerHTML = '<p class="text-muted small mb-0">Loading...</p>'
+
+    fetch('../../../app/controllers/administrative/TeacherSubjectsController.php?teacher_id=' + encodeURIComponent(teacherId))
+        .then(function(r){ return r.json() })
+        .then(function(res){
+            if(!res.success){
+                list.innerHTML = '<p class="text-danger small mb-0">' + (res.message || 'Failed to load subjects.') + '</p>'
+                return
+            }
+            const subjects = res.data || []
+            if(subjects.length === 0){
+                list.innerHTML = '<p class="text-muted small mb-0">This teacher has no assigned section yet, so there are no subjects to choose from.</p>'
+                return
+            }
+
+            const byGrade = {}
+            subjects.forEach(function(subject){
+                if(!byGrade[subject.grade_name]) byGrade[subject.grade_name] = []
+                byGrade[subject.grade_name].push(subject)
+            })
+
+            let html = ''
+            Object.keys(byGrade).forEach(function(gradeName){
+                html += '<p class="fw-semibold mb-1">' + escapeHtml(gradeName) + '</p>'
+                byGrade[gradeName].forEach(function(subject){
+                    const checkedAttr = subject.assigned ? 'checked' : ''
+                    html += '<div class="form-check">' +
+                        '<input class="form-check-input assign-subject-checkbox" type="checkbox" value="' + subject.id + '" id="assign_subject_' + subject.id + '" ' + checkedAttr + '>' +
+                        '<label class="form-check-label" for="assign_subject_' + subject.id + '">' + escapeHtml(subject.subject_name) + '</label>' +
+                        '</div>'
+                })
+            })
+            list.innerHTML = html
+        })
+        .catch(function(){
+            list.innerHTML = '<p class="text-danger small mb-0">Something went wrong loading subjects.</p>'
+        })
+}
+
+function saveAssignSubjects(){
+    const teacherId = document.getElementById('assignSubjectsTeacherId').value
+    const subjectIds = Array.from(document.querySelectorAll('.assign-subject-checkbox:checked')).map(function(cb){ return cb.value })
+    const btn = document.getElementById('assignSubjectsSaveBtn')
+    btn.disabled = true
+
+    fetch('../../../app/controllers/administrative/TeacherSubjectsController.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teacher_id: teacherId, subject_ids: subjectIds, csrf_token: csrfToken() })
+    })
+        .then(function(r){ return r.json() })
+        .then(function(res){
+            btn.disabled = false
+            if(res.success){
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('assignSubjectsModal')).hide()
+                notifySuccess(res.message || 'Subject assignments updated.')
+            }else{
+                notifyError(res.message || 'Failed to save subject assignments.')
+            }
+        })
+        .catch(function(err){
+            btn.disabled = false
+            notifyError(err.message)
+        })
+}

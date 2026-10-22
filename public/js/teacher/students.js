@@ -9,6 +9,40 @@ function debounce(fn, delay){
     }
 }
 
+function openPhotoZoom(src){
+    if(!src) return
+    const overlay = document.getElementById('photoZoomOverlay')
+    const img = document.getElementById('photoZoomOverlayImg')
+    if(!overlay || !img) return
+    img.src = src
+    overlay.classList.add('show')
+}
+
+function closePhotoZoom(){
+    const overlay = document.getElementById('photoZoomOverlay')
+    if(overlay) overlay.classList.remove('show')
+}
+
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closePhotoZoom()
+})
+
+document.addEventListener('DOMContentLoaded', function(){
+    const previewImg = document.getElementById('student_picture_preview')
+    if(!previewImg) return
+    // Scaling the thumbnail in place (rather than reusing the centered
+    // lightbox) clipped against the modal's rounded corner once enlarged,
+    // since the modal clips anything that overflows its own bounds. The
+    // lightbox is position:fixed against the viewport, so it isn't
+    // affected by that and always renders centered.
+    previewImg.addEventListener('mouseenter', function(){
+        openPhotoZoom(previewImg.src)
+    })
+    previewImg.addEventListener('mouseleave', function(){
+        closePhotoZoom()
+    })
+})
+
 document.addEventListener('DOMContentLoaded', function(){
     const searchInput = document.getElementById('student_table_search')
     if(!searchInput) return
@@ -39,10 +73,11 @@ document.addEventListener('DOMContentLoaded', function(){
 /**
  * Everything below drives the single Add/Edit Student modal: Student Info
  * is tab 1 and must be saved first for a new student (it's what creates the
- * row and returns the id the other four tabs need); editing an existing
+ * row and returns the id the other three tabs need); editing an existing
  * student unlocks every tab immediately. Parent/Guardian and Health Profile
- * are upsert-style (one row per student); Reading Level and Academic
- * Records use a small add/edit form plus a list of existing entries.
+ * are upsert-style (one row per student); Reading Level uses a small
+ * add/edit form plus a list of existing entries. Academic Records lives on
+ * its own page now (academic-records.php), not as a tab here.
  */
 (function(){
     const RELIGION_PRESETS = Array.from(document.querySelectorAll('#religion option')).map(function(o){ return o.value }).filter(Boolean)
@@ -73,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function setTabsEnabled(enabled){
-        ['tab-btn-parent', 'tab-btn-health', 'tab-btn-reading', 'tab-btn-academic'].forEach(function(id){
+        ['tab-btn-parent', 'tab-btn-health', 'tab-btn-reading'].forEach(function(id){
             const btn = document.getElementById(id)
             if(!btn) return
             if(enabled){
@@ -471,19 +506,27 @@ document.addEventListener('DOMContentLoaded', function(){
 
     loadProvinces()
 
+    // Multi-section teachers pick their section from a dropdown instead of
+    // a fixed hidden field -- the hidden grade_level_id input next to it
+    // was never actually kept in sync with that choice, so it reached the
+    // server empty on submit.
+    const sectionSelectEl = document.getElementById('section_id')
+    if(sectionSelectEl){
+        sectionSelectEl.addEventListener('change', function(){
+            const selectedOption = sectionSelectEl.options[sectionSelectEl.selectedIndex]
+            const gradeLevelId = selectedOption ? selectedOption.getAttribute('data-grade-level-id') : ''
+            const gradeLevelInput = document.getElementById('grade_level_id')
+            if(gradeLevelInput) gradeLevelInput.value = gradeLevelId || ''
+        })
+    }
+
     window.openStudentModal = function(id){
         currentStudentId = id
         resetStudentInfoForm()
         resetReadingLevelForm()
-        resetAcademicRecordForm()
         clearParentGuardianForm()
         clearHealthProfileForm()
         document.getElementById('readingLevelList').innerHTML = '<tr><td colspan="5" class="text-center text-muted">No reading level records yet.</td></tr>'
-        document.getElementById('academicRecordList').innerHTML = '<tr><td colspan="6" class="text-center text-muted">No academic records yet.</td></tr>'
-        academicRecordRows = []
-        if(document.getElementById('ap_period_filter')){
-            document.getElementById('ap_period_filter').value = ''
-        }
 
         if(id){
             document.getElementById('studentModalLabel').textContent = 'Edit Student'
@@ -959,150 +1002,11 @@ document.addEventListener('DOMContentLoaded', function(){
             .catch(function(err){ notifyError(err.message) })
     })
 
-    // ===== Academic Records (mini add-form + list) =====
-
-    function resetAcademicRecordForm(){
-        document.getElementById('academicRecordForm').reset()
-        document.getElementById('ap_edit_id').value = ''
-        document.getElementById('ap_submit_btn').textContent = 'Add'
-        document.getElementById('ap_cancel_btn').classList.add('d-none')
-    }
-
-    let academicRecordRows = []
-
-    function renderAcademicRecordList(rows){
-        const tbody = document.getElementById('academicRecordList')
-        tbody.innerHTML = ''
-        if(!rows || rows.length === 0){
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No academic records yet.</td></tr>'
-            return
-        }
-        rows.forEach(function(row){
-            const isPassed = row.remarks === 'Passed'
-            const remarksBadge = row.remarks
-                ? '<span class="badge ' + (isPassed ? 'bg-label-success' : 'bg-label-danger') + '">' + escapeHtml(row.remarks) + '</span>'
-                : ''
-            const tr = document.createElement('tr')
-            tr.innerHTML =
-                '<td>' + escapeHtml(row.subject_name) + '</td>' +
-                '<td>' + escapeHtml(row.grading_period) + '</td>' +
-                '<td>' + escapeHtml(row.grade) + '</td>' +
-                '<td>' + remarksBadge + '</td>' +
-                '<td>' + escapeHtml(row.recorded_by_name || '') + '</td>' +
-                '<td>' +
-                    '<button type="button" class="btn btn-sm btn-warning ap-edit-btn"><i class="bx bx-edit"></i></button> ' +
-                    '<button type="button" class="btn btn-sm btn-danger ap-delete-btn"><i class="bx bx-trash"></i></button>' +
-                '</td>'
-            tr.querySelector('.ap-edit-btn').addEventListener('click', function(){
-                editAcademicRecord(row.id, row.subject_name, row.grading_period, row.grade)
-            })
-            tr.querySelector('.ap-delete-btn').addEventListener('click', function(){
-                deleteAcademicRecord(row.id)
-            })
-            tbody.appendChild(tr)
-        })
-    }
-
-    function applyAcademicFilterAndRender(){
-        const filterEl = document.getElementById('ap_period_filter')
-        const period = filterEl ? filterEl.value : ''
-        const filtered = period
-            ? academicRecordRows.filter(function(row){ return row.grading_period === period })
-            : academicRecordRows
-        renderAcademicRecordList(filtered)
-    }
-
-    function loadAcademicRecords(){
-        if(!currentStudentId) return
-        fetch('../../../app/controllers/teacher/AcademicProfileController.php?student_id=' + currentStudentId)
-            .then(function(r){ return r.json() })
-            .then(function(res){
-                academicRecordRows = res.data || []
-                applyAcademicFilterAndRender()
-            })
-    }
-
-    const apPeriodFilterEl = document.getElementById('ap_period_filter')
-    if(apPeriodFilterEl){
-        apPeriodFilterEl.addEventListener('change', applyAcademicFilterAndRender)
-    }
-
-    function editAcademicRecord(id, subjectName, gradingPeriod, grade){
-        document.getElementById('ap_edit_id').value = id
-        document.getElementById('ap_subject_name').value = subjectName
-        document.getElementById('ap_grading_period').value = gradingPeriod
-        document.getElementById('ap_grade').value = grade
-        document.getElementById('ap_submit_btn').textContent = 'Update'
-        document.getElementById('ap_cancel_btn').classList.remove('d-none')
-    }
-
-    document.getElementById('ap_cancel_btn').addEventListener('click', resetAcademicRecordForm)
-
-    function deleteAcademicRecord(id){
-        Swal.fire({
-            icon: 'warning', title: 'Delete this record?', text: 'This action cannot be undone.',
-            showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'Delete'
-        }).then(function(result){
-            if(!result.isConfirmed) return
-            fetch('../../../app/controllers/teacher/AcademicProfileController.php', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id, csrf_token: csrfToken() })
-            })
-                .then(function(r){ return r.json() })
-                .then(function(res){
-                    if(res.success){
-                        notifySuccess(res.message || 'Deleted.')
-                        loadAcademicRecords()
-                    }else{
-                        notifyError(res.message)
-                    }
-                })
-        })
-    }
-
-    document.getElementById('academicRecordForm').addEventListener('submit', function(e){
-        e.preventDefault()
-        if(!currentStudentId) return
-        const editId = document.getElementById('ap_edit_id').value
-        const payload = {
-            student_id: currentStudentId,
-            school_year_id: document.getElementById('school_year_id') ? document.getElementById('school_year_id').value : null,
-            subject_name: document.getElementById('ap_subject_name').value,
-            grading_period: document.getElementById('ap_grading_period').value,
-            grade: document.getElementById('ap_grade').value,
-            csrf_token: csrfToken()
-        }
-        if(editId){
-            payload.id = editId
-        }
-        fetch('../../../app/controllers/teacher/AcademicProfileController.php', {
-            method: editId ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-            .then(function(r){ return r.json() })
-            .then(function(res){
-                if(res.success){
-                    notifySuccess(res.message || 'Saved.')
-                    resetAcademicRecordForm()
-                    loadAcademicRecords()
-                }else{
-                    notifyError(res.message)
-                }
-            })
-            .catch(function(err){ notifyError(err.message) })
-    })
-
     // Lazy-load each tab's data the moment it's shown.
     document.getElementById('tab-btn-parent').addEventListener('shown.bs.tab', loadParentGuardian)
     document.getElementById('tab-btn-health').addEventListener('shown.bs.tab', loadHealthProfile)
     document.getElementById('tab-btn-reading').addEventListener('shown.bs.tab', function(){
         resetReadingLevelForm()
         loadReadingLevels()
-    })
-    document.getElementById('tab-btn-academic').addEventListener('shown.bs.tab', function(){
-        resetAcademicRecordForm()
-        loadAcademicRecords()
     })
 })()

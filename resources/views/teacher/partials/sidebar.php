@@ -45,6 +45,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </a>
         </li>
 
+        <!-- Academic Records -->
+        <li class="menu-item <?php echo ($currentPage === 'academic-records.php') ? 'active' : ''; ?>">
+          <a href="academic-records.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-book-content"></i>
+            <div data-i18n="Academic Records">Academic Records</div>
+          </a>
+        </li>
+
         <!-- Reports (dropdown: Overview, At-Risk Learners, Feeding Program, Class List) -->
         <?php $reportsPages = ['at-risk.php', 'feeding-program.php']; ?>
         <li class="menu-item <?php echo in_array($currentPage, $reportsPages, true) ? 'active' : ''; ?>">

@@ -53,10 +53,28 @@ $religionOptions = [
     .bmi-badge-overweight      { background-color: #fff3cd; color: #997404; }
     .bmi-badge-obese           { background-color: #f8d7da; color: #842029; }
     #studentModal .nav-link[disabled] { pointer-events: none; opacity: .5; }
-    #student_picture_preview { width: 90px; height: 90px; object-fit: cover; border-radius: .375rem; border: 1px solid #d9dee3; }
+    #student_picture_preview { width: 90px; height: 90px; object-fit: contain; background-color: #fff; border-radius: .375rem; border: 1px solid #d9dee3; cursor: zoom-in; }
+    .photo-zoom-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .photo-zoom-overlay.show { display: flex; }
+    .photo-zoom-overlay img { max-width: 90vw; max-height: 90vh; border-radius: .5rem; box-shadow: 0 0 24px rgba(0,0,0,.5); }
+    .photo-zoom-overlay-close { position: absolute; top: 20px; right: 28px; color: #fff; font-size: 2rem; line-height: 1; cursor: pointer; }
   </style>
 </head>
 <body>
+
+    <div id="photoZoomOverlay" class="photo-zoom-overlay" onclick="closePhotoZoom()">
+        <span class="photo-zoom-overlay-close" onclick="closePhotoZoom()">&times;</span>
+        <img id="photoZoomOverlayImg" src="" alt="Picture preview (enlarged)">
+    </div>
 
     <?php FlashMessage::showFlash(); ?>
 
@@ -198,9 +216,6 @@ $religionOptions = [
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="tab-btn-reading" data-bs-toggle="tab" data-bs-target="#tab-reading" type="button" role="tab" disabled>Reading Level</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="tab-btn-academic" data-bs-toggle="tab" data-bs-target="#tab-academic" type="button" role="tab" disabled>Academic Records</button>
-                        </li>
                     </ul>
                     <div class="alert alert-info py-2" id="studentModalHint">Save the student's basic info first to unlock the other tabs.</div>
 
@@ -213,7 +228,7 @@ $religionOptions = [
                                 <div class="row g-3">
                                     <div class="col-6 col-md-3 mb-3 d-flex flex-column align-items-start">
                                         <label class="form-label">Picture</label>
-                                        <img id="student_picture_preview" src="../../../public/assets/img/avatars/1.png" alt="Picture preview" class="mb-2">
+                                        <img id="student_picture_preview" src="../../../public/assets/img/avatars/1.png" alt="Picture preview" class="mb-2" onclick="openPhotoZoom(this.src)">
                                         <input class="form-control form-control-sm" type="file" name="picture" id="picture" accept="image/jpeg,image/png,image/gif">
                                         <div class="form-text">JPG, PNG, or GIF. Max 2MB.</div>
                                     </div>
@@ -755,66 +770,6 @@ $religionOptions = [
                             </div>
                         </div>
 
-                        <!-- Academic Records -->
-                        <div class="tab-pane fade" id="tab-academic" role="tabpanel">
-                            <form id="academicRecordForm" class="border rounded p-3 mb-3 bg-light">
-                                <input type="hidden" id="ap_edit_id">
-                                <div class="row g-3">
-                                    <div class="col-6 col-md-4 mb-3">
-                                        <label for="ap_subject_name" class="form-label">Subject Name</label>
-                                        <input class="form-control" type="text" id="ap_subject_name" required>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-3">
-                                        <label for="ap_grading_period" class="form-label">Grading Period</label>
-                                        <select class="form-select" id="ap_grading_period" required>
-                                            <option value="" selected disabled>-- Choose --</option>
-                                            <option value="1st Quarter">1st Quarter</option>
-                                            <option value="2nd Quarter">2nd Quarter</option>
-                                            <option value="3rd Quarter">3rd Quarter</option>
-                                            <option value="4th Quarter">4th Quarter</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6 col-md-2 mb-3">
-                                        <label for="ap_grade" class="form-label">Grade</label>
-                                        <input class="form-control" type="number" step="0.01" min="0" max="100" id="ap_grade" required>
-                                    </div>
-                                    <div class="col-6 col-md-3 mb-3 d-flex align-items-end gap-2">
-                                        <button type="submit" class="btn btn-primary flex-grow-1" id="ap_submit_btn">Add</button>
-                                        <button type="button" class="btn btn-outline-secondary d-none" id="ap_cancel_btn">Cancel</button>
-                                    </div>
-                                </div>
-                                <small class="text-muted d-block mt-n2 mb-2">Remarks is set automatically from the grade -- 75 and above is Passed, 74 and below is Failed.</small>
-                            </form>
-                            <div class="d-flex justify-content-end mb-2">
-                                <div style="max-width: 220px; width: 100%;">
-                                    <select class="form-select form-select-sm" id="ap_period_filter">
-                                        <option value="">All Grading Periods</option>
-                                        <option value="1st Quarter">1st Quarter</option>
-                                        <option value="2nd Quarter">2nd Quarter</option>
-                                        <option value="3rd Quarter">3rd Quarter</option>
-                                        <option value="4th Quarter">4th Quarter</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-sm table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Subject</th>
-                                            <th>Grading Period</th>
-                                            <th>Grade</th>
-                                            <th>Remarks</th>
-                                            <th>Teacher</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="academicRecordList">
-                                        <tr><td colspan="6" class="text-center text-muted">No academic records yet.</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -865,7 +820,7 @@ $religionOptions = [
                     <td><?php echo $offset + $index + 1; ?></td>
                     <td>
                       <?php if (!empty($student['picture'])): ?>
-                        <img src="../../../<?= htmlspecialchars($student['picture']) ?>" alt="" style="width: 36px; height: 36px; object-fit: cover; border-radius: .375rem;">
+                        <img src="../../../<?= htmlspecialchars($student['picture']) ?>" alt="" style="width: 36px; height: 36px; object-fit: contain; background-color: #fff; border-radius: .375rem;">
                       <?php else: ?>
                         <i class="bx bx-user-circle fs-3 text-muted"></i>
                       <?php endif; ?>

@@ -9,6 +9,39 @@ function debounce(fn, delay){
     }
 }
 
+function openPhotoZoom(src){
+    if(!src) return
+    const overlay = document.getElementById('photoZoomOverlay')
+    const img = document.getElementById('photoZoomOverlayImg')
+    if(!overlay || !img) return
+    img.src = src
+    overlay.classList.add('show')
+}
+
+function closePhotoZoom(){
+    const overlay = document.getElementById('photoZoomOverlay')
+    if(overlay) overlay.classList.remove('show')
+}
+
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closePhotoZoom()
+})
+
+document.addEventListener('DOMContentLoaded', function(){
+    const avatarImg = document.querySelector('.learner-avatar-img')
+    if(!avatarImg) return
+    // Scaling the avatar in place clipped against the card's rounded
+    // corner once enlarged. The lightbox is position:fixed against the
+    // viewport instead, so it isn't affected by that and always renders
+    // centered.
+    avatarImg.addEventListener('mouseenter', function(){
+        openPhotoZoom(avatarImg.src)
+    })
+    avatarImg.addEventListener('mouseleave', function(){
+        closePhotoZoom()
+    })
+})
+
 document.addEventListener('DOMContentLoaded', function(){
     const searchInput = document.getElementById('student_search')
     const select = document.getElementById('student_id')
