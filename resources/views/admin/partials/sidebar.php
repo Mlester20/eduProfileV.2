@@ -4,7 +4,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!-- Layout wrapper -->
-<div class="layout-wrapper layout-content-navbar">
+<div class="layout-wrapper layout-content-navbar admin-portal">
   <div class="layout-container">
 
     <!-- Menu -->
@@ -111,6 +111,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
       </ul>
     </aside>
     <!-- / Menu -->
+
+    <script src="../../../public/js/admin/auto-uppercase.js?v=<?php echo filemtime(__DIR__ . '/../../../../public/js/admin/auto-uppercase.js'); ?>"></script>
 
     <!-- Layout page -->
     <div class="layout-page">

@@ -137,5 +137,7 @@ if(isset($con) && $con instanceof mysqli && isset($_SESSION['id'])){
     </aside>
     <!-- / Menu -->
 
+    <script src="../../../public/js/teacher/auto-uppercase.js?v=<?php echo filemtime(__DIR__ . '/../../../../public/js/teacher/auto-uppercase.js'); ?>"></script>
+
     <!-- Layout page -->
     <div class="layout-page">

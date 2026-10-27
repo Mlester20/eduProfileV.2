@@ -12,7 +12,7 @@ if(isset($con) && $con instanceof mysqli){
 ?>
 
 <!-- Layout wrapper -->
-<div class="layout-wrapper layout-content-navbar">
+<div class="layout-wrapper layout-content-navbar administrative-portal">
   <div class="layout-container">
 
     <!-- Menu -->
@@ -189,6 +189,8 @@ if(isset($con) && $con instanceof mysqli){
       </ul>
     </aside>
     <!-- / Menu -->
+
+    <script src="../../../public/js/administrative/auto-uppercase.js?v=<?php echo filemtime(__DIR__ . '/../../../../public/js/administrative/auto-uppercase.js'); ?>"></script>
 
     <!-- Layout page -->
     <div class="layout-page">
