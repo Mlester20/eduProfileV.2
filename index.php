@@ -57,12 +57,12 @@ $school = SchoolSettings::get($con);
           <div class="illus-card">
             <img src="<?= base_url('public/assets/img/favicon/logo.png') ?>" alt="EduProfile" class="illus-logo" />
           </div>
-          <div class="illus-badge"><i class='bx bx-check'></i></div>
+          <!-- <div class="illus-badge"><i class='bx bx-check'></i></div> -->
         </div>
 
         <div>
           <p class="auth-left-title">EduProfile</p>
-          <p class="auth-left-tagline">An Innovative Profiling System for Student Learners of San Jose Sur Elementary School</p>
+          <p class="auth-left-tagline">AN INNOVATIVE PROFILING SYSTEM FOR STUDENT LEARNER'S OF SAN JOSE SUR ELEMENTARY SCHOOL</p>
           <p class="auth-left-subtext"><?php echo htmlspecialchars($school['school_name']); ?> &nbsp;•&nbsp; <?php echo htmlspecialchars($school['district']); ?> &nbsp;•&nbsp; DepEd <?php echo htmlspecialchars($school['region']); ?></p>
         </div>
       </div>
