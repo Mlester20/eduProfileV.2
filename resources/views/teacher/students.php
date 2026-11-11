@@ -818,7 +818,7 @@ $religionOptions = [
               ?>
               <?php if (!empty($rows)): ?>
                 <?php foreach ($rows as $index => $student): ?>
-                  <tr role="button" style="cursor: pointer;" onclick="openStudentModal(<?= (int) $student['id'] ?>)">
+                  <tr>
                     <td><?php echo $offset + $index + 1; ?></td>
                     <td>
                       <?php if (!empty($student['picture'])): ?>
@@ -828,45 +828,38 @@ $religionOptions = [
                       <?php endif; ?>
                     </td>
                     <td><?php echo htmlspecialchars($student['lrn']); ?></td>
-                    <td><?php echo htmlspecialchars($student['full_name']); ?></td>
+                    <td><a href="javascript:void(0);" onclick="openStudentModal(<?= (int) $student['id'] ?>)" class="fw-semibold text-dark"><?php echo htmlspecialchars($student['full_name']); ?></a></td>
                     <td><?php echo htmlspecialchars($student['grade_name'] . ' - ' . $student['section_name']); ?></td>
                     <td><?php echo StudentsAge::calculateAge($student['birth_date']); ?></td>
                     <td>
-                      <a
-                        href="student-print.php?id=<?php echo $student['id']; ?>"
-                        target="_blank"
-                        class="btn btn-sm btn-outline-primary"
-                        title="Print"
-                        data-bs-toggle="tooltip"
-                        onclick="event.stopPropagation();"
-                      >
-                        <i class="bx bx-printer"></i>
-                      </a>
-
-                      <button
-                        class="btn btn-sm btn-warning"
-                        type="button"
-                        title="Edit"
-                        data-bs-toggle="tooltip"
-                        onclick="event.stopPropagation(); openStudentModal(<?= (int) $student['id'] ?>)"
-                      >
-                        <i class="bx bx-edit"></i>
-                      </button>
-
-                      <form action="../../../app/controllers/teacher/StudentsController.php" method="post" class="d-inline delete-student-form" data-student-name="<?= htmlspecialchars(addslashes($student['full_name'])) ?>">
-                          <?= Csrf::field() ?>
-                        <input type="hidden" name="id" value="<?= htmlspecialchars($student['id']) ?>">
-                        <input type="hidden" name="delete_student" value="1">
-                        <button
-                          type="submit"
-                          class="btn btn-sm btn-danger"
-                          title="Delete"
-                          data-bs-toggle="tooltip"
-                          onclick="event.stopPropagation();"
-                        >
-                          <i class="bx bx-trash"></i>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="bx bx-dots-vertical-rounded"></i>
                         </button>
-                      </form>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          <li>
+                            <a class="dropdown-item" href="student-print.php?id=<?php echo $student['id']; ?>" target="_blank" onclick="event.stopPropagation();">
+                              <i class="bx bx-printer me-2"></i> Print
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" href="javascript:void(0);" onclick="event.stopPropagation(); openStudentModal(<?= (int) $student['id'] ?>)">
+                              <i class="bx bx-edit me-2"></i> Edit
+                            </a>
+                          </li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li>
+                            <form action="../../../app/controllers/teacher/StudentsController.php" method="post" class="m-0 p-0" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                              <?= Csrf::field() ?>
+                              <input type="hidden" name="id" value="<?= htmlspecialchars($student['id']) ?>">
+                              <input type="hidden" name="delete_student" value="1">
+                              <button type="submit" class="dropdown-item text-danger" onclick="event.stopPropagation();">
+                                <i class="bx bx-trash me-2"></i> Delete
+                              </button>
+                            </form>
+                          </li>
+                        </ul>
+                      </div>
                     </td>
                   </tr>
                 <?php endforeach; ?>

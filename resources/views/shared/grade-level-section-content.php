@@ -300,44 +300,33 @@ AuthRole::allowOnly([$role]);
                                 <td><?= htmlspecialchars($section['grade_level_name'] . ' - ' . $section['section_name'] ); ?></td>
                                 <td><?= (new DateTime($section['created_at']))->format('F j, Y') ?></td>
                                 <td>
-                                    <button
-                                        class="btn btn-sm btn-outline-secondary"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#teacherHistoryModal"
-                                        onclick="showTeacherHistory('<?= htmlspecialchars($section['id']); ?>', '<?= htmlspecialchars($section['grade_level_name'] . ' - ' . $section['section_name']); ?>')"
-                                        title="Teacher Assignment History"
-                                    >
-                                        <i class="bx bx-history"></i>
-                                    </button>
-
-                                    <button
-                                        class="btn btn-sm btn-warning"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editSectionModal"
-                                        onclick="editSection(
-                                            '<?= htmlspecialchars($section['id']); ?>',
-                                            '<?= htmlspecialchars($section['grade_level_id']); ?>',
-                                            '<?= htmlspecialchars($section['section_name']); ?>',
-                                            '<?= htmlspecialchars($section['adviser_id']); ?>'
-                                        )"
-                                        title="Edit"
-                                    >
-                                        <i class="bx bx-edit"></i>
-                                    </button>
-
-                                    <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/SectionsController.php" method="post" style="display: inline;">
-                                        <?= Csrf::field() ?>
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars($section['id']); ?>">
-                                        <button
-                                            type="submit"
-                                            class="btn btn-sm btn-danger"
-                                            name="delete_section"
-                                            title="Delete"
-                                            onclick="return confirm('Are you sure you want to delete this section? this action cannot be undone.')"
-                                        >
-                                            <i class="bx bx-trash"></i>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
-                                    </form>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#teacherHistoryModal" onclick="showTeacherHistory('<?= htmlspecialchars($section['id']); ?>', '<?= htmlspecialchars($section['grade_level_name'] . ' - ' . $section['section_name']); ?>')">
+                                                    <i class="bx bx-history me-2"></i> History
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editSectionModal" onclick="editSection('<?= htmlspecialchars($section['id']); ?>','<?= htmlspecialchars($section['grade_level_id']); ?>','<?= htmlspecialchars($section['section_name']); ?>','<?= htmlspecialchars($section['adviser_id']); ?>')">
+                                                    <i class="bx bx-edit me-2"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/SectionsController.php" method="post" class="m-0 p-0">
+                                                    <?= Csrf::field() ?>
+                                                    <input type="hidden" name="id" value="<?= htmlspecialchars($section['id']); ?>">
+                                                    <button type="submit" class="dropdown-item text-danger" name="delete_section" onclick="return confirm('Are you sure you want to delete this section? this action cannot be undone.')">
+                                                        <i class="bx bx-trash me-2"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -168,34 +168,28 @@ AuthRole::allowOnly([$role]);
                       </span>
                   </td>
                   <td>
-                    <button
-                      class="btn btn-warning btn-sm"
-                      data-bs-toggle="modal"
-                      data-bs-target="#editSyModal"
-                      onclick="editSy(
-                        '<?= htmlspecialchars($sy['id']); ?>',
-                        '<?= htmlspecialchars($sy['school_year']); ?>',
-                        '<?= htmlspecialchars($sy['start_date']); ?>',
-                        '<?= htmlspecialchars($sy['end_date']); ?>',
-                        '<?= htmlspecialchars($sy['status']); ?>'
-                      )"
-                      title="Edit"
-                    >
-                      <i class="bx bx-edit"></i>
-                    </button>
-                    <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/SchoolYearController.php" method="POST" style="display:inline-block;">
-                        <?= Csrf::field() ?>
-                      <input type="hidden" name="id" value="<?= htmlspecialchars($sy['id']); ?>">
-                      <button
-                          type="submit"
-                          name="delete_sy"
-                          class="btn btn-danger btn-sm"
-                          title="Delete"
-                          onclick="return confirm('are you sure you want to delete this record?')"
-                        >
-                        <i class="bx bx-trash"></i>
+                    <div class="btn-group btn-group-sm">
+                      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bx bx-dots-vertical-rounded"></i>
                       </button>
-                    </form>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editSyModal" onclick="editSy('<?= htmlspecialchars($sy['id']); ?>','<?= htmlspecialchars($sy['school_year']); ?>','<?= htmlspecialchars($sy['start_date']); ?>','<?= htmlspecialchars($sy['end_date']); ?>','<?= htmlspecialchars($sy['status']); ?>')">
+                            <i class="bx bx-edit me-2"></i> Edit
+                          </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                          <form action="../../../app/controllers/<?= htmlspecialchars($role) ?>/SchoolYearController.php" method="POST" class="m-0 p-0">
+                            <?= Csrf::field() ?>
+                            <input type="hidden" name="id" value="<?= htmlspecialchars($sy['id']); ?>">
+                            <button type="submit" class="dropdown-item text-danger" name="delete_sy" onclick="return confirm('Are you sure you want to delete this record? This action cannot be undone.')">
+                              <i class="bx bx-trash me-2"></i> Delete
+                            </button>
+                          </form>
+                        </li>
+                      </ul>
+                    </div>
                   </td>
                 </tr>
             <?php endforeach; ?>

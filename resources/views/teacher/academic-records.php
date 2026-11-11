@@ -81,7 +81,7 @@ AuthRole::allowOnly(['teacher']);
                             </div>
                             <div class="col-6 col-md-2 mb-3">
                                 <label for="ap_grade" class="form-label">Grade</label>
-                                <input class="form-control" type="number" step="0.01" min="0" max="100" id="ap_grade" required>
+                                  <input class="form-control" type="text" maxlength="2" pattern="[0-9]*" id="ap_grade" required>
                             </div>
                             <div class="col-6 col-md-3 mb-3 d-flex align-items-end gap-2">
                                 <button type="submit" class="btn btn-primary flex-grow-1" id="ap_submit_btn">Add</button>
